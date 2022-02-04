@@ -7,4 +7,5 @@ type mongooseConnection = {
 
 declare global {
   var mongoose: mongooseConnection;
+  var _mongoClientPromise: Promise<MongoClient>;
 }

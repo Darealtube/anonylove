@@ -1,0 +1,228 @@
+.appbar {
+  display: flex;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  margin-left: 64px;
+  margin-right: 64px;
+}
+
+.loginPage {
+  background-image: url(/homebg.png);
+  background-size: cover;
+  background-attachment: fixed;
+  overflow: auto;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.loginbutton {
+  background: transparent;
+  color: #f6f7f8;
+  background: linear-gradient(to left, transparent 50%, #70161e 50%) right;
+  background-size: 200%;
+  transition: 0.2s ease-out;
+  height: 40px
+}
+
+.loginbutton:hover {
+  background-position: left;
+}
+
+.diduknow {
+  animation: funfact 0.5s forwards;
+  animation-delay: 1s;
+  height: 240px;
+  width: 520px;
+  margin-top: 40px;
+  background-color: linear-gradient(#f6f7f8, #f6f7f8);
+  opacity: 0;
+  overflow: auto;
+}
+
+.title1 {
+  color: transparent;
+  background-image: linear-gradient(#ffcfd2, #ffcfd2),
+    linear-gradient(#fff, #fff);
+  -webkit-background-clip: padding-box, text;
+  background-clip: padding-box, text;
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  background-position: left;
+  animation: revealer-text 0.8s 0.2s forwards;
+}
+
+.title2 {
+  color: transparent;
+  background-image: linear-gradient(#ffcfd2, #ffcfd2),
+    linear-gradient(#fff, #fff);
+  -webkit-background-clip: padding-box, text;
+  background-clip: padding-box, text;
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  background-position: left;
+  animation: revealer-text 0.8s 0.2s forwards;
+  animation-delay: 0.5s;
+}
+
+.heart {
+  position: relative;
+  width: 100px;
+  height: 90px;
+  float: left;
+  animation: heartfloat 2s linear infinite;
+  opacity: 0;
+}
+.heart:before,
+.heart:after {
+  position: absolute;
+  content: "";
+  left: 30px;
+  top: 0;
+  width: 30px;
+  height: 50px;
+  background: #fc2e5a;
+  -moz-border-radius: 50px 50px 0 0;
+  border-radius: 50px 50px 0 0;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  -webkit-transform-origin: 0 100%;
+  -moz-transform-origin: 0 100%;
+  -ms-transform-origin: 0 100%;
+  -o-transform-origin: 0 100%;
+  transform-origin: 0 100%;
+}
+.heart:after {
+  left: 0;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  -webkit-transform-origin: 100% 100%;
+  -moz-transform-origin: 100% 100%;
+  -ms-transform-origin: 100% 100%;
+  -o-transform-origin: 100% 100%;
+  transform-origin: 100% 100%;
+}
+
+.heartContainers {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+}
+
+@keyframes heartfloat {
+  0% {
+    transform: translateY(0);
+    margin-left: 0px;
+    opacity: 0;
+  }
+  25% {
+    margin-left: 20px;
+  }
+  50% {
+    margin-left: 40px;
+    opacity: 1;
+  }
+  75% {
+    margin-left: 20px;
+  }
+  100% {
+    margin-left: 0px;
+    transform: translateY(-40vh);
+    opacity: 0;
+  }
+}
+
+@keyframes funfact {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes revealer-text {
+  0% {
+    background-size: 0% 100%;
+  }
+  50% {
+    background-size: 70% 100%;
+    background-position: left;
+  }
+  51% {
+    background-size: 100% 100%;
+    background-position: right;
+  }
+  100% {
+    background-size: 0% 100%, 100% 100%;
+    background-position: right;
+  }
+}
+
+.heartContainers .heart:nth-child(1) {
+  animation-delay: 2s;
+}
+
+.heartContainers .heart:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.heartContainers .heart:nth-child(3) {
+  animation-delay: 1.3s;
+}
+
+.heartContainers .heart:nth-child(4) {
+  animation-delay: 2.4s;
+}
+
+.heartContainers .heart:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.heartContainers .heart:nth-child(6) {
+  animation-delay: 3.2s;
+}
+
+.heartContainers .heart:nth-child(7) {
+  animation-delay: 1.8s;
+}
+
+.heartContainers .heart:nth-child(8) {
+  animation-delay: 3s;
+}
+
+.heartContainers .heart:nth-child(9) {
+  animation-delay: 2.6s;
+}
+
+.heartContainers .heart:nth-child(10) {
+  animation-delay: 0.8s;
+}
+
+@media all and (max-width: 900px) {
+  .main {
+    align-items: center;
+    justify-content: center;
+  }
+  .appbar {
+    margin: 0 0 0 0;
+    align-items: center;
+    justify-content: center;
+  }
+  .diduknow {
+    width: 360px;
+    height: 240px;
+  }
+}

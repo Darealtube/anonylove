@@ -10,6 +10,9 @@ dbConnect();
 
 const apolloServer = new ApolloServer({
   schema,
+  context: ({ req }) => {
+    console.log(req.cookies["next-auth.session-token"]);
+  },
   formatError: (err) => {
     // Don't give the specific errors to the client.
     if (err.message.startsWith("Database Error: ")) {

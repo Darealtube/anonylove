@@ -33,7 +33,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
-      uri: `http://localhost:4000/api/graphql`,
+      uri: `https://anonylove.vercel.app/api/graphql`,
       credentials: "same-origin",
     }),
     cache: new InMemoryCache({}),

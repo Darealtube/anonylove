@@ -11,7 +11,9 @@ import { BuiltInProviderType } from "next-auth/providers";
 import {
   ClientSafeProvider,
   getProviders,
+  getSession,
   LiteralUnion,
+  useSession,
 } from "next-auth/react";
 import Head from "next/head";
 import styles from "../styles/Login.module.css";
@@ -28,9 +30,12 @@ type Providers = Record<
 >;
 
 const SignIn = ({ providers }: { providers: Providers }) => {
+  const { data: session } = useSession();
   const theme = useTheme();
   const sm = useMediaQuery(theme.breakpoints.down("md"));
   const [quote, setQuote] = useState("");
+
+  console.log(session);
 
   useEffect(() => {
     setQuote(quoteRandomizer(anonyQuotes));
@@ -128,10 +133,21 @@ const SignIn = ({ providers }: { providers: Providers }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const providers = await getProviders();
+  const session = await getSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/home",
+        permanent: false,
+      },
+    };
+  }
+
   return {
-    props: { providers },
+    props: { providers, session },
   };
 };
 

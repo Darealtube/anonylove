@@ -5,25 +5,10 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import { getSession } from "next-auth/react";
 
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
 let apolloClient: null | ApolloClient<NormalizedCacheObject>;
-
-const authLink = setContext(async (_, { headers }) => {
-  const session = await getSession();
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem("token");
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: `Bearer foue12i30nbr2o1`,
-    },
-  };
-});
 
 // Creates an HttpLink towards the website's api on https://anonylove.vercel.app/api/graphql.
 // In order to work in dev environment, set the uri to http://localhost:4000/api/graphql.

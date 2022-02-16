@@ -12,6 +12,22 @@ export const resolvers = {
     ) => {
       return await User.find({});
     },
+    searchUser: async (
+      _parent: any,
+      args: any,
+      _context: Context,
+      _info: GraphQLResolveInfo
+    ) => {
+      const searchUserResult = await User.find({
+        name: {
+          $regex: new RegExp(args.key.trim(), "i"),
+        },
+      })
+        .sort({ name: 1 })
+        .limit(5);
+
+      return searchUserResult;
+    },
   },
 
   Mutation: {

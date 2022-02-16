@@ -10,6 +10,7 @@ export const typeDefs = gql`
 
   type Query {
     getUsers: [User]
+    searchUser(key: String): [User]
   }
 
   type Mutation {

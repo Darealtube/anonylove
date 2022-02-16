@@ -1,5 +1,5 @@
 import BrandLogo from "../../public/brandlogoblack.png";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/AppWrap.module.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Image from "next/image";

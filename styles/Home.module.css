@@ -1,24 +1,13 @@
-.appbar {
+.homeContainer {
+  width: 100%;
   display: flex;
-  margin-left: 16px;
-  margin-right: 16px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  margin-bottom: 32px;
 }
 
-.mainmenu {
-  background: rgb(239, 169, 174);
-  background: linear-gradient(
-    90deg,
-    rgba(239, 169, 174, 1) 25%,
-    rgba(229, 83, 129, 1) 50%,
-    rgba(216, 30, 91, 1) 75%,
-    rgba(112, 22, 30, 1) 100%
-  );
-}
-
-.appbaroptions {
-  margin-left: 16px;
-}
-
-.pfp {
+.avatar {
   border-radius: 50%;
 }

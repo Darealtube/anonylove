@@ -1,15 +1,13 @@
 import { useMediaQuery, useTheme, Grid, Container } from "@mui/material";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import { ReactChild, useState } from "react";
-import ChatList from "../Components/Home/ChatList";
-import styles from "../styles/Home.module.css";
+import { ReactNode, useState } from "react";
+import ChatList from "./ChatList";
+import styles from "../../styles/AppWrap.module.css";
 
-const MobileChatList = dynamic(
-  () => import("../Components/Home/MobileChatList")
-);
+const MobileChatList = dynamic(() => import("./MobileChatList"));
 
-const AppWrap = ({ children }: { children: ReactChild }) => {
+const AppWrap = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
   const theme = useTheme();

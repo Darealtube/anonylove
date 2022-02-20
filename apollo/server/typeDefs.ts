@@ -6,14 +6,18 @@ export const typeDefs = gql`
     name: String!
     email: String!
     image: String
+    cover: String
+    bio: String
+    status: String
   }
 
   type Query {
-    getUsers: [User]
+    getUser(name: String!): User
     searchUser(key: String): [User]
   }
 
   type Mutation {
     createUser(name: String, email: String): Boolean
+    createUniqueTag(userId: ID!, name: String!): Boolean
   }
 `;

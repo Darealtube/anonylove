@@ -2,6 +2,9 @@ import NextAuth from "next-auth";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import clientPromise from "../../../lib/dbAdapter";
+import { initializeApollo } from "../../../apollo/apolloClient";
+import { CREATE_UNIQUE_TAG } from "../../../apollo/mutation/createUniqueTag";
+import dbConnect from "../../../lib/dbConnect";
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -14,4 +17,19 @@ export default NextAuth({
   ],
   adapter: MongoDBAdapter(clientPromise),
   secret: process.env.AUTH_SECRET,
+  events: {
+    signIn: async ({ user, isNewUser }) => {
+      if (isNewUser) {
+        await dbConnect();
+        const apolloClient = initializeApollo();
+        await apolloClient.mutate({
+          mutation: CREATE_UNIQUE_TAG,
+          variables: {
+            userId: user.id,
+            name: user.name,
+          },
+        });
+      }
+    },
+  },
 });

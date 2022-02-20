@@ -15,6 +15,7 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Button,
 } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
@@ -22,6 +23,9 @@ import { SyntheticEvent, useState } from "react";
 import AppWrap from "../Components/Wrapper/AppWrap";
 import useSearch from "../utils/Hooks/useSearch";
 import BrandLogo from "../public/brandlogo.png";
+import { signOut } from "next-auth/react";
+import { User } from "../types/models";
+import NoUserImg from "../public/anonyUser.png";
 
 const StyledAutoComplete = styled(Autocomplete)({
   [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
@@ -48,13 +52,6 @@ const StyledAutoComplete = styled(Autocomplete)({
     color: "#F6F7F8",
   },
 });
-
-type User = {
-  _id: string;
-  name: string;
-  email: string;
-  image: string;
-};
 
 const Home = () => {
   const theme = useTheme();
@@ -87,7 +84,7 @@ const Home = () => {
           <Box mt={4}>
             <Image src={BrandLogo} alt="LOGO" width={304} height={192} />
           </Box>
-
+          <Button onClick={() => signOut({ callbackUrl: "/" })}>Logout</Button>
           <StyledAutoComplete
             id="anonylove-searchbar"
             sx={{ width: "80%", color: "white", mt: 4, mb: 4 }}
@@ -98,7 +95,7 @@ const Home = () => {
             onInputChange={handleSearchInput}
             filterOptions={(x) => x}
             options={
-              (data?.searchUser as User[]) ? (data.searchUser as User[]) : []
+              (data?.searchUser as User[]) ? (data?.searchUser as User[]) : []
             }
             loading={loading}
             getOptionLabel={(option) => {
@@ -111,7 +108,7 @@ const Home = () => {
               <ListItem {...props}>
                 <ListItemAvatar>
                   <Image
-                    src={(option as User).image}
+                    src={(option as User).image ?? NoUserImg}
                     alt="PFP"
                     width={40}
                     height={40}

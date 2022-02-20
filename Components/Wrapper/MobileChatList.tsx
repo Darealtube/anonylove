@@ -72,17 +72,21 @@ const MobileChatList = ({
               <SettingsIcon />
             </IconButton>
 
-            <Box ml={2}>
-              {session?.user?.image && (
-                <Image
-                  src={session.user.image}
-                  alt="PFP"
-                  width={40}
-                  height={40}
-                  className={styles.pfp}
-                />
-              )}
-            </Box>
+            <Link href={`/profile/${session?.user?.name}`} passHref>
+              <a>
+                <Box ml={2}>
+                  {session?.user?.image && (
+                    <Image
+                      src={session.user.image}
+                      alt="PFP"
+                      width={40}
+                      height={40}
+                      className={styles.pfp}
+                    />
+                  )}
+                </Box>
+              </a>
+            </Link>
           </AppBar>
           <Divider />
           <List sx={{ width: "100%" }}>

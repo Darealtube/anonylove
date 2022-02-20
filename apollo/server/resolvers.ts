@@ -1,23 +1,25 @@
 import { Context } from "@apollo/client";
 import { GraphQLResolveInfo } from "graphql";
+import { ObjectId } from "mongodb";
 import User from "../../models/User";
 
-export const resolvers = {
+type ResolverFn = (
+  parent: any,
+  args: any,
+  ctx: Context,
+  info: GraphQLResolveInfo
+) => any;
+
+interface ResolverMap {
+  [field: string]: ResolverFn;
+}
+interface Resolvers {
+  [resolver: string]: ResolverMap;
+}
+
+export const resolvers: Resolvers = {
   Query: {
-    getUsers: async (
-      _parent: any,
-      args: any,
-      _context: Context,
-      _info: GraphQLResolveInfo
-    ) => {
-      return await User.find({});
-    },
-    searchUser: async (
-      _parent: any,
-      args: any,
-      _context: Context,
-      _info: GraphQLResolveInfo
-    ) => {
+    searchUser: async (_parent, args, _context, _info) => {
       const searchUserResult = await User.find({
         name: {
           $regex: new RegExp(args.key.trim(), "i"),
@@ -28,16 +30,22 @@ export const resolvers = {
 
       return searchUserResult;
     },
+    getUser: async (_parent, args, _context, _info) => {
+      return await User.findOne({ name: args.name });
+    },
   },
 
   Mutation: {
-    createUser: async (
-      _parent: any,
-      args: any,
-      _context: Context,
-      _info: GraphQLResolveInfo
-    ) => {
+    createUser: async (_parent, args, _context, _info) => {
       await User.create(args);
+      return true;
+    },
+    createUniqueTag: async (_parent, args, _context, _info) => {
+      await User.updateOne(
+        { _id: new ObjectId(args.userId) },
+        { name: `${args.name}${Math.floor(1000 + Math.random() * 9000)}` },
+        { new: true }
+      );
       return true;
     },
   },

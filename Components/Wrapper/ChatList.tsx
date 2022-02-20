@@ -53,17 +53,21 @@ const ChatList = ({ session }: { session: Session | null }) => {
           <SettingsIcon />
         </IconButton>
 
-        <Box ml={2}>
-          {session?.user?.image && (
-            <Image
-              src={session.user.image}
-              alt="PFP"
-              width={40}
-              height={40}
-              className={styles.pfp}
-            />
-          )}
-        </Box>
+        <Link href={`/profile/${session?.user?.name}`} passHref>
+          <a>
+            <Box ml={2}>
+              {session?.user?.image && (
+                <Image
+                  src={session.user.image}
+                  alt="PFP"
+                  width={40}
+                  height={40}
+                  className={styles.pfp}
+                />
+              )}
+            </Box>
+          </a>
+        </Link>
       </AppBar>
 
       <Divider />
@@ -75,7 +79,7 @@ const ChatList = ({ session }: { session: Session | null }) => {
           <ListItemText
             primary="Brunch this weekend?"
             secondary={
-              <React.Fragment>
+              <>
                 <Typography
                   sx={{ display: "inline" }}
                   component="span"
@@ -85,7 +89,7 @@ const ChatList = ({ session }: { session: Session | null }) => {
                   Ali Connors
                 </Typography>
                 {" — I'll be in your neighborhood doing errands this…"}
-              </React.Fragment>
+              </>
             }
           />
         </ListItem>

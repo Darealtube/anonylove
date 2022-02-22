@@ -48,5 +48,12 @@ export const resolvers: Resolvers = {
       );
       return true;
     },
+    editUser: async (_parent, args, _context, _info) => {
+      const { originalName, ...updatedFields } = args;
+      await User.updateOne({ name: originalName }, updatedFields, {
+        new: true,
+      });
+      return true;
+    },
   },
 };

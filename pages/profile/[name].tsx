@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Typography,
-  Divider,
-  Paper,
-} from "@mui/material";
+import { Box, Button, Container, Grid, Typography, Paper } from "@mui/material";
 import styles from "../../styles/Profile.module.css";
 import Image from "next/image";
 import Head from "next/head";
@@ -14,14 +6,17 @@ import NoBg from "../../public/nobg.png";
 import anonyUser from "../../public/anonyUser.png";
 import AppWrap from "../../Components/Wrapper/AppWrap";
 import { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { addApolloState } from "../../apollo/apolloClient";
 import { GET_USER_QUERY } from "../../apollo/query/userQuery";
 import { useQuery } from "@apollo/client";
 import { getUser } from "../../utils/SSR/profile";
 import { getUserResult, getUserVariables } from "../../types/Queries";
+import Information from "../../Components/Profile/Information";
+import Link from "next/link";
 
 const Profile = ({ name }: { name: string }) => {
+  const { data: session } = useSession();
   const { data: user } = useQuery<getUserResult, getUserVariables>(
     GET_USER_QUERY,
     {
@@ -30,6 +25,7 @@ const Profile = ({ name }: { name: string }) => {
       },
     }
   );
+  const ownProfile = session?.user?.name === user?.getUser?.name;
 
   return (
     <>
@@ -41,7 +37,7 @@ const Profile = ({ name }: { name: string }) => {
       <AppWrap>
         <Box className={styles.cover}>
           <Image
-            src={NoBg}
+            src={user?.getUser?.cover ?? NoBg}
             alt="No Background Image"
             objectFit="cover"
             layout="fill"
@@ -67,19 +63,28 @@ const Profile = ({ name }: { name: string }) => {
         <Container sx={{ position: "relative", bottom: "40px" }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={12} lg={6}>
-              <Box mb={2}>
+              <Information title="Email Address">
                 <Typography align="center" variant="h6">
                   {user?.getUser?.email}
                 </Typography>
-                <Divider sx={{ backgroundColor: "white" }} />
-                <Typography align="center">Email Address</Typography>
-              </Box>
-              <Box mb={2}>
+              </Information>
+              <Information title="Relationship Status">
                 <Typography align="center" variant="h6">
-                  Single
+                  {user?.getUser?.status ?? "Unknown"}
                 </Typography>
-                <Divider sx={{ backgroundColor: "white" }} />
-                <Typography align="center">Relationship Status</Typography>
+              </Information>
+              {ownProfile ? (
+                <Link href="/profile/edit" passHref>
+                  <Button
+                    component="a"
+                    variant="outlined"
+                    className={styles.reqButton}
+                    fullWidth
+                  >
+                    Edit Profile
+                  </Button>
+                </Link>
+              ) : (
                 <Button
                   variant="outlined"
                   className={styles.reqButton}
@@ -87,14 +92,17 @@ const Profile = ({ name }: { name: string }) => {
                 >
                   Send Request
                 </Button>
+              )}
+              {!ownProfile && (
                 <Button
+                  component="a"
                   variant="outlined"
                   className={styles.reqButton}
                   fullWidth
                 >
                   Report User
                 </Button>
-              </Box>
+              )}
             </Grid>
             <Grid item xs={12} sm={6} md={12} lg={6}>
               <Typography
@@ -104,15 +112,7 @@ const Profile = ({ name }: { name: string }) => {
                 &ldquo;
               </Typography>
               <Paper className={styles.bio} elevation={6}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-                varius interdum lobortis. Nunc ultricies tellus enim, aliquam
-                interdum leo tincidunt ut. Integer finibus nunc et lorem
-                gravida, non tincidunt dolor fringilla. Suspendisse pellentesque
-                sem tempus lobortis sollicitudin. Praesent at tortor in lorem
-                vehicula sagittis at in ipsum. Ut lectus enim, fermentum eget
-                odio sit amet, tempus condimentum risus. Etiam aliquet felis
-                orci, in tincidunt erat facilisis ut. Praesent blandit feugiat
-                pulvinar.
+                {user?.getUser?.bio ?? ""}
               </Paper>
             </Grid>
           </Grid>

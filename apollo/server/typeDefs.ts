@@ -19,5 +19,13 @@ export const typeDefs = gql`
   type Mutation {
     createUser(name: String, email: String): Boolean
     createUniqueTag(userId: ID!, name: String!): Boolean
+    editUser(
+      originalName: String!
+      name: String!
+      image: String
+      cover: String
+      bio: String
+      status: String
+    ): Boolean
   }
 `;

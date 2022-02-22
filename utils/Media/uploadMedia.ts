@@ -1,4 +1,4 @@
-export const uploadImages = async (image: File | string) => {
+export const uploadImage = async (image: File | string) => {
   let url: string = "";
   const data = new FormData();
   const sign = await getSignature(); // Get returned sign and timestamp
@@ -30,6 +30,7 @@ export const uploadImages = async (image: File | string) => {
   } else {
     return url;
   }
+  return url;
 };
 
 const getSignature = async () => {
@@ -45,8 +46,7 @@ const getSignature = async () => {
       const { signature, timestamp } = data;
       return { signature, timestamp };
     })
-    .catch((err) => {
-      console.log(err);
+    .catch(() => {
       return null;
     });
   return response;

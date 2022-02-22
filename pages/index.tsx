@@ -13,7 +13,6 @@ import {
   getProviders,
   getSession,
   LiteralUnion,
-  useSession,
 } from "next-auth/react";
 import Head from "next/head";
 import styles from "../styles/Login.module.css";
@@ -30,12 +29,9 @@ type Providers = Record<
 >;
 
 const SignIn = ({ providers }: { providers: Providers }) => {
-  const { data: session } = useSession();
   const theme = useTheme();
   const sm = useMediaQuery(theme.breakpoints.down("md"));
   const [quote, setQuote] = useState("");
-
-  console.log(session);
 
   useEffect(() => {
     setQuote(quoteRandomizer(anonyQuotes));

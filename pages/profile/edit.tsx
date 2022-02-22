@@ -12,23 +12,33 @@ import {
   Grid,
   Typography,
   Paper,
+  Button,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 import { getSession, useSession } from "next-auth/react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER_QUERY } from "../../apollo/query/userQuery";
 import { getUserResult, getUserVariables } from "../../types/Queries";
-import { MutableRefObject, useRef, useState } from "react";
+import { MutableRefObject, ReactNode, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { addApolloState } from "../../apollo/apolloClient";
 import { getUser } from "../../utils/SSR/profile";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { getImages } from "../../utils/Media/getImage";
 import Information from "../../Components/Profile/Information";
+import Link from "next/link";
+import { EDIT_USER_PROFILE } from "../../apollo/mutation/userMutation";
+import { useRouter } from "next/router";
+import { uploadImage } from "../../utils/Media/uploadMedia";
 
 const EditProfile = () => {
+  const router = useRouter();
   const pfp = useRef<HTMLInputElement | null>(null);
   const cover = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
+  const [editProfile] = useMutation(EDIT_USER_PROFILE);
   const { data: user } = useQuery<getUserResult, getUserVariables>(
     GET_USER_QUERY,
     {
@@ -40,12 +50,25 @@ const EditProfile = () => {
 
   const [profile, setProfile] = useState({
     name: user?.getUser?.name,
-    email: user?.getUser?.email,
     image: user?.getUser?.image,
     cover: user?.getUser?.cover,
     bio: user?.getUser?.bio,
-    status: user?.getUser?.status,
+    status: user?.getUser?.status ?? "Single",
   });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfile({
+      ...profile,
+      [e.currentTarget.name]: e.currentTarget.value,
+    });
+  };
+
+  const handleSelect = (e: SelectChangeEvent<string>, child: ReactNode) => {
+    setProfile({
+      ...profile,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleChangeCoverClick = () => {
     (cover as MutableRefObject<HTMLInputElement>).current.click();
@@ -75,6 +98,31 @@ const EditProfile = () => {
         });
       });
     }
+  };
+
+  const handleSubmit = async () => {
+    editProfile({
+      variables: {
+        ...profile,
+        image:
+          session?.user?.image === profile.image
+            ? profile.image
+            : await uploadImage(profile.image as string),
+        cover:
+          user?.getUser?.cover === profile.cover
+            ? profile.cover
+            : await uploadImage(profile.cover as string),
+        originalName: session?.user?.name,
+      },
+    })
+      .then((res) => {
+        if (res.errors) {
+          throw new Error("An error occurred. Try again.");
+        } else {
+          router.replace(`/profile/${session?.user?.name}`);
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -138,6 +186,7 @@ const EditProfile = () => {
             variant="standard"
             sx={{ width: "80%" }}
             value={profile.name}
+            onChange={handleChange}
             inputProps={{
               style: {
                 color: "white",
@@ -152,37 +201,50 @@ const EditProfile = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={12} lg={6}>
               <Information title="Email Address">
-                <TextField
-                  id="email"
-                  name="email"
-                  variant="standard"
-                  sx={{ width: "100%" }}
-                  value={profile.email}
-                  inputProps={{
-                    style: {
-                      color: "white",
-                      fontSize: "20px",
-                      textAlign: "center",
-                    },
-                  }}
-                />
+                <Typography align="center" variant="h6">
+                  {user?.getUser?.email}
+                </Typography>
               </Information>
               <Information title="Relationship Status">
-                <TextField
+                <Select
                   id="status"
                   name="status"
-                  variant="standard"
-                  sx={{ width: "100%" }}
+                  labelId="Status"
                   value={profile.status}
-                  inputProps={{
-                    style: {
-                      color: "white",
-                      fontSize: "20px",
-                      textAlign: "center",
-                    },
-                  }}
-                />
+                  onChange={handleSelect}
+                  label="Relationship Status"
+                  fullWidth
+                  sx={{ color: "#f6f7f8" }}
+                >
+                  <MenuItem value={"Single"}>Single</MenuItem>
+                  <MenuItem value={"In a Relationship"}>
+                    In a Relationship
+                  </MenuItem>
+                  <MenuItem value={"It's Complicated"}>
+                    It&apos;s Complicated
+                  </MenuItem>
+                </Select>
               </Information>
+
+              <Link href={`/profile/${session?.user?.name}`} passHref>
+                <Button
+                  component="a"
+                  variant="outlined"
+                  className={styles.reqButton}
+                  fullWidth
+                >
+                  Cancel
+                </Button>
+              </Link>
+
+              <Button
+                variant="outlined"
+                className={styles.reqButton}
+                fullWidth
+                onClick={handleSubmit}
+              >
+                Save
+              </Button>
             </Grid>
 
             <Grid item xs={12} sm={6} md={12} lg={6}>
@@ -199,6 +261,7 @@ const EditProfile = () => {
                   variant="outlined"
                   sx={{ width: "80%", color: "white" }}
                   value={profile.bio}
+                  onChange={handleChange}
                   multiline
                   rows={7}
                   inputProps={{

@@ -18,7 +18,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
-      uri: `https://anonylove.vercel.app/api/graphql`,
+      uri: `http://localhost:4000/api/graphql`,
       credentials: "same-origin",
     }),
     cache: new InMemoryCache({}),
@@ -56,7 +56,6 @@ export function addApolloState(
   if (pageProps?.props) {
     pageProps.props[APOLLO_STATE_PROP_NAME] = client.cache.extract();
   }
-
   return pageProps;
 }
 

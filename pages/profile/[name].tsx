@@ -111,7 +111,11 @@ const Profile = ({ name }: { name: string }) => {
               >
                 &ldquo;
               </Typography>
-              <Paper className={styles.bio} elevation={6}>
+              <Paper
+                className={styles.bio}
+                sx={{ color: "#f6f7f8" }}
+                elevation={6}
+              >
                 {user?.getUser?.bio ?? ""}
               </Paper>
             </Grid>

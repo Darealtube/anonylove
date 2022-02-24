@@ -9,11 +9,13 @@ import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { addApolloState } from "../../apollo/apolloClient";
 import { GET_USER_QUERY } from "../../apollo/query/userQuery";
-import { useQuery } from "@apollo/client";
-import { getUser } from "../../utils/SSR/profile";
+import { useMutation, useQuery } from "@apollo/client";
+import { getUserInfo } from "../../utils/SSR/profile";
 import { getUserResult, getUserVariables } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
+import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
+import { GET_USER_CONFESSION_REQUESTS } from "../../apollo/query/requestQuery";
 
 const Profile = ({ name }: { name: string }) => {
   const { data: session } = useSession();
@@ -26,6 +28,41 @@ const Profile = ({ name }: { name: string }) => {
     }
   );
   const ownProfile = session?.user?.name === user?.getUser?.name;
+  const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST, {
+    update: (cache, result) => {
+      const newRequest = result.data?.sendConfessionRequest;
+      const data = cache.readQuery({
+        query: GET_USER_CONFESSION_REQUESTS,
+        variables: {
+          name: session?.user?.name,
+        },
+      });
+
+      cache.writeQuery({
+        query: GET_USER_CONFESSION_REQUESTS,
+        variables: {
+          name: session?.user?.name,
+        },
+        data: {
+          getUser: {
+            ...(data as getUserResult)?.getUser,
+            sentConfessionRequests: {
+              ...(data as getUserResult)?.getUser.sentConfessionRequests,
+              edges: [
+                { __typename: "RequestEdge", node: newRequest },
+                ...(data as getUserResult)?.getUser.sentConfessionRequests
+                  .edges,
+              ],
+            },
+          },
+        },
+      });
+    },
+  });
+
+  const handleRequest = () => {
+    sendRequest({ variables: { sender: session?.user?.name, receiver: name } });
+  };
 
   return (
     <>
@@ -88,6 +125,7 @@ const Profile = ({ name }: { name: string }) => {
                 <Button
                   variant="outlined"
                   className={styles.reqButton}
+                  onClick={handleRequest}
                   fullWidth
                 >
                   Send Request
@@ -128,7 +166,7 @@ const Profile = ({ name }: { name: string }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data, exists } = await getUser(context.params?.name as string);
+  const { data, exists } = await getUserInfo(context.params?.name as string);
 
   if (!exists) {
     return {

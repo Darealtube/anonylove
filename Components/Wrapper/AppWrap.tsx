@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { ReactNode, useState } from "react";
 import ChatList from "./ChatList";
 import styles from "../../styles/AppWrap.module.css";
+import { useQuery } from "@apollo/client";
+import { GET_USER_CONFESSION_REQUESTS } from "../../apollo/query/requestQuery";
 
 const MobileChatList = dynamic(() => import("./MobileChatList"));
 
@@ -12,6 +14,13 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const [chatOpen, setChatOpen] = useState(false);
   const theme = useTheme();
   const sm = useMediaQuery(theme.breakpoints.down("md"));
+  const { data: query } = useQuery(GET_USER_CONFESSION_REQUESTS, {
+    variables: {
+      limit: 4,
+      name: session?.user?.name,
+    },
+    skip: !session,
+  });
 
   const handleChatOpen = () => {
     setChatOpen(!chatOpen);

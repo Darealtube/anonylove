@@ -6,7 +6,32 @@ export interface User {
   cover?: string;
   bio?: string;
   status?: string;
+  sentConfessionRequests: RequestConnection;
+  receivedConfessionRequests: RequestConnection[];
 }
+
+export interface Request {
+  id: string;
+  date: Date;
+  sender: string;
+  receiver: string;
+  acceepted: boolean;
+}
+
+type RequestConnection = {
+  totalCount: number;
+  pageInfo: PageInfo;
+  edges: [RequestEdge];
+};
+
+type RequestEdge = {
+  node: Request;
+};
+
+type PageInfo = {
+  endCursor: string;
+  hasNextPage: boolean;
+};
 
 export interface Message {
   id: string;

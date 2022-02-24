@@ -24,7 +24,7 @@ import { getUserResult, getUserVariables } from "../../types/Queries";
 import { MutableRefObject, ReactNode, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { addApolloState } from "../../apollo/apolloClient";
-import { getUser } from "../../utils/SSR/profile";
+import { getUserInfo } from "../../utils/SSR/profile";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { getImages } from "../../utils/Media/getImage";
 import Information from "../../Components/Profile/Information";
@@ -215,6 +215,7 @@ const EditProfile = () => {
                   label="Relationship Status"
                   fullWidth
                   sx={{ color: "#f6f7f8" }}
+                  SelectDisplayProps={{ style: { textAlign: "center" } }}
                 >
                   <MenuItem value={"Single"}>Single</MenuItem>
                   <MenuItem value={"In a Relationship"}>
@@ -283,7 +284,7 @@ export default EditProfile;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data } = await getUser(session?.user?.name as string);
+  const { data } = await getUserInfo(session?.user?.name as string);
 
   if (!session) {
     return {

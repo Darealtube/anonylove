@@ -1,7 +1,10 @@
 import { Context } from "@apollo/client";
 import { GraphQLResolveInfo } from "graphql";
 import { ObjectId } from "mongodb";
+import Request from "../../models/Request";
 import User from "../../models/User";
+import { Decursorify } from "../../utils/Pagination.ts/cursorify";
+import relayPaginate from "../../utils/Pagination.ts/relayPaginate";
 
 type ResolverFn = (
   parent: any,
@@ -18,6 +21,42 @@ interface Resolvers {
 }
 
 export const resolvers: Resolvers = {
+  User: {
+    sentConfessionRequests: async (parent, args, _context, _info) => {
+      const sentConfessions = await Request.find({
+        sender: parent.name,
+        ...(args.after && { date: { $lt: Decursorify(args.after) } }),
+      })
+        .sort({
+          date: 1,
+        })
+        .limit(args.limit);
+
+      const data = relayPaginate({
+        finalArray: sentConfessions,
+        cursorIdentifier: "date",
+        limit: args.limit,
+      });
+      return data;
+    },
+    receivedConfessionRequests: async (parent, args, _context, _info) => {
+      const receivedConfessions = await Request.find({
+        receiver: parent.name,
+        ...(args.after && { date: { $lt: Decursorify(args.after) } }),
+      })
+        .sort({
+          date: 1,
+        })
+        .limit(args.limit);
+
+      const data = relayPaginate({
+        finalArray: receivedConfessions,
+        cursorIdentifier: "date",
+        limit: args.limit,
+      });
+      return data;
+    },
+  },
   Query: {
     searchUser: async (_parent, args, _context, _info) => {
       const searchUserResult = await User.find({
@@ -54,6 +93,22 @@ export const resolvers: Resolvers = {
         new: true,
       });
       return true;
+    },
+    sendConfessionRequest: async (_parent, args, _context, _info) => {
+      const sentRequest = await Request.create({
+        sender: args.sender,
+        receiver: args.receiver,
+        accepted: false,
+      });
+      return sentRequest;
+    },
+    confessionRequestAction: async (_parent, args, _context, _info) => {
+      const actRequest = await Request.updateOne(
+        { _id: args.requestID },
+        { accepted: args.accepted },
+        { new: true }
+      );
+      return actRequest;
     },
   },
 };

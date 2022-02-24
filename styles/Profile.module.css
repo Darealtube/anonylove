@@ -22,8 +22,8 @@
 
 .reqButton {
   height: 40px;
-  margin-top: 16px;
-  margin-right: 16px;
+  margin-top: 16px !important;
+  margin-right: 16px !important;
   background: transparent !important;
   color: #f6f7f8 !important;
   border-color: #f6f7f8 !important;

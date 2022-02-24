@@ -1,7 +1,7 @@
 import { initializeApollo } from "../../apollo/apolloClient";
 import { GET_USER_QUERY } from "../../apollo/query/userQuery";
 
-export const getUser = async (name: string) => {
+export const getUserInfo = async (name: string) => {
   const apolloClient = initializeApollo();
   const {
     data: { getUser },

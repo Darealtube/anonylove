@@ -5,6 +5,7 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from "@apollo/client";
+import { relayStylePagination } from "@apollo/client/utilities";
 
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
@@ -21,7 +22,15 @@ function createApolloClient() {
       uri: `https://anonylove.vercel.app/api/graphql`,
       credentials: "same-origin",
     }),
-    cache: new InMemoryCache({}),
+    cache: new InMemoryCache({
+      typePolicies: {
+        User: {
+          fields: {
+            sentConfessionRequests: relayStylePagination(),
+          },
+        },
+      },
+    }),
   });
 }
 

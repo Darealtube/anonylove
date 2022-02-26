@@ -6,14 +6,28 @@ export const SEND_CONFESSION_REQUEST = gql`
       _id
       accepted
       date
-      sender
-      receiver
+      sender {
+        name
+        image
+      }
+      receiver {
+        name
+        image
+      }
     }
   }
 `;
 
-export const CONFESSION_REQUEST_ACTION = gql`
-  mutation ConfessionRequestAction($requestID: ID!, $accepted: Boolean!) {
-    confessionRequestAction(requestID: $requestID, accepted: $accepted)
+export const REJECT_CONFESSION_REQUEST = gql`
+  mutation RejectConfessionRequest($requestID: ID!) {
+    rejectConfessionRequest(requestID: $requestID)
+  }
+`;
+
+export const ACCEPT_CONFESSION_REQUEST = gql`
+  mutation AcceptConfessionRequest($requestID: ID!) {
+    acceptConfessionRequest(requestID: $requestID) {
+      _id
+    }
   }
 `;

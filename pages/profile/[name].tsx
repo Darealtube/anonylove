@@ -28,37 +28,7 @@ const Profile = ({ name }: { name: string }) => {
     }
   );
   const ownProfile = session?.user?.name === user?.getUser?.name;
-  const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST, {
-    update: (cache, result) => {
-      const newRequest = result.data?.sendConfessionRequest;
-      const data = cache.readQuery({
-        query: GET_USER_CONFESSION_REQUESTS,
-        variables: {
-          name: session?.user?.name,
-        },
-      });
-
-      cache.writeQuery({
-        query: GET_USER_CONFESSION_REQUESTS,
-        variables: {
-          name: session?.user?.name,
-        },
-        data: {
-          getUser: {
-            ...(data as getUserResult)?.getUser,
-            sentConfessionRequests: {
-              ...(data as getUserResult)?.getUser.sentConfessionRequests,
-              edges: [
-                { __typename: "RequestEdge", node: newRequest },
-                ...(data as getUserResult)?.getUser.sentConfessionRequests
-                  .edges,
-              ],
-            },
-          },
-        },
-      });
-    },
-  });
+  const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
 
   const handleRequest = () => {
     sendRequest({ variables: { sender: session?.user?.name, receiver: name } });

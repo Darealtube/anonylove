@@ -4,11 +4,19 @@ export const GET_USER_CONFESSION_REQUESTS = gql`
   query UserConfessionRequests($name: String!, $after: ID, $limit: Int) {
     getUser(name: $name) {
       _id
-      sentConfessionRequests(limit: $limit, after: $after) {
+      receivedConfessionRequests(limit: $limit, after: $after) {
         edges {
           node {
             _id
             accepted
+            sender {
+              name
+              image
+            }
+            receiver {
+              name
+              image
+            }
           }
         }
         pageInfo {

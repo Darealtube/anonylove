@@ -57,6 +57,14 @@ export const resolvers: Resolvers = {
       return data;
     },
   },
+  Request: {
+    sender: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.sender }).lean();
+    },
+    receiver: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.receiver }).lean();
+    },
+  },
   Query: {
     searchUser: async (_parent, args, _context, _info) => {
       const searchUserResult = await User.find({
@@ -102,13 +110,19 @@ export const resolvers: Resolvers = {
       });
       return sentRequest;
     },
-    confessionRequestAction: async (_parent, args, _context, _info) => {
-      const actRequest = await Request.updateOne(
+    rejectConfessionRequest: async (_parent, args, _context, _info) => {
+      await Request.deleteOne({
+        _id: args.requestID,
+      });
+      return true;
+    },
+    acceptConfessionRequest: async (_parent, args, _context, _info) => {
+      const acceptedRequest = await Request.updateOne(
         { _id: args.requestID },
-        { accepted: args.accepted },
+        { accepted: true },
         { new: true }
       );
-      return actRequest;
+      return acceptedRequest;
     },
   },
 };

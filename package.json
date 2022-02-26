@@ -12,6 +12,7 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.4.1",
+    "@mui/lab": "^5.0.0-alpha.70",
     "@mui/material": "^5.4.0",
     "@next-auth/mongodb-adapter": "^1.0.1",
     "apollo-server-micro": "^3.6.2",

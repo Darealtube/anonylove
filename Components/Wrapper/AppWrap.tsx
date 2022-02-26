@@ -1,22 +1,39 @@
-import { useMediaQuery, useTheme, Grid, Container } from "@mui/material";
+import {
+  useMediaQuery,
+  useTheme,
+  Grid,
+  Container,
+  Tab,
+  Box,
+  AppBar,
+  IconButton,
+} from "@mui/material";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import { ReactNode, useState } from "react";
-import ChatList from "./ChatList";
+import { ReactNode, SyntheticEvent, useState } from "react";
+import ChatList from "./Lists/ChatList";
 import styles from "../../styles/AppWrap.module.css";
 import { useQuery } from "@apollo/client";
 import { GET_USER_CONFESSION_REQUESTS } from "../../apollo/query/requestQuery";
+import BrandLogo from "../../public/brandlogoblack.png";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import Link from "next/link";
+import Image from "next/image";
+import RequestList from "./Lists/RequestList";
 
-const MobileChatList = dynamic(() => import("./MobileChatList"));
+const MobileDrawer = dynamic(() => import("./MobileDrawer"));
 
 const AppWrap = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
+  const [tab, setTab] = useState("chat");
   const theme = useTheme();
   const sm = useMediaQuery(theme.breakpoints.down("md"));
   const { data: query } = useQuery(GET_USER_CONFESSION_REQUESTS, {
     variables: {
-      limit: 4,
+      limit: 10,
       name: session?.user?.name,
     },
     skip: !session,
@@ -26,6 +43,13 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
     setChatOpen(!chatOpen);
   };
 
+  const handleTabChange = (
+    _event: SyntheticEvent<Element, Event>,
+    tab: string
+  ) => {
+    setTab(tab);
+  };
+
   return (
     <Grid
       container
@@ -33,25 +57,98 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
       className={styles.mainmenu}
     >
       {!sm ? (
-        <Grid
-          item
-          md={4}
-          sx={{
-            backgroundColor: "#F6F7F8",
-            height: "100%",
-            overflow: "auto",
-          }}
-        >
-          <Container>
-            <ChatList session={session} />
-          </Container>
+        <Grid item md={4} className={styles.drawer}>
+          <AppBar
+            className={styles.appbar}
+            sx={{ backgroundColor: "#f6f7f8", pl: 4, pr: 4 }}
+            elevation={0}
+          >
+            <Link href="/home" passHref>
+              <a>
+                <Image src={BrandLogo} alt="LOGO" />
+              </a>
+            </Link>
+            <Box flexGrow={1} />
+            <IconButton
+              sx={{ height: 40, width: 40 }}
+              className={styles.appbaroptions}
+            >
+              <NotificationsIcon />
+            </IconButton>
+
+            <IconButton
+              sx={{ height: 40, width: 40 }}
+              className={styles.appbaroptions}
+            >
+              <SettingsIcon />
+            </IconButton>
+
+            <Link href={`/profile/${session?.user?.name}`} passHref>
+              <a>
+                <Box ml={2}>
+                  {session?.user?.image && (
+                    <Image
+                      src={session.user.image}
+                      alt="PFP"
+                      width={40}
+                      height={40}
+                      className={styles.pfp}
+                    />
+                  )}
+                </Box>
+              </a>
+            </Link>
+          </AppBar>
+
+          <TabContext value={tab}>
+            <Box
+              sx={{
+                borderBottom: 1,
+                borderColor: "divider",
+                position: "sticky",
+                top: 90,
+                backgroundColor: "#f6f7f8",
+                zIndex: 2,
+              }}
+            >
+              <TabList onChange={handleTabChange} centered>
+                <Tab label="Chats" value="chat" />
+                <Tab label="Requests" value="request" />
+              </TabList>
+            </Box>
+            <TabPanel value="chat">
+              <Container sx={{ zIndex: 1 }}>
+                <ChatList />
+              </Container>
+            </TabPanel>
+            <TabPanel value="request">
+              <Container sx={{ zIndex: 1 }}>
+                <RequestList
+                  requests={query?.getUser?.receivedConfessionRequests}
+                />
+              </Container>
+            </TabPanel>
+          </TabContext>
         </Grid>
       ) : (
-        <MobileChatList
-          open={chatOpen}
-          handleChatList={handleChatOpen}
-          session={session}
-        />
+        <MobileDrawer open={chatOpen} handleChatList={handleChatOpen}>
+          <TabContext value={tab}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <TabList onChange={handleTabChange} centered>
+                <Tab label="Chats" value="chat" />
+                <Tab label="Requests" value="request" />
+              </TabList>
+            </Box>
+            <TabPanel value="chat">
+              <ChatList />
+            </TabPanel>
+            <TabPanel value="request">
+              <RequestList
+                requests={query?.getUser?.receivedConfessionRequests}
+              />
+            </TabPanel>
+          </TabContext>
+        </MobileDrawer>
       )}
       <Grid
         item

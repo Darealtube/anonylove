@@ -15,8 +15,8 @@ export const typeDefs = gql`
 
   type Request {
     _id: ID!
-    sender: ID!
-    receiver: ID!
+    sender: User!
+    receiver: User!
     date: String
     accepted: Boolean
   }
@@ -45,7 +45,8 @@ export const typeDefs = gql`
     createUser(name: String, email: String): Boolean
     createUniqueTag(userId: ID!, name: String!): Boolean
     sendConfessionRequest(sender: String!, receiver: String!): Request
-    confessionRequestAction(requestID: ID!, accepted: Boolean!): Request
+    rejectConfessionRequest(requestID: ID!): Boolean
+    acceptConfessionRequest(requestID: ID!): Request
     editUser(
       originalName: String!
       name: String!

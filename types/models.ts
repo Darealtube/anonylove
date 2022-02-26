@@ -11,14 +11,14 @@ export interface User {
 }
 
 export interface Request {
-  id: string;
+  _id: string;
   date: Date;
-  sender: string;
-  receiver: string;
+  sender: User;
+  receiver: User;
   acceepted: boolean;
 }
 
-type RequestConnection = {
+export type RequestConnection = {
   totalCount: number;
   pageInfo: PageInfo;
   edges: [RequestEdge];
@@ -34,7 +34,7 @@ type PageInfo = {
 };
 
 export interface Message {
-  id: string;
+  _id: string;
   date: Date;
   sender: User;
   message: string;
@@ -42,8 +42,18 @@ export interface Message {
 }
 
 export interface Chat {
-  id: string;
+  _id: string;
   confesser: User;
   confessee: User;
   messages: Message[];
 }
+
+export type ChatConnection = {
+  totalCount: number;
+  pageInfo: PageInfo;
+  edges: [ChatEdge];
+};
+
+type ChatEdge = {
+  node: Chat;
+};

@@ -1,10 +1,4 @@
-import {
-  SwipeableDrawer,
-  Container,
-  AppBar,
-  IconButton,
-  Box,
-} from "@mui/material";
+import { SwipeableDrawer, AppBar, IconButton, Box } from "@mui/material";
 import BrandLogo from "../../public/brandlogoblack.png";
 import styles from "../../styles/AppWrap.module.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -34,46 +28,44 @@ const MobileDrawer = ({
         onClose={handleChatList}
         onOpen={handleChatList}
       >
-        <Container>
-          <AppBar className={styles.appbar} color="transparent" elevation={0}>
-            <Link href="/home" passHref>
-              <a>
-                <Image src={BrandLogo} alt="LOGO" />
-              </a>
-            </Link>
-            <Box flexGrow={1} />
-            <IconButton
-              sx={{ height: 40, width: 40 }}
-              className={styles.appbaroptions}
-            >
-              <NotificationsIcon />
-            </IconButton>
+        <AppBar className={styles.appbar} elevation={0}>
+          <Link href="/home" passHref>
+            <a>
+              <Image src={BrandLogo} alt="LOGO" />
+            </a>
+          </Link>
+          <Box flexGrow={1} />
+          <IconButton
+            sx={{ height: 40, width: 40 }}
+            className={styles.appbaroptions}
+          >
+            <NotificationsIcon />
+          </IconButton>
 
-            <IconButton
-              sx={{ height: 40, width: 40 }}
-              className={styles.appbaroptions}
-            >
-              <SettingsIcon />
-            </IconButton>
+          <IconButton
+            sx={{ height: 40, width: 40 }}
+            className={styles.appbaroptions}
+          >
+            <SettingsIcon />
+          </IconButton>
 
-            <Link href={`/profile/${session?.user?.name}`} passHref>
-              <a>
-                <Box ml={2}>
-                  {session?.user?.image && (
-                    <Image
-                      src={session.user.image}
-                      alt="PFP"
-                      width={40}
-                      height={40}
-                      className={styles.pfp}
-                    />
-                  )}
-                </Box>
-              </a>
-            </Link>
-          </AppBar>
-          {children}
-        </Container>
+          <Link href={`/profile/${session?.user?.name}`} passHref>
+            <a>
+              <Box ml={2}>
+                {session?.user?.image && (
+                  <Image
+                    src={session.user.image}
+                    alt="PFP"
+                    width={40}
+                    height={40}
+                    className={styles.pfp}
+                  />
+                )}
+              </Box>
+            </a>
+          </Link>
+        </AppBar>
+        {children}
       </SwipeableDrawer>
     </>
   );

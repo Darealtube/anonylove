@@ -15,7 +15,6 @@ import { getUserResult, getUserVariables } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
 import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
-import { GET_USER_CONFESSION_REQUESTS } from "../../apollo/query/requestQuery";
 
 const Profile = ({ name }: { name: string }) => {
   const { data: session } = useSession();

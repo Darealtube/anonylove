@@ -58,11 +58,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
     >
       {!sm ? (
         <Grid item md={4} className={styles.drawer}>
-          <AppBar
-            className={styles.appbar}
-            sx={{ backgroundColor: "#f6f7f8", pl: 4, pr: 4 }}
-            elevation={0}
-          >
+          <AppBar className={styles.appbar} elevation={0}>
             <Link href="/home" passHref>
               <a>
                 <Image src={BrandLogo} alt="LOGO" />
@@ -101,16 +97,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
           </AppBar>
 
           <TabContext value={tab}>
-            <Box
-              sx={{
-                borderBottom: 1,
-                borderColor: "divider",
-                position: "sticky",
-                top: 90,
-                backgroundColor: "#f6f7f8",
-                zIndex: 2,
-              }}
-            >
+            <Box sx={{ borderColor: "divider" }} className={styles.tabs}>
               <TabList onChange={handleTabChange} centered>
                 <Tab label="Chats" value="chat" />
                 <Tab label="Requests" value="request" />
@@ -133,19 +120,23 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
       ) : (
         <MobileDrawer open={chatOpen} handleChatList={handleChatOpen}>
           <TabContext value={tab}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Box sx={{ borderColor: "divider" }} className={styles.tabs}>
               <TabList onChange={handleTabChange} centered>
                 <Tab label="Chats" value="chat" />
                 <Tab label="Requests" value="request" />
               </TabList>
             </Box>
             <TabPanel value="chat">
-              <ChatList />
+              <Container sx={{ zIndex: 1 }}>
+                <ChatList />
+              </Container>
             </TabPanel>
             <TabPanel value="request">
-              <RequestList
-                requests={query?.getUser?.receivedConfessionRequests}
-              />
+              <Container sx={{ zIndex: 1 }}>
+                <RequestList
+                  requests={query?.getUser?.receivedConfessionRequests}
+                />
+              </Container>
             </TabPanel>
           </TabContext>
         </MobileDrawer>

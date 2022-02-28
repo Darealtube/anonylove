@@ -3,15 +3,11 @@ import { Schema } from "mongoose";
 import mongoose from "mongoose";
 import { DateTime } from "luxon";
 
-const now = () => {
-  return DateTime.now();
-};
-
 const RequestSchema = new Schema({
   id: ObjectId,
   date: {
     type: Date,
-    default: now(),
+    default: DateTime.local,
   },
   sender: String,
   receiver: String,

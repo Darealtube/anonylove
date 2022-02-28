@@ -1,9 +1,20 @@
 .appbar {
-  position: sticky;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+  position: sticky !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background-color: #f6f7f8 !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
+.tabs {
+  border-bottom: 8px !important;
+  position: sticky !important;
+  top: 90 !important;
+  background-color: #f6f7f8 !important;
+  z-index: 2 !important;
 }
 
 .drawer {

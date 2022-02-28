@@ -9,6 +9,7 @@ export const GET_USER_CONFESSION_REQUESTS = gql`
           node {
             _id
             accepted
+            date
             sender {
               name
               image

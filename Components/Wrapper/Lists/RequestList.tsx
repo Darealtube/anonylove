@@ -14,11 +14,13 @@ import { RequestConnection } from "../../../types/models";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import dynamic from "next/dynamic";
+import { DateTime } from "luxon";
 
 const DeleteDialog = dynamic(() => import("../DeleteRequestDialog"));
 
 //  Set parameter "requests" as optional for now
 const RequestList = ({ requests }: { requests?: RequestConnection }) => {
+  const dateNow = DateTime.local();
   const [openDelete, setOpenDelete] = useState(false);
   const [targetId, setTargetId] = useState("");
 
@@ -60,6 +62,13 @@ const RequestList = ({ requests }: { requests?: RequestConnection }) => {
                         >
                           I want to confess to you!
                         </Typography>
+                        {` - ${Math.floor(
+                          dateNow.diff(DateTime.fromMillis(+request.date), [
+                            "days",
+                            "hours",
+                            "minutes",
+                          ]).minutes
+                        )}m`}
                       </>
                     }
                   />

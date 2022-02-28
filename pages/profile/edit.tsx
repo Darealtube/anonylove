@@ -1,6 +1,5 @@
 import Head from "next/head";
 import styles from "../../styles/Profile.module.css";
-import AppWrap from "../../Components/Wrapper/AppWrap";
 import Image from "next/image";
 import NoBg from "../../public/nobg.png";
 import anonyUser from "../../public/anonyUser.png";
@@ -133,17 +132,40 @@ const EditProfile = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <AppWrap>
-        <Box className={styles.cover}>
+      <Box className={styles.cover}>
+        <Image
+          src={profile.cover ?? NoBg}
+          alt="No Background Image"
+          objectFit="cover"
+          layout="fill"
+        />
+        <IconButton
+          sx={{ position: "absolute", color: "#f6f7f8" }}
+          onClick={handleChangeCoverClick}
+        >
+          <CameraAltIcon />
+        </IconButton>
+        <input
+          type="file"
+          hidden={true}
+          accept="image/*"
+          ref={cover}
+          onChange={handleChangeCover}
+        />
+      </Box>
+
+      <Box className={styles.main}>
+        <Box className={styles.pfp}>
           <Image
-            src={profile.cover ?? NoBg}
-            alt="No Background Image"
-            objectFit="cover"
+            src={profile.image ?? anonyUser}
+            alt="PFP"
             layout="fill"
+            objectFit="cover"
+            className={styles.avatar}
           />
           <IconButton
             sx={{ position: "absolute", color: "#f6f7f8" }}
-            onClick={handleChangeCoverClick}
+            onClick={handleChangePFPClick}
           >
             <CameraAltIcon />
           </IconButton>
@@ -151,131 +173,106 @@ const EditProfile = () => {
             type="file"
             hidden={true}
             accept="image/*"
-            ref={cover}
-            onChange={handleChangeCover}
+            ref={pfp}
+            onChange={handleChangePFP}
           />
         </Box>
 
-        <Box className={styles.main}>
-          <Box className={styles.pfp}>
-            <Image
-              src={profile.image ?? anonyUser}
-              alt="PFP"
-              layout="fill"
-              objectFit="cover"
-              className={styles.avatar}
-            />
-            <IconButton
-              sx={{ position: "absolute", color: "#f6f7f8" }}
-              onClick={handleChangePFPClick}
-            >
-              <CameraAltIcon />
-            </IconButton>
-            <input
-              type="file"
-              hidden={true}
-              accept="image/*"
-              ref={pfp}
-              onChange={handleChangePFP}
-            />
-          </Box>
+        <TextField
+          id="name"
+          name="name"
+          variant="standard"
+          sx={{ width: "80%" }}
+          value={profile.name}
+          onChange={handleChange}
+          inputProps={{
+            style: {
+              color: "white",
+              fontSize: "40px",
+              textAlign: "center",
+            },
+          }}
+        />
+      </Box>
 
-          <TextField
-            id="name"
-            name="name"
-            variant="standard"
-            sx={{ width: "80%" }}
-            value={profile.name}
-            onChange={handleChange}
-            inputProps={{
-              style: {
-                color: "white",
-                fontSize: "40px",
-                textAlign: "center",
-              },
-            }}
-          />
-        </Box>
+      <Container sx={{ position: "relative", bottom: "40px" }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={12} lg={6}>
+            <Information title="Email Address">
+              <Typography align="center" variant="h6">
+                {user?.getUser?.email}
+              </Typography>
+            </Information>
+            <Information title="Relationship Status">
+              <Select
+                id="status"
+                name="status"
+                labelId="Status"
+                value={profile.status}
+                onChange={handleSelect}
+                label="Relationship Status"
+                fullWidth
+                sx={{ color: "#f6f7f8" }}
+                SelectDisplayProps={{ style: { textAlign: "center" } }}
+              >
+                <MenuItem value={"Single"}>Single</MenuItem>
+                <MenuItem value={"In a Relationship"}>
+                  In a Relationship
+                </MenuItem>
+                <MenuItem value={"It's Complicated"}>
+                  It&apos;s Complicated
+                </MenuItem>
+              </Select>
+            </Information>
 
-        <Container sx={{ position: "relative", bottom: "40px" }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={12} lg={6}>
-              <Information title="Email Address">
-                <Typography align="center" variant="h6">
-                  {user?.getUser?.email}
-                </Typography>
-              </Information>
-              <Information title="Relationship Status">
-                <Select
-                  id="status"
-                  name="status"
-                  labelId="Status"
-                  value={profile.status}
-                  onChange={handleSelect}
-                  label="Relationship Status"
-                  fullWidth
-                  sx={{ color: "#f6f7f8" }}
-                  SelectDisplayProps={{ style: { textAlign: "center" } }}
-                >
-                  <MenuItem value={"Single"}>Single</MenuItem>
-                  <MenuItem value={"In a Relationship"}>
-                    In a Relationship
-                  </MenuItem>
-                  <MenuItem value={"It's Complicated"}>
-                    It&apos;s Complicated
-                  </MenuItem>
-                </Select>
-              </Information>
-
-              <Link href={`/profile/${session?.user?.name}`} passHref>
-                <Button
-                  component="a"
-                  variant="outlined"
-                  className={styles.reqButton}
-                  fullWidth
-                >
-                  Cancel
-                </Button>
-              </Link>
-
+            <Link href={`/profile/${session?.user?.name}`} passHref>
               <Button
+                component="a"
                 variant="outlined"
                 className={styles.reqButton}
                 fullWidth
-                onClick={handleSubmit}
               >
-                Save
+                Cancel
               </Button>
-            </Grid>
+            </Link>
 
-            <Grid item xs={12} sm={6} md={12} lg={6}>
-              <Typography
-                variant="h1"
-                sx={{ position: "absolute", color: "white", ml: 2 }}
-              >
-                &ldquo;
-              </Typography>
-              <Paper className={styles.bio} elevation={6}>
-                <TextField
-                  id="bio"
-                  name="bio"
-                  variant="outlined"
-                  sx={{ width: "80%", color: "white" }}
-                  value={profile.bio}
-                  onChange={handleChange}
-                  multiline
-                  rows={7}
-                  inputProps={{
-                    style: {
-                      color: "white",
-                    },
-                  }}
-                />
-              </Paper>
-            </Grid>
+            <Button
+              variant="outlined"
+              className={styles.reqButton}
+              fullWidth
+              onClick={handleSubmit}
+            >
+              Save
+            </Button>
           </Grid>
-        </Container>
-      </AppWrap>
+
+          <Grid item xs={12} sm={6} md={12} lg={6}>
+            <Typography
+              variant="h1"
+              sx={{ position: "absolute", color: "white", ml: 2 }}
+            >
+              &ldquo;
+            </Typography>
+            <Paper className={styles.bio} elevation={6}>
+              <TextField
+                id="bio"
+                name="bio"
+                variant="outlined"
+                sx={{ width: "80%", color: "white" }}
+                value={profile.bio}
+                onChange={handleChange}
+                multiline
+                rows={7}
+                inputProps={{
+                  style: {
+                    color: "white",
+                  },
+                }}
+              />
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
     </>
   );
 };

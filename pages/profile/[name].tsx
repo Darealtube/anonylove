@@ -4,7 +4,6 @@ import Image from "next/image";
 import Head from "next/head";
 import NoBg from "../../public/nobg.png";
 import anonyUser from "../../public/anonyUser.png";
-import AppWrap from "../../Components/Wrapper/AppWrap";
 import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { addApolloState } from "../../apollo/apolloClient";
@@ -40,95 +39,93 @@ const Profile = ({ name }: { name: string }) => {
         <meta name="description" content="Face the Fear of Confession" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <AppWrap>
-        <Box className={styles.cover}>
+      <Box className={styles.cover}>
+        <Image
+          src={user?.getUser?.cover ?? NoBg}
+          alt="No Background Image"
+          objectFit="cover"
+          layout="fill"
+        />
+      </Box>
+
+      <Box className={styles.main}>
+        <Box className={styles.pfp}>
           <Image
-            src={user?.getUser?.cover ?? NoBg}
-            alt="No Background Image"
-            objectFit="cover"
-            layout="fill"
+            src={user?.getUser?.image ?? anonyUser}
+            alt="PFP"
+            width={160}
+            height={160}
+            className={styles.avatar}
           />
         </Box>
 
-        <Box className={styles.main}>
-          <Box className={styles.pfp}>
-            <Image
-              src={user?.getUser?.image ?? anonyUser}
-              alt="PFP"
-              width={160}
-              height={160}
-              className={styles.avatar}
-            />
-          </Box>
+        <Typography align="center" variant="h3" mt={1}>
+          {user?.getUser?.name}
+        </Typography>
+      </Box>
 
-          <Typography align="center" variant="h3" mt={1}>
-            {user?.getUser?.name}
-          </Typography>
-        </Box>
-
-        <Container sx={{ position: "relative", bottom: "40px" }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={12} lg={6}>
-              <Information title="Email Address">
-                <Typography align="center" variant="h6">
-                  {user?.getUser?.email}
-                </Typography>
-              </Information>
-              <Information title="Relationship Status">
-                <Typography align="center" variant="h6">
-                  {user?.getUser?.status ?? "Unknown"}
-                </Typography>
-              </Information>
-              {ownProfile ? (
-                <Link href="/profile/edit" passHref>
-                  <Button
-                    component="a"
-                    variant="outlined"
-                    className={styles.reqButton}
-                    fullWidth
-                  >
-                    Edit Profile
-                  </Button>
-                </Link>
-              ) : (
-                <Button
-                  variant="outlined"
-                  className={styles.reqButton}
-                  onClick={handleRequest}
-                  fullWidth
-                >
-                  Send Request
-                </Button>
-              )}
-              {!ownProfile && (
+      <Container sx={{ position: "relative", bottom: "40px" }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={12} lg={6}>
+            <Information title="Email Address">
+              <Typography align="center" variant="h6">
+                {user?.getUser?.email}
+              </Typography>
+            </Information>
+            <Information title="Relationship Status">
+              <Typography align="center" variant="h6">
+                {user?.getUser?.status ?? "Unknown"}
+              </Typography>
+            </Information>
+            {ownProfile ? (
+              <Link href="/profile/edit" passHref>
                 <Button
                   component="a"
                   variant="outlined"
                   className={styles.reqButton}
                   fullWidth
                 >
-                  Report User
+                  Edit Profile
                 </Button>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6} md={12} lg={6}>
-              <Typography
-                variant="h1"
-                sx={{ position: "absolute", color: "white", ml: 2 }}
+              </Link>
+            ) : (
+              <Button
+                variant="outlined"
+                className={styles.reqButton}
+                onClick={handleRequest}
+                fullWidth
               >
-                &ldquo;
-              </Typography>
-              <Paper
-                className={styles.bio}
-                sx={{ color: "#f6f7f8" }}
-                elevation={6}
+                Send Request
+              </Button>
+            )}
+            {!ownProfile && (
+              <Button
+                component="a"
+                variant="outlined"
+                className={styles.reqButton}
+                fullWidth
               >
-                {user?.getUser?.bio ?? ""}
-              </Paper>
-            </Grid>
+                Report User
+              </Button>
+            )}
           </Grid>
-        </Container>
-      </AppWrap>
+          <Grid item xs={12} sm={6} md={12} lg={6}>
+            <Typography
+              variant="h1"
+              sx={{ position: "absolute", color: "white", ml: 2 }}
+            >
+              &ldquo;
+            </Typography>
+            <Paper
+              className={styles.bio}
+              sx={{ color: "#f6f7f8" }}
+              elevation={6}
+            >
+              {user?.getUser?.bio ?? ""}
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
     </>
   );
 };

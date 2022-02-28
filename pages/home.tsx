@@ -20,7 +20,6 @@ import {
 import Head from "next/head";
 import Image from "next/image";
 import { SyntheticEvent, useState } from "react";
-import AppWrap from "../Components/Wrapper/AppWrap";
 import useSearch from "../utils/Hooks/useSearch";
 import BrandLogo from "../public/brandlogo.png";
 import { signOut } from "next-auth/react";
@@ -79,86 +78,81 @@ const Home = () => {
         <meta name="description" content="Face the Fear of Confession" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <AppWrap>
-        <Container className={styles.homeContainer}>
-          <Box mt={4}>
-            <Image src={BrandLogo} alt="LOGO" width={304} height={192} />
-          </Box>
-          <Button onClick={() => signOut({ callbackUrl: "/" })}>Logout</Button>
-          <StyledAutoComplete
-            id="anonylove-searchbar"
-            sx={{ width: "80%", color: "white", mt: 4, mb: 4 }}
-            open={searchOpen}
-            onOpen={handleSearchOpen}
-            onClose={handleSearchOpen}
-            inputValue={search}
-            onInputChange={handleSearchInput}
-            filterOptions={(x) => x}
-            options={
-              (data?.searchUser as User[]) ? (data?.searchUser as User[]) : []
-            }
-            loading={loading}
-            getOptionLabel={(option) => {
-              return (option as User).name;
-            }}
-            isOptionEqualToValue={(option, value) =>
-              (option as User).name === (value as User).name
-            }
-            renderOption={(props, option) => (
-              <ListItem {...props}>
-                <ListItemAvatar>
-                  <Image
-                    src={(option as User).image ?? NoUserImg}
-                    alt="PFP"
-                    width={40}
-                    height={40}
-                    className={styles.avatar}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={(option as User).name}
-                  secondary="Heya!"
+      <Container className={styles.homeContainer}>
+        <Box mt={4}>
+          <Image src={BrandLogo} alt="LOGO" width={304} height={192} />
+        </Box>
+        <Button onClick={() => signOut({ callbackUrl: "/" })}>Logout</Button>
+        <StyledAutoComplete
+          id="anonylove-searchbar"
+          sx={{ width: "80%", color: "white", mt: 4, mb: 4 }}
+          open={searchOpen}
+          onOpen={handleSearchOpen}
+          onClose={handleSearchOpen}
+          inputValue={search}
+          onInputChange={handleSearchInput}
+          filterOptions={(x) => x}
+          options={
+            (data?.searchUser as User[]) ? (data?.searchUser as User[]) : []
+          }
+          loading={loading}
+          getOptionLabel={(option) => {
+            return (option as User).name;
+          }}
+          isOptionEqualToValue={(option, value) =>
+            (option as User).name === (value as User).name
+          }
+          renderOption={(props, option) => (
+            <ListItem {...props}>
+              <ListItemAvatar>
+                <Image
+                  src={(option as User).image ?? NoUserImg}
+                  alt="PFP"
+                  width={40}
+                  height={40}
+                  className={styles.avatar}
                 />
-              </ListItem>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Search for a person to confess to..."
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <>
-                      {loading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : null}
-                      {params.InputProps.endAdornment}
-                    </>
-                  ),
-                }}
-              />
-            )}
-          />
+              </ListItemAvatar>
+              <ListItemText primary={(option as User).name} secondary="Heya!" />
+            </ListItem>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search for a person to confess to..."
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
+        />
 
-          <Box width="80%">
-            <Typography variant={sm ? "body1" : "h5"} textAlign="center">
-              The way to confess to someone is to drop everything you&apos;ve
-              prepared for and just go do it. Fuck the script, fuck the
-              response, fuck the expectations in your conversations, fuck your
-              insecurities, fuck your shame, the only thing you should think
-              about is what is true and immediate. You confess, and what happens
-              next is your responsibility. Just go for it :D
-            </Typography>
+        <Box width="80%">
+          <Typography variant={sm ? "body1" : "h5"} textAlign="center">
+            The way to confess to someone is to drop everything you&apos;ve
+            prepared for and just go do it. Fuck the script, fuck the response,
+            fuck the expectations in your conversations, fuck your insecurities,
+            fuck your shame, the only thing you should think about is what is
+            true and immediate. You confess, and what happens next is your
+            responsibility. Just go for it :D
+          </Typography>
 
-            <Typography variant={sm ? "body2" : "h6"} textAlign="center" mt={8}>
-              &quot;If you&apos;re stuck on a problem, don&apos;t sit there and
-              think about it; just start working on it. Even if you don&apos;t
-              know what you&apos;re doing, the simple act of working on it will
-              eventually cause the right ideas to show up in your head.&quot;
-            </Typography>
-          </Box>
-        </Container>
-      </AppWrap>
+          <Typography variant={sm ? "body2" : "h6"} textAlign="center" mt={8}>
+            &quot;If you&apos;re stuck on a problem, don&apos;t sit there and
+            think about it; just start working on it. Even if you don&apos;t
+            know what you&apos;re doing, the simple act of working on it will
+            eventually cause the right ideas to show up in your head.&quot;
+          </Typography>
+        </Box>
+      </Container>
     </>
   );
 };

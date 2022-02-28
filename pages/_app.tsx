@@ -4,6 +4,8 @@ import { SessionProvider } from "next-auth/react";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../apollo/apolloClient";
+import { useRouter } from "next/router";
+import AppWrap from "../Components/Wrapper/AppWrap";
 
 const theme = createTheme({
   typography: {
@@ -13,12 +15,19 @@ const theme = createTheme({
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const apolloClient = useApollo(pageProps);
+  const router = useRouter();
   return (
     <>
       <ApolloProvider client={apolloClient}>
         <ThemeProvider theme={theme}>
           <SessionProvider session={session}>
-            <Component {...pageProps} />
+            {router.route === "/" ? (
+              <Component {...pageProps} />
+            ) : (
+              <AppWrap>
+                <Component {...pageProps} />
+              </AppWrap>
+            )}
           </SessionProvider>
         </ThemeProvider>
       </ApolloProvider>

@@ -22,6 +22,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Link from "next/link";
 import Image from "next/image";
 import RequestList from "./Lists/RequestList";
+import { GET_USER_CHATS } from "../../apollo/query/chatQuery";
 
 const MobileDrawer = dynamic(() => import("./MobileDrawer"));
 
@@ -31,7 +32,15 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const [tab, setTab] = useState("chat");
   const theme = useTheme();
   const sm = useMediaQuery(theme.breakpoints.down("md"));
-  const { data: query } = useQuery(GET_USER_CONFESSION_REQUESTS, {
+  const { data: chatQuery } = useQuery(GET_USER_CHATS, {
+    variables: {
+      limit: 10,
+      name: session?.user?.name,
+    },
+    skip: !session,
+  });
+
+  const { data: requestQuery } = useQuery(GET_USER_CONFESSION_REQUESTS, {
     variables: {
       limit: 10,
       name: session?.user?.name,
@@ -105,13 +114,13 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Box>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
-                <ChatList />
+                <ChatList chats={chatQuery?.getUser?.chats} />
               </Container>
             </TabPanel>
             <TabPanel value="request">
               <Container sx={{ zIndex: 1 }}>
                 <RequestList
-                  requests={query?.getUser?.receivedConfessionRequests}
+                  requests={requestQuery?.getUser?.receivedConfessionRequests}
                 />
               </Container>
             </TabPanel>
@@ -128,13 +137,13 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Box>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
-                <ChatList />
+                <ChatList chats={chatQuery?.getUser?.chats} />
               </Container>
             </TabPanel>
             <TabPanel value="request">
               <Container sx={{ zIndex: 1 }}>
                 <RequestList
-                  requests={query?.getUser?.receivedConfessionRequests}
+                  requests={requestQuery?.getUser?.receivedConfessionRequests}
                 />
               </Container>
             </TabPanel>

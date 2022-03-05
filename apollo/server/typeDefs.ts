@@ -9,8 +9,9 @@ export const typeDefs = gql`
     cover: String
     bio: String
     status: String
-    sentConfessionRequests(limit: Int, after: ID): RequestConnection
-    receivedConfessionRequests(limit: Int, after: ID): RequestConnection
+    sentConfessionRequests(limit: Int, after: String): RequestConnection
+    receivedConfessionRequests(limit: Int, after: String): RequestConnection
+    chats(limit: Int, after: String): ChatConnection
   }
 
   type Request {
@@ -31,6 +32,23 @@ export const typeDefs = gql`
     node: Request
   }
 
+  type Chat {
+    _id: ID!
+    confesser: User!
+    confessee: User!
+    messages: [ID]
+  }
+
+  type ChatConnection {
+    totalCount: Int
+    pageInfo: PageInfo
+    edges: [ChatEdge]
+  }
+
+  type ChatEdge {
+    node: Chat
+  }
+
   type PageInfo {
     endCursor: ID
     hasNextPage: Boolean
@@ -46,7 +64,7 @@ export const typeDefs = gql`
     createUniqueTag(userId: ID!, name: String!): Boolean
     sendConfessionRequest(sender: String!, receiver: String!): Request
     rejectConfessionRequest(requestID: ID!): Boolean
-    acceptConfessionRequest(requestID: ID!): Request
+    acceptConfessionRequest(requestID: ID!): Chat
     editUser(
       originalName: String!
       name: String!

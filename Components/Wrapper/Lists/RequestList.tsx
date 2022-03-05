@@ -17,12 +17,24 @@ import dynamic from "next/dynamic";
 import { DateTime } from "luxon";
 
 const DeleteDialog = dynamic(() => import("../DeleteRequestDialog"));
+const AcceptDialog = dynamic(() => import("../AcceptRequestDialog"));
 
 //  Set parameter "requests" as optional for now
 const RequestList = ({ requests }: { requests?: RequestConnection }) => {
   const dateNow = DateTime.local();
   const [openDelete, setOpenDelete] = useState(false);
+  const [openAccept, setOpenAccept] = useState(false);
   const [targetId, setTargetId] = useState("");
+
+  const handleOpenAcceptDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setTargetId(e.currentTarget.id);
+    setOpenAccept(true);
+  };
+
+  const handleCloseAcceptDialog = () => {
+    setTargetId("");
+    setOpenAccept(false);
+  };
 
   const handleOpenDeleteDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
     setTargetId(e.currentTarget.id);
@@ -82,7 +94,7 @@ const RequestList = ({ requests }: { requests?: RequestConnection }) => {
                   <IconButton id={request._id} onClick={handleOpenDeleteDialog}>
                     <DeleteIcon />
                   </IconButton>
-                  <IconButton>
+                  <IconButton id={request._id} onClick={handleOpenAcceptDialog}>
                     <CheckIcon />
                   </IconButton>
                 </Box>
@@ -94,6 +106,11 @@ const RequestList = ({ requests }: { requests?: RequestConnection }) => {
       <DeleteDialog
         open={openDelete}
         handleClose={handleCloseDeleteDialog}
+        requestID={targetId}
+      />
+      <AcceptDialog
+        open={openAccept}
+        handleClose={handleCloseAcceptDialog}
         requestID={targetId}
       />
     </>

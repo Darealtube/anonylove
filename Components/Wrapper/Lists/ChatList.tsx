@@ -21,14 +21,14 @@ const ChatList = ({ chats }: { chats?: ChatConnection }) => {
               <ListItem alignItems="flex-start">
                 <ListItemAvatar>
                   <Image
-                    src={chat.node.confesser.image as string}
+                    src={chat.node.confessee.image as string}
                     alt="Confesser PFP"
                     width={40}
                     height={40}
                   />
                 </ListItemAvatar>
                 <ListItemText
-                  primary={chat.node.confesser.name}
+                  primary={chat.node.confessee.name}
                   secondary={
                     <>
                       <Typography
@@ -37,7 +37,7 @@ const ChatList = ({ chats }: { chats?: ChatConnection }) => {
                         variant="body2"
                         color="text.primary"
                       >
-                        Sample Latest Message
+                        Sample Latest Message {chat.node._id}
                       </Typography>
                     </>
                   }

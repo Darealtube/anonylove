@@ -1,20 +1,20 @@
 import { gql } from "@apollo/client";
 
-export const GET_USER_CONFESSION_REQUESTS = gql`
-  query UserConfessionRequests($name: String!, $after: String, $limit: Int) {
+export const GET_USER_CHATS = gql`
+  query UserChats($name: String!, $after: String, $limit: Int) {
     getUser(name: $name) {
       _id
-      receivedConfessionRequests(limit: $limit, after: $after) {
+      chats(limit: $limit, after: $after) {
         edges {
           node {
             _id
-            accepted
-            date
-            sender {
+            confesser {
+              _id
               name
               image
             }
-            receiver {
+            confessee {
+              _id
               name
               image
             }

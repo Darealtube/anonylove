@@ -7,7 +7,8 @@ export interface User {
   bio?: string;
   status?: string;
   sentConfessionRequests: RequestConnection;
-  receivedConfessionRequests: RequestConnection[];
+  receivedConfessionRequests: RequestConnection;
+  chats: ChatConnection;
 }
 
 export interface Request {
@@ -15,7 +16,7 @@ export interface Request {
   date: Date;
   sender: User;
   receiver: User;
-  acceepted: boolean;
+  accepted: boolean;
 }
 
 export type RequestConnection = {
@@ -43,6 +44,7 @@ export interface Message {
 
 export interface Chat {
   _id: string;
+  updatedAt: Date;
   confesser: User;
   confessee: User;
   messages: Message[];
@@ -54,6 +56,6 @@ export type ChatConnection = {
   edges: [ChatEdge];
 };
 
-type ChatEdge = {
+export type ChatEdge = {
   node: Chat;
 };

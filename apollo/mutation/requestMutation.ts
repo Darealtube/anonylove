@@ -28,6 +28,16 @@ export const ACCEPT_CONFESSION_REQUEST = gql`
   mutation AcceptConfessionRequest($requestID: ID!) {
     acceptConfessionRequest(requestID: $requestID) {
       _id
+      confesser {
+        _id
+        name
+        image
+      }
+      confessee {
+        _id
+        name
+        image
+      }
     }
   }
 `;

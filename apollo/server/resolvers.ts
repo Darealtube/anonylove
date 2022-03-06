@@ -66,8 +66,10 @@ export const resolvers: Resolvers = {
       const chats = await Chat.find({
         $or: [{ confesser: parent.name }, { confessee: parent.name }],
         ...(args.after && { updatedAt: { $gt: Decursorify(args.after) } }),
-      }).limit(args.limit);
-      
+      })
+        .sort({ updatedAt: -1 })
+        .limit(args.limit);
+
       const data = relayPaginate({
         finalArray: chats,
         cursorIdentifier: "updatedAt",

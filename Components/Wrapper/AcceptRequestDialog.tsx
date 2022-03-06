@@ -11,8 +11,8 @@ import {
 import { useSession } from "next-auth/react";
 import { ACCEPT_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
 import { GET_USER_CHATS } from "../../apollo/query/chatQuery";
-/* import { ChatEdge } from "../../types/models"; */
-import { getUserResult, getUserVariables } from "../../types/Queries";
+import { ChatEdge } from "../../types/models";
+import { getUserResult } from "../../types/Queries";
 
 type AcceptRequestDialog = {
   open: boolean;
@@ -25,46 +25,45 @@ const AcceptRequestDialog = ({
   handleClose,
   requestID,
 }: AcceptRequestDialog) => {
-  const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST);
   const { data: session } = useSession();
+  const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST, {
+    update: (cache, result) => {
+      const newChat = result.data?.acceptConfessionRequest;
+      const data = cache.readQuery<getUserResult>({
+        query: GET_USER_CHATS,
+        variables: {
+          limit: 10,
+          name: session?.user?.name as string,
+        },
+      });
 
-  const handleAcceptRequest = () => {
-    acceptRequest({
-      variables: { requestID },
-      update: (cache, result) => {
-        const newChat = result.data?.acceptConfessionRequest;
-        const data = cache.readQuery<getUserResult, getUserVariables>({
-          query: GET_USER_CHATS,
-          variables: {
-            name: session?.user?.name as string,
-          },
-        });
-
-        console.log(data);
-
-        cache.writeQuery({
-          query: GET_USER_CHATS,
-          variables: {
-            name: session?.user?.name as string,
-          },
-          data: {
-            getUser: {
-              ...data?.getUser,
-              chats: {
-                ...data?.getUser.chats,
-                edges: [
-                  /* ...data?.getUser?.chats?.edges as [ChatEdge], */
-                  { __typename: "ChatEdge", node: newChat },
-                ],
-              },
+      cache.writeQuery({
+        query: GET_USER_CHATS,
+        variables: {
+          limit: 10,
+          name: session?.user?.name as string,
+        },
+        data: {
+          getUser: {
+            ...data?.getUser,
+            chats: {
+              ...data?.getUser.chats,
+              edges: [
+                { __typename: "ChatEdge", node: newChat },
+                ...(data?.getUser?.chats?.edges as [ChatEdge]),
+              ],
             },
           },
-        });
-        cache.evict({ id: `Request:${requestID}` });
-        cache.gc();
-        handleClose();
-      },
-    });
+        },
+      });
+      cache.evict({ id: `Request:${requestID}` });
+      cache.gc();
+      handleClose();
+    },
+  });
+
+  const handleAcceptRequest = () => {
+    acceptRequest({ variables: { requestID } });
   };
 
   return (

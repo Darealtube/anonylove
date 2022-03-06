@@ -16,7 +16,7 @@ export interface Request {
   date: Date;
   sender: User;
   receiver: User;
-  acceepted: boolean;
+  accepted: boolean;
 }
 
 export type RequestConnection = {
@@ -56,6 +56,6 @@ export type ChatConnection = {
   edges: [ChatEdge];
 };
 
-type ChatEdge = {
+export type ChatEdge = {
   node: Chat;
 };

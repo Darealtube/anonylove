@@ -37,7 +37,7 @@ const ChatList = ({ chats }: { chats?: ChatConnection }) => {
                         variant="body2"
                         color="text.primary"
                       >
-                        Sample Latest Message
+                        Sample Latest Message {chat.node._id}
                       </Typography>
                     </>
                   }

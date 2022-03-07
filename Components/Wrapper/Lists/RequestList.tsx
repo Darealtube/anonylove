@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   Divider,
   IconButton,
   List,
@@ -15,16 +16,40 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import dynamic from "next/dynamic";
 import { DateTime } from "luxon";
+import { getUserResult } from "../../../types/Queries";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const DeleteDialog = dynamic(() => import("../DeleteRequestDialog"));
 const AcceptDialog = dynamic(() => import("../AcceptRequestDialog"));
 
 //  Set parameter "requests" as optional for now
-const RequestList = ({ requests }: { requests?: RequestConnection }) => {
+const RequestList = ({
+  requests,
+  moreRequests,
+}: {
+  requests?: RequestConnection;
+  moreRequests?: any;
+}) => {
   const dateNow = DateTime.local();
   const [openDelete, setOpenDelete] = useState(false);
   const [openAccept, setOpenAccept] = useState(false);
+  const [hasMore, setHasMore] = useState(requests?.pageInfo.hasNextPage);
   const [targetId, setTargetId] = useState("");
+
+  const loadMoreRequests = () => {
+    moreRequests({
+      variables: { after: requests?.pageInfo.endCursor, limit: 10 },
+    }).then((fetchMoreResult: { data: getUserResult }) => {
+      if (fetchMoreResult.data.getUser) {
+        if (
+          !fetchMoreResult.data.getUser.receivedConfessionRequests.pageInfo
+            .hasNextPage
+        ) {
+          setHasMore(false);
+        }
+      }
+    });
+  };
 
   const handleOpenAcceptDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
     setTargetId(e.currentTarget.id);
@@ -47,7 +72,14 @@ const RequestList = ({ requests }: { requests?: RequestConnection }) => {
   };
 
   return (
-    <>
+    <InfiniteScroll
+      dataLength={requests?.edges.length as number}
+      next={loadMoreRequests}
+      hasMore={hasMore as boolean}
+      loader={<CircularProgress />}
+      style={{ textAlign: "center", overflow: "hidden" }}
+      scrollableTarget="chatDrawer"
+    >
       <List sx={{ width: "100%" }}>
         {requests &&
           requests?.edges.map(({ node: request }) => (
@@ -113,7 +145,7 @@ const RequestList = ({ requests }: { requests?: RequestConnection }) => {
         handleClose={handleCloseAcceptDialog}
         requestID={targetId}
       />
-    </>
+    </InfiniteScroll>
   );
 };
 

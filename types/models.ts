@@ -29,7 +29,7 @@ type RequestEdge = {
   node: Request;
 };
 
-type PageInfo = {
+export type PageInfo = {
   endCursor: string;
   hasNextPage: boolean;
 };

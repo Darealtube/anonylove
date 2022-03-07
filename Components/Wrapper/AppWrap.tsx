@@ -7,6 +7,7 @@ import {
   Box,
   AppBar,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
@@ -27,12 +28,13 @@ import { GET_USER_CHATS } from "../../apollo/query/chatQuery";
 const MobileDrawer = dynamic(() => import("./MobileDrawer"));
 
 const AppWrap = ({ children }: { children: ReactNode }) => {
+  const theme = useTheme();
+  const sm = useMediaQuery(theme.breakpoints.down("md"));
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
   const [tab, setTab] = useState("chat");
-  const theme = useTheme();
-  const sm = useMediaQuery(theme.breakpoints.down("md"));
-  const { data: chatQuery } = useQuery(GET_USER_CHATS, {
+  
+  const { data: chatQuery, fetchMore: moreChats } = useQuery(GET_USER_CHATS, {
     variables: {
       limit: 10,
       name: session?.user?.name,
@@ -40,13 +42,16 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
     skip: !session,
   });
 
-  const { data: requestQuery } = useQuery(GET_USER_CONFESSION_REQUESTS, {
-    variables: {
-      limit: 10,
-      name: session?.user?.name,
-    },
-    skip: !session,
-  });
+  const { data: requestQuery, fetchMore: moreRequests } = useQuery(
+    GET_USER_CONFESSION_REQUESTS,
+    {
+      variables: {
+        limit: 10,
+        name: session?.user?.name,
+      },
+      skip: !session,
+    }
+  );
 
   const handleChatOpen = () => {
     setChatOpen(!chatOpen);
@@ -66,7 +71,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
       className={styles.mainmenu}
     >
       {!sm ? (
-        <Grid item md={4} className={styles.drawer}>
+        <Grid item md={4} className={styles.drawer} id="chatDrawer">
           <AppBar className={styles.appbar} elevation={0}>
             <Link href="/home" passHref>
               <a>
@@ -114,14 +119,44 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Box>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
-                <ChatList chats={chatQuery?.getUser?.chats} />
+                {chatQuery?.getUser?.chats ? (
+                  <ChatList
+                    chats={chatQuery?.getUser?.chats}
+                    moreChats={moreChats}
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                )}
               </Container>
             </TabPanel>
             <TabPanel value="request">
               <Container sx={{ zIndex: 1 }}>
-                <RequestList
-                  requests={requestQuery?.getUser?.receivedConfessionRequests}
-                />
+                {requestQuery?.getUser?.receivedConfessionRequests ? (
+                  <RequestList
+                    requests={requestQuery?.getUser?.receivedConfessionRequests}
+                    moreRequests={moreRequests}
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                )}
               </Container>
             </TabPanel>
           </TabContext>
@@ -137,14 +172,44 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Box>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
-                <ChatList chats={chatQuery?.getUser?.chats} />
+                {chatQuery?.getUser?.chats ? (
+                  <ChatList
+                    chats={chatQuery?.getUser?.chats}
+                    moreChats={moreChats}
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                )}
               </Container>
             </TabPanel>
             <TabPanel value="request">
               <Container sx={{ zIndex: 1 }}>
-                <RequestList
-                  requests={requestQuery?.getUser?.receivedConfessionRequests}
-                />
+                {requestQuery?.getUser?.receivedConfessionRequests ? (
+                  <RequestList
+                    requests={requestQuery?.getUser?.receivedConfessionRequests}
+                    moreRequests={moreRequests}
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                )}
               </Container>
             </TabPanel>
           </TabContext>

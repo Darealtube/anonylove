@@ -4,8 +4,8 @@ import { ObjectId } from "mongodb";
 import Chat from "../../models/Chat";
 import Request from "../../models/Request";
 import User from "../../models/User";
-import { Decursorify } from "../../utils/Pagination.ts/cursorify";
-import relayPaginate from "../../utils/Pagination.ts/relayPaginate";
+import { Decursorify } from "../../utils/Pagination/cursorify";
+import relayPaginate from "../../utils/Pagination/relayPaginate";
 
 type ResolverFn = (
   parent: any,
@@ -30,7 +30,7 @@ export const resolvers: Resolvers = {
         ...(args.after && { date: { $lt: Decursorify(args.after) } }),
       })
         .sort({
-          date: 1,
+          date: -1,
         })
         .limit(args.limit);
 
@@ -48,7 +48,7 @@ export const resolvers: Resolvers = {
         ...(args.after && { date: { $lt: Decursorify(args.after) } }),
       })
         .sort({
-          date: 1,
+          date: -1,
         })
         .limit(args.limit);
 
@@ -65,7 +65,7 @@ export const resolvers: Resolvers = {
       });
       const chats = await Chat.find({
         $or: [{ confesser: parent.name }, { confessee: parent.name }],
-        ...(args.after && { updatedAt: { $gt: Decursorify(args.after) } }),
+        ...(args.after && { updatedAt: { $lt: Decursorify(args.after) } }),
       })
         .sort({ updatedAt: -1 })
         .limit(args.limit);

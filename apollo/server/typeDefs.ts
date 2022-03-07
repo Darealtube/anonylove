@@ -36,6 +36,7 @@ export const typeDefs = gql`
     _id: ID!
     confesser: User!
     confessee: User!
+    updatedAt: String
     messages: [ID]
   }
 

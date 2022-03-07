@@ -9,41 +9,15 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
-import { ChatConnection } from "../../../types/models";
+import { Chat } from "../../../types/models";
 import { getUserResult } from "../../../types/Queries";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 //  Set parameter "chats" as optional for now
-const ChatList = ({
-  chats,
-  moreChats,
-}: {
-  chats?: ChatConnection;
-  moreChats?: any;
-}) => {
-  const [hasMore, setHasMore] = useState(chats?.pageInfo.hasNextPage);
-  const loadMoreChats = () => {
-    moreChats({
-      variables: { after: chats?.pageInfo.endCursor, limit: 10 },
-    }).then((fetchMoreResult: { data: getUserResult }) => {
-      if (fetchMoreResult.data.getUser) {
-        if (!fetchMoreResult.data.getUser.chats.pageInfo.hasNextPage) {
-          setHasMore(false);
-        }
-      }
-    });
-  };
+const ChatList = ({ chat }: { chat?: Chat }) => {
   return (
-    <InfiniteScroll
-      dataLength={chats?.edges.length as number}
-      next={loadMoreChats}
-      hasMore={hasMore as boolean}
-      loader={<CircularProgress />}
-      style={{ textAlign: "center", overflow: "hidden" }}
-      scrollableTarget="chatDrawer"
-    >
+    <>
       <List sx={{ width: "100%" }}>
-        {chats &&
+        {/* {chats &&
           chats?.edges.map((chat) => (
             <>
               <ListItem alignItems="flex-start">
@@ -73,9 +47,9 @@ const ChatList = ({
               </ListItem>
               <Divider />
             </>
-          ))}
+          ))} */}
       </List>
-    </InfiniteScroll>
+    </>
   );
 };
 

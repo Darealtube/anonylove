@@ -18,6 +18,7 @@ import dynamic from "next/dynamic";
 import { DateTime } from "luxon";
 import { getUserResult } from "../../../types/Queries";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Anonymous from "../../../public/anonyUser.png";
 
 const DeleteDialog = dynamic(() => import("../DeleteRequestDialog"));
 const AcceptDialog = dynamic(() => import("../AcceptRequestDialog"));
@@ -88,14 +89,14 @@ const RequestList = ({
                 <ListItem alignItems="flex-start">
                   <ListItemAvatar>
                     <Image
-                      src={request.sender.image as string}
+                      src={Anonymous}
                       alt="Confesser PFP"
                       width={40}
                       height={40}
                     />
                   </ListItemAvatar>
                   <ListItemText
-                    primary={request.sender.name}
+                    primary={"Anonymous"}
                     secondary={
                       <>
                         <Typography

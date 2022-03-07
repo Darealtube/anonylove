@@ -8,16 +8,7 @@ export const GET_USER_CONFESSION_REQUESTS = gql`
         edges {
           node {
             _id
-            accepted
             date
-            sender {
-              name
-              image
-            }
-            receiver {
-              name
-              image
-            }
           }
         }
         pageInfo {

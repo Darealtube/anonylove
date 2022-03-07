@@ -9,9 +9,8 @@ const RequestSchema = new Schema({
     type: Date,
     default: DateTime.local,
   },
-  sender: String,
+  anonymous: String,
   receiver: String,
-  accepted: Boolean,
 });
 
 export default mongoose.models.Request ||

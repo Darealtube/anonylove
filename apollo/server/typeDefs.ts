@@ -11,15 +11,13 @@ export const typeDefs = gql`
     status: String
     sentConfessionRequests(limit: Int, after: String): RequestConnection
     receivedConfessionRequests(limit: Int, after: String): RequestConnection
-    chats(limit: Int, after: String): ChatConnection
   }
 
   type Request {
     _id: ID!
-    sender: User!
+    anonymous: User!
     receiver: User!
     date: String
-    accepted: Boolean
   }
 
   type RequestConnection {
@@ -34,20 +32,10 @@ export const typeDefs = gql`
 
   type Chat {
     _id: ID!
-    confesser: User!
+    anonymous: User!
     confessee: User!
     updatedAt: String
     messages: [ID]
-  }
-
-  type ChatConnection {
-    totalCount: Int
-    pageInfo: PageInfo
-    edges: [ChatEdge]
-  }
-
-  type ChatEdge {
-    node: Chat
   }
 
   type PageInfo {
@@ -63,9 +51,9 @@ export const typeDefs = gql`
   type Mutation {
     createUser(name: String, email: String): Boolean
     createUniqueTag(userId: ID!, name: String!): Boolean
-    sendConfessionRequest(sender: String!, receiver: String!): Request
+    sendConfessionRequest(anonymous: String!, receiver: String!): Request
     rejectConfessionRequest(requestID: ID!): Boolean
-    acceptConfessionRequest(requestID: ID!): Chat
+    acceptConfessionRequest(requestID: ID!): Boolean
     editUser(
       originalName: String!
       name: String!

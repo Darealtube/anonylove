@@ -1,7 +1,6 @@
 import { Context } from "@apollo/client";
 import { GraphQLResolveInfo } from "graphql";
 import { ObjectId } from "mongodb";
-import Chat from "../../models/Chat";
 import Request from "../../models/Request";
 import User from "../../models/User";
 import { Decursorify } from "../../utils/Pagination/cursorify";
@@ -24,9 +23,9 @@ interface Resolvers {
 export const resolvers: Resolvers = {
   User: {
     sentConfessionRequests: async (parent, args, _context, _info) => {
-      const totalCount = await Request.count({ sender: parent.name });
+      const totalCount = await Request.count({ anonymous: parent.name });
       const sentConfessions = await Request.find({
-        sender: parent.name,
+        anonymous: parent.name,
         ...(args.after && { date: { $lt: Decursorify(args.after) } }),
       })
         .sort({
@@ -59,36 +58,10 @@ export const resolvers: Resolvers = {
       });
       return { ...data, totalCount };
     },
-    chats: async (parent, args, _context, _info) => {
-      const totalCount = await Chat.count({
-        $or: [{ confesser: parent.name }, { confessee: parent.name }],
-      });
-      const chats = await Chat.find({
-        $or: [{ confesser: parent.name }, { confessee: parent.name }],
-        ...(args.after && { updatedAt: { $lt: Decursorify(args.after) } }),
-      })
-        .sort({ updatedAt: -1 })
-        .limit(args.limit);
-
-      const data = relayPaginate({
-        finalArray: chats,
-        cursorIdentifier: "updatedAt",
-        limit: args.limit,
-      });
-      return { ...data, totalCount };
-    },
-  },
-  Chat: {
-    confesser: async (parent, _args, _context, _info) => {
-      return await User.findOne({ name: parent.confesser });
-    },
-    confessee: async (parent, _args, _context, _info) => {
-      return await User.findOne({ name: parent.confessee });
-    },
   },
   Request: {
-    sender: async (parent, _args, _context, _info) => {
-      return await User.findOne({ name: parent.sender }).lean();
+    anonymous: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.anonymous }).lean();
     },
     receiver: async (parent, _args, _context, _info) => {
       return await User.findOne({ name: parent.receiver }).lean();
@@ -133,7 +106,7 @@ export const resolvers: Resolvers = {
     },
     sendConfessionRequest: async (_parent, args, _context, _info) => {
       const sentRequest = await Request.create({
-        sender: args.sender,
+        anonymous: args.anonymous,
         receiver: args.receiver,
         accepted: false,
       });
@@ -147,11 +120,25 @@ export const resolvers: Resolvers = {
     },
     acceptConfessionRequest: async (_parent, args, _context, _info) => {
       const request = await Request.findByIdAndDelete(args.requestID);
-      const newChat = await Chat.create({
-        confesser: request.sender,
-        confessee: request.receiver,
-      });
-      return newChat;
+      await User.findOneAndUpdate(
+        { name: request.anonymous },
+        {
+          activeChat: {
+            anonymous: request.anonymous,
+            confessee: request.receiver,
+          },
+        }
+      );
+      await User.findOneAndUpdate(
+        { name: request.receiver },
+        {
+          activeChat: {
+            anonymous: request.anonymous,
+            confessee: request.receiver,
+          },
+        }
+      );
+      return true;
     },
   },
 };

@@ -24,9 +24,9 @@ interface Resolvers {
 export const resolvers: Resolvers = {
   User: {
     sentConfessionRequests: async (parent, args, _context, _info) => {
-      const totalCount = await Request.count({ sender: parent.name });
+      const totalCount = await Request.count({ anonymous: parent.name });
       const sentConfessions = await Request.find({
-        sender: parent.name,
+        anonymous: parent.name,
         ...(args.after && { date: { $lt: Decursorify(args.after) } }),
       })
         .sort({
@@ -59,39 +59,24 @@ export const resolvers: Resolvers = {
       });
       return { ...data, totalCount };
     },
-    chats: async (parent, args, _context, _info) => {
-      const totalCount = await Chat.count({
-        $or: [{ confesser: parent.name }, { confessee: parent.name }],
-      });
-      const chats = await Chat.find({
-        $or: [{ confesser: parent.name }, { confessee: parent.name }],
-        ...(args.after && { updatedAt: { $lt: Decursorify(args.after) } }),
-      })
-        .sort({ updatedAt: -1 })
-        .limit(args.limit);
-
-      const data = relayPaginate({
-        finalArray: chats,
-        cursorIdentifier: "updatedAt",
-        limit: args.limit,
-      });
-      return { ...data, totalCount };
-    },
-  },
-  Chat: {
-    confesser: async (parent, _args, _context, _info) => {
-      return await User.findOne({ name: parent.confesser });
-    },
-    confessee: async (parent, _args, _context, _info) => {
-      return await User.findOne({ name: parent.confessee });
+    activeChat: async (parent, _args, _context, _info) => {
+      return await Chat.findById(parent.activeChat);
     },
   },
   Request: {
-    sender: async (parent, _args, _context, _info) => {
-      return await User.findOne({ name: parent.sender }).lean();
+    anonymous: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.anonymous }).lean();
     },
     receiver: async (parent, _args, _context, _info) => {
       return await User.findOne({ name: parent.receiver }).lean();
+    },
+  },
+  Chat: {
+    anonymous: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.anonymous });
+    },
+    confessee: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.confessee });
     },
   },
   Query: {
@@ -133,7 +118,7 @@ export const resolvers: Resolvers = {
     },
     sendConfessionRequest: async (_parent, args, _context, _info) => {
       const sentRequest = await Request.create({
-        sender: args.sender,
+        anonymous: args.anonymous,
         receiver: args.receiver,
         accepted: false,
       });
@@ -148,9 +133,17 @@ export const resolvers: Resolvers = {
     acceptConfessionRequest: async (_parent, args, _context, _info) => {
       const request = await Request.findByIdAndDelete(args.requestID);
       const newChat = await Chat.create({
-        confesser: request.sender,
+        anonymous: request.anonymous,
         confessee: request.receiver,
       });
+      await User.findOneAndUpdate(
+        { name: request.anonymous },
+        { activeChat: newChat._id }
+      );
+      await User.findOneAndUpdate(
+        { name: request.receiver },
+        { activeChat: newChat._id }
+      );
       return newChat;
     },
   },

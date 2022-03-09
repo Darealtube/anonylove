@@ -41,3 +41,10 @@
 .pfp {
   border-radius: 50%;
 }
+
+.loading {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

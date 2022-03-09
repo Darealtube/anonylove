@@ -5,9 +5,9 @@ import { DateTime } from "luxon";
 
 const ChatSchema = new Schema({
   id: ObjectId,
-  confesser: String,
+  anonymous: String,
   confessee: String,
-  messages: ObjectId,
+  messages: [ObjectId],
   updatedAt: {
     type: Date,
     default: DateTime.local,

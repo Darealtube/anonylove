@@ -15,7 +15,6 @@ import { ReactNode, SyntheticEvent, useState } from "react";
 import ChatList from "./Lists/ChatList";
 import styles from "../../styles/AppWrap.module.css";
 import { useQuery } from "@apollo/client";
-import { GET_USER_CONFESSION_REQUESTS } from "../../apollo/query/requestQuery";
 import BrandLogo from "../../public/brandlogoblack.png";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -23,7 +22,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Link from "next/link";
 import Image from "next/image";
 import RequestList from "./Lists/RequestList";
-import { GET_USER_CHATS } from "../../apollo/query/chatQuery";
+import { GET_USER_SOCIALS } from "../../apollo/query/userQuery";
 
 const MobileDrawer = dynamic(() => import("./MobileDrawer"));
 
@@ -33,17 +32,9 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
   const [tab, setTab] = useState("chat");
-  
-  const { data: chatQuery, fetchMore: moreChats } = useQuery(GET_USER_CHATS, {
-    variables: {
-      limit: 10,
-      name: session?.user?.name,
-    },
-    skip: !session,
-  });
 
-  const { data: requestQuery, fetchMore: moreRequests } = useQuery(
-    GET_USER_CONFESSION_REQUESTS,
+  const { data: infoQuery, fetchMore: moreRequests } = useQuery(
+    GET_USER_SOCIALS,
     {
       variables: {
         limit: 10,
@@ -119,20 +110,10 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Box>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
-                {chatQuery?.getUser?.chats ? (
-                  <ChatList
-                    chats={chatQuery?.getUser?.chats}
-                    moreChats={moreChats}
-                  />
+                {infoQuery?.getUser?.activeChat ? (
+                  <ChatList chat={infoQuery?.getUser?.activeChat} />
                 ) : (
-                  <Box
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <Box className={styles.loading}>
                     <CircularProgress />
                   </Box>
                 )}
@@ -140,20 +121,13 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </TabPanel>
             <TabPanel value="request">
               <Container sx={{ zIndex: 1 }}>
-                {requestQuery?.getUser?.receivedConfessionRequests ? (
+                {infoQuery?.getUser?.receivedConfessionRequests ? (
                   <RequestList
-                    requests={requestQuery?.getUser?.receivedConfessionRequests}
+                    requests={infoQuery?.getUser?.receivedConfessionRequests}
                     moreRequests={moreRequests}
                   />
                 ) : (
-                  <Box
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <Box className={styles.loading}>
                     <CircularProgress />
                   </Box>
                 )}
@@ -172,20 +146,10 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Box>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
-                {chatQuery?.getUser?.chats ? (
-                  <ChatList
-                    chats={chatQuery?.getUser?.chats}
-                    moreChats={moreChats}
-                  />
+                {infoQuery?.getUser?.activeChat ? (
+                  <ChatList chat={infoQuery?.getUser?.activeChat} />
                 ) : (
-                  <Box
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <Box className={styles.loading}>
                     <CircularProgress />
                   </Box>
                 )}
@@ -193,20 +157,13 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </TabPanel>
             <TabPanel value="request">
               <Container sx={{ zIndex: 1 }}>
-                {requestQuery?.getUser?.receivedConfessionRequests ? (
+                {infoQuery?.getUser?.receivedConfessionRequests ? (
                   <RequestList
-                    requests={requestQuery?.getUser?.receivedConfessionRequests}
+                    requests={infoQuery?.getUser?.receivedConfessionRequests}
                     moreRequests={moreRequests}
                   />
                 ) : (
-                  <Box
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <Box className={styles.loading}>
                     <CircularProgress />
                   </Box>
                 )}

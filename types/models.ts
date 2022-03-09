@@ -8,13 +8,13 @@ export interface User {
   status?: string;
   sentConfessionRequests: RequestConnection;
   receivedConfessionRequests: RequestConnection;
-  chats: ChatConnection;
+  activeChat?: Chat;
 }
 
 export interface Request {
   _id: string;
   date: Date;
-  sender: User;
+  anonymous: User;
   receiver: User;
   accepted: boolean;
 }
@@ -45,17 +45,7 @@ export interface Message {
 export interface Chat {
   _id: string;
   updatedAt: Date;
-  confesser: User;
+  anonymous: User;
   confessee: User;
   messages: Message[];
 }
-
-export type ChatConnection = {
-  totalCount: number;
-  pageInfo: PageInfo;
-  edges: [ChatEdge];
-};
-
-export type ChatEdge = {
-  node: Chat;
-};

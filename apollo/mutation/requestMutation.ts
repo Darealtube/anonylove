@@ -1,12 +1,11 @@
 import { gql } from "apollo-server-micro";
 
 export const SEND_CONFESSION_REQUEST = gql`
-  mutation SendConfessionRequest($sender: String!, $receiver: String!) {
-    sendConfessionRequest(sender: $sender, receiver: $receiver) {
+  mutation SendConfessionRequest($anonymous: String!, $receiver: String!) {
+    sendConfessionRequest(anonymous: $anonymous, receiver: $receiver) {
       _id
-      accepted
       date
-      sender {
+      anonymous {
         name
         image
       }
@@ -28,7 +27,7 @@ export const ACCEPT_CONFESSION_REQUEST = gql`
   mutation AcceptConfessionRequest($requestID: ID!) {
     acceptConfessionRequest(requestID: $requestID) {
       _id
-      confesser {
+      anonymous {
         _id
         name
         image

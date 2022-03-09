@@ -1,6 +1,7 @@
 import { Context } from "@apollo/client";
 import { GraphQLResolveInfo } from "graphql";
 import { ObjectId } from "mongodb";
+import Chat from "../../models/Chat";
 import Request from "../../models/Request";
 import User from "../../models/User";
 import { Decursorify } from "../../utils/Pagination/cursorify";
@@ -58,6 +59,9 @@ export const resolvers: Resolvers = {
       });
       return { ...data, totalCount };
     },
+    activeChat: async (parent, _args, _context, _info) => {
+      return await Chat.findById(parent.activeChat);
+    },
   },
   Request: {
     anonymous: async (parent, _args, _context, _info) => {
@@ -65,6 +69,14 @@ export const resolvers: Resolvers = {
     },
     receiver: async (parent, _args, _context, _info) => {
       return await User.findOne({ name: parent.receiver }).lean();
+    },
+  },
+  Chat: {
+    anonymous: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.anonymous });
+    },
+    confessee: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.confessee });
     },
   },
   Query: {
@@ -120,25 +132,19 @@ export const resolvers: Resolvers = {
     },
     acceptConfessionRequest: async (_parent, args, _context, _info) => {
       const request = await Request.findByIdAndDelete(args.requestID);
+      const newChat = await Chat.create({
+        anonymous: request.anonymous,
+        confessee: request.receiver,
+      });
       await User.findOneAndUpdate(
         { name: request.anonymous },
-        {
-          activeChat: {
-            anonymous: request.anonymous,
-            confessee: request.receiver,
-          },
-        }
+        { activeChat: newChat._id }
       );
       await User.findOneAndUpdate(
         { name: request.receiver },
-        {
-          activeChat: {
-            anonymous: request.anonymous,
-            confessee: request.receiver,
-          },
-        }
+        { activeChat: newChat._id }
       );
-      return true;
+      return newChat;
     },
   },
 };

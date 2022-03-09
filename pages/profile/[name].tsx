@@ -29,7 +29,7 @@ const Profile = ({ name }: { name: string }) => {
   const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
 
   const handleRequest = () => {
-    sendRequest({ variables: { sender: session?.user?.name, receiver: name } });
+    sendRequest({ variables: { anonymous: session?.user?.name, receiver: name } });
   };
 
   return (

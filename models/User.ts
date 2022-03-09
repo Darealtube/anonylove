@@ -21,7 +21,7 @@ const UserSchema = new Schema({
   cover: String,
   bio: String,
   status: String,
-  activeChat: Chat,
+  activeChat: ObjectId,
 });
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);

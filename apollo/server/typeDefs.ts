@@ -11,6 +11,7 @@ export const typeDefs = gql`
     status: String
     sentConfessionRequests(limit: Int, after: String): RequestConnection
     receivedConfessionRequests(limit: Int, after: String): RequestConnection
+    activeChat: Chat
   }
 
   type Request {
@@ -53,7 +54,7 @@ export const typeDefs = gql`
     createUniqueTag(userId: ID!, name: String!): Boolean
     sendConfessionRequest(anonymous: String!, receiver: String!): Request
     rejectConfessionRequest(requestID: ID!): Boolean
-    acceptConfessionRequest(requestID: ID!): Boolean
+    acceptConfessionRequest(requestID: ID!): Chat
     editUser(
       originalName: String!
       name: String!

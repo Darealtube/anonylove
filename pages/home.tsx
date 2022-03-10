@@ -25,6 +25,7 @@ import BrandLogo from "../public/brandlogo.png";
 import { signOut } from "next-auth/react";
 import { User } from "../types/models";
 import NoUserImg from "../public/anonyUser.png";
+import Link from "next/link";
 
 const StyledAutoComplete = styled(Autocomplete)({
   [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
@@ -103,18 +104,25 @@ const Home = () => {
             (option as User).name === (value as User).name
           }
           renderOption={(props, option) => (
-            <ListItem {...props}>
-              <ListItemAvatar>
-                <Image
-                  src={(option as User).image ?? NoUserImg}
-                  alt="PFP"
-                  width={40}
-                  height={40}
-                  className={styles.avatar}
-                />
-              </ListItemAvatar>
-              <ListItemText primary={(option as User).name} secondary="Heya!" />
-            </ListItem>
+            <Link href={`/profile/${(option as User).name}`} passHref>
+              <a>
+                <ListItem {...props}>
+                  <ListItemAvatar>
+                    <Image
+                      src={(option as User).image ?? NoUserImg}
+                      alt="PFP"
+                      width={40}
+                      height={40}
+                      className={styles.avatar}
+                    />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={(option as User).name}
+                    secondary="Heya!"
+                  />
+                </ListItem>
+              </a>
+            </Link>
           )}
           renderInput={(params) => (
             <TextField

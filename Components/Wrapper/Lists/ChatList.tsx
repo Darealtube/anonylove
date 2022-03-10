@@ -10,6 +10,7 @@ import Image from "next/image";
 import { Chat } from "../../../types/models";
 import Anonymous from "../../../public/anonyUser.png";
 import { useSession } from "next-auth/react";
+import styles from "../../../styles/List.module.css";
 
 //  Set parameter "chats" as optional for now
 const ChatList = ({ chat }: { chat?: Chat }) => {
@@ -29,6 +30,7 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
                   alt="PFP"
                   width={40}
                   height={40}
+                  className={styles.avatar}
                 />
               </ListItemAvatar>
               <ListItemText

@@ -3,7 +3,6 @@ import {
   useTheme,
   Grid,
   Container,
-  Tab,
   Box,
   AppBar,
   IconButton,
@@ -11,19 +10,21 @@ import {
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import { ReactNode, SyntheticEvent, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
 import ChatList from "./Lists/ChatList";
 import styles from "../../styles/AppWrap.module.css";
 import { useQuery } from "@apollo/client";
 import BrandLogo from "../../public/brandlogoblack.png";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { TabPanel } from "@mui/lab";
 import Link from "next/link";
 import Image from "next/image";
 import RequestList from "./Lists/RequestList";
 import { GET_USER_SOCIALS } from "../../apollo/query/userQuery";
+import Tabs from "./Tabs";
 
+export const ActiveChatContext = createContext(true);
 const MobileDrawer = dynamic(() => import("./MobileDrawer"));
 
 const AppWrap = ({ children }: { children: ReactNode }) => {
@@ -31,29 +32,24 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const sm = useMediaQuery(theme.breakpoints.down("md"));
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
-  const [tab, setTab] = useState("chat");
 
-  const { data: infoQuery, fetchMore: moreRequests } = useQuery(
-    GET_USER_SOCIALS,
-    {
-      variables: {
-        limit: 10,
-        name: session?.user?.name,
-      },
-      skip: !session,
-    }
-  );
+  const {
+    data: infoQuery,
+    fetchMore: moreRequests,
+    loading,
+  } = useQuery(GET_USER_SOCIALS, {
+    variables: {
+      limit: 10,
+      name: session?.user?.name,
+    },
+    skip: !session,
+  });
 
   const handleChatOpen = () => {
     setChatOpen(!chatOpen);
   };
 
-  const handleTabChange = (
-    _event: SyntheticEvent<Element, Event>,
-    tab: string
-  ) => {
-    setTab(tab);
-  };
+  const hasActiveChat = infoQuery?.getUser?.activeChat ? true : false;
 
   return (
     <Grid
@@ -101,16 +97,10 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Link>
           </AppBar>
 
-          <TabContext value={tab}>
-            <Box sx={{ borderColor: "divider" }} className={styles.tabs}>
-              <TabList onChange={handleTabChange} centered>
-                <Tab label="Chats" value="chat" />
-                <Tab label="Requests" value="request" />
-              </TabList>
-            </Box>
+          <Tabs hasActiveChat={loading ? true : hasActiveChat}>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
-                {infoQuery?.getUser?.activeChat ? (
+                {!loading ? (
                   <ChatList chat={infoQuery?.getUser?.activeChat} />
                 ) : (
                   <Box className={styles.loading}>
@@ -121,7 +111,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </TabPanel>
             <TabPanel value="request">
               <Container sx={{ zIndex: 1 }}>
-                {infoQuery?.getUser?.receivedConfessionRequests ? (
+                {!loading ? (
                   <RequestList
                     requests={infoQuery?.getUser?.receivedConfessionRequests}
                     moreRequests={moreRequests}
@@ -133,17 +123,11 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
                 )}
               </Container>
             </TabPanel>
-          </TabContext>
+          </Tabs>
         </Grid>
       ) : (
         <MobileDrawer open={chatOpen} handleChatList={handleChatOpen}>
-          <TabContext value={tab}>
-            <Box sx={{ borderColor: "divider" }} className={styles.tabs}>
-              <TabList onChange={handleTabChange} centered>
-                <Tab label="Chats" value="chat" />
-                <Tab label="Requests" value="request" />
-              </TabList>
-            </Box>
+          <Tabs hasActiveChat={loading ? true : hasActiveChat}>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
                 {infoQuery?.getUser?.activeChat ? (
@@ -169,7 +153,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
                 )}
               </Container>
             </TabPanel>
-          </TabContext>
+          </Tabs>
         </MobileDrawer>
       )}
       <Grid
@@ -178,7 +162,9 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
         md={8}
         sx={{ color: "white", height: "100%", overflow: "auto" }}
       >
-        {children}
+        <ActiveChatContext.Provider value={loading ? true : hasActiveChat}>
+          {children}
+        </ActiveChatContext.Provider>
       </Grid>
     </Grid>
   );

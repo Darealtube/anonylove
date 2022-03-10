@@ -8,7 +8,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { REJECT_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
+import { REJECT_CONFESSION_REQUEST } from "../../../apollo/mutation/requestMutation";
 
 type DeleteRequestDialogProps = {
   open: boolean;

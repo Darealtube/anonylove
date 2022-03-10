@@ -14,8 +14,11 @@ import { getUserResult, getUserVariables } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
 import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
+import { useContext } from "react";
+import { ActiveChatContext } from "../../Components/Wrapper/AppWrap";
 
 const Profile = ({ name }: { name: string }) => {
+  const hasActiveChat = useContext(ActiveChatContext);
   const { data: session } = useSession();
   const { data: user } = useQuery<getUserResult, getUserVariables>(
     GET_USER_QUERY,
@@ -29,7 +32,9 @@ const Profile = ({ name }: { name: string }) => {
   const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
 
   const handleRequest = () => {
-    sendRequest({ variables: { anonymous: session?.user?.name, receiver: name } });
+    sendRequest({
+      variables: { anonymous: session?.user?.name, receiver: name },
+    });
   };
 
   return (
@@ -94,6 +99,7 @@ const Profile = ({ name }: { name: string }) => {
                 className={styles.reqButton}
                 onClick={handleRequest}
                 fullWidth
+                disabled={hasActiveChat}
               >
                 Send Request
               </Button>
@@ -104,6 +110,7 @@ const Profile = ({ name }: { name: string }) => {
                 variant="outlined"
                 className={styles.reqButton}
                 fullWidth
+                disabled={hasActiveChat}
               >
                 Report User
               </Button>

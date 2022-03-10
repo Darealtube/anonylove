@@ -19,9 +19,10 @@ import { DateTime } from "luxon";
 import { getUserResult } from "../../../types/Queries";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Anonymous from "../../../public/anonyUser.png";
+import styles from "../../../styles/List.module.css";
 
-const DeleteDialog = dynamic(() => import("../DeleteRequestDialog"));
-const AcceptDialog = dynamic(() => import("../AcceptRequestDialog"));
+const DeleteDialog = dynamic(() => import("../Dialogs/DeleteRequestDialog"));
+const AcceptDialog = dynamic(() => import("../Dialogs/AcceptRequestDialog"));
 
 //  Set parameter "requests" as optional for now
 const RequestList = ({
@@ -93,6 +94,7 @@ const RequestList = ({
                       alt="Confesser PFP"
                       width={40}
                       height={40}
+                      className={styles.avatar}
                     />
                   </ListItemAvatar>
                   <ListItemText

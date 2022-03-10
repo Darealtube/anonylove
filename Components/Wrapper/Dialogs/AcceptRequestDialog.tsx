@@ -8,7 +8,10 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { ACCEPT_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
+import { useSession } from "next-auth/react";
+import { ACCEPT_CONFESSION_REQUEST } from "../../../apollo/mutation/requestMutation";
+import { GET_USER_SOCIALS } from "../../../apollo/query/userQuery";
+import { getUserResult } from "../../../types/Queries";
 
 type AcceptRequestDialog = {
   open: boolean;
@@ -21,8 +24,32 @@ const AcceptRequestDialog = ({
   handleClose,
   requestID,
 }: AcceptRequestDialog) => {
+  const { data: session } = useSession();
   const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST, {
-    update: (cache, _result) => {
+    update: (cache, result) => {
+      const newChat = result?.data?.acceptConfessionRequest;
+      const user = cache.readQuery<getUserResult>({
+        query: GET_USER_SOCIALS,
+        variables: {
+          limit: 10,
+          name: session?.user?.name,
+        },
+      });
+
+      cache.writeQuery({
+        query: GET_USER_SOCIALS,
+        variables: {
+          limit: 10,
+          name: session?.user?.name,
+        },
+        data: {
+          getUser: {
+            ...user?.getUser,
+            activeChat: newChat,
+          },
+        },
+      });
+
       cache.evict({ id: `Request:${requestID}` });
       cache.gc();
       handleClose();

@@ -17,6 +17,7 @@
     "@next-auth/mongodb-adapter": "^1.0.1",
     "apollo-server-micro": "^3.6.2",
     "cloudinary": "^1.28.1",
+    "emoji-mart": "^3.0.1",
     "graphql": "^16.3.0",
     "graphql-tools": "^8.2.0",
     "luxon": "^2.3.0",
@@ -31,6 +32,7 @@
     "react-infinite-scroll-component": "^6.1.0"
   },
   "devDependencies": {
+    "@types/emoji-mart": "^3.0.9",
     "@types/luxon": "^2.0.9",
     "@types/micro-cors": "^0.1.2",
     "@types/node": "17.0.14",

@@ -94,6 +94,11 @@ export const resolvers: Resolvers = {
     getUser: async (_parent, args, _context, _info) => {
       return await User.findOne({ name: args.name });
     },
+    getUserActiveChat: async (_parent, args, _context, _info) => {
+      return await Chat.findOne({
+        $or: [{ anonymous: args.name }, { confessee: args.name }],
+      });
+    },
   },
 
   Mutation: {

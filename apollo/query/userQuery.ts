@@ -33,6 +33,7 @@ export const GET_USER_SOCIALS = gql`
       activeChat {
         _id
         confessee {
+          _id
           name
           image
         }

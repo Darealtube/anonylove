@@ -19,27 +19,38 @@ export interface Request {
   accepted: boolean;
 }
 
-export type RequestConnection = {
+export interface RequestConnection {
   totalCount: number;
   pageInfo: PageInfo;
   edges: [RequestEdge];
-};
+}
 
-type RequestEdge = {
+interface RequestEdge {
   node: Request;
-};
+}
 
-export type PageInfo = {
+export interface PageInfo {
   endCursor: string;
   hasNextPage: boolean;
-};
+}
 
 export interface Message {
   _id: string;
+  chat: string;
   date: Date;
   sender: User;
   message: string;
-  favorite: boolean;
+  anonymous: boolean;
+}
+
+export interface MessageConnection {
+  totalCount: number;
+  pageInfo: PageInfo;
+  edges: [MessageEdge];
+}
+
+export interface MessageEdge {
+  node: Message;
 }
 
 export interface Chat {
@@ -47,5 +58,5 @@ export interface Chat {
   updatedAt: Date;
   anonymous: User;
   confessee: User;
-  messages: Message[];
+  messages: MessageConnection;
 }

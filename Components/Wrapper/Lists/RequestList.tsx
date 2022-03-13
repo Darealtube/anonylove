@@ -16,7 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import dynamic from "next/dynamic";
 import { DateTime } from "luxon";
-import { getUserResult } from "../../../types/Queries";
+import { GetUserResult } from "../../../types/Queries";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Anonymous from "../../../public/anonyUser.png";
 import styles from "../../../styles/List.module.css";
@@ -41,7 +41,7 @@ const RequestList = ({
   const loadMoreRequests = () => {
     moreRequests({
       variables: { after: requests?.pageInfo.endCursor, limit: 10 },
-    }).then((fetchMoreResult: { data: getUserResult }) => {
+    }).then((fetchMoreResult: { data: GetUserResult }) => {
       if (fetchMoreResult.data.getUser) {
         if (
           !fetchMoreResult.data.getUser.receivedConfessionRequests.pageInfo

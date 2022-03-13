@@ -7,7 +7,6 @@ const ChatSchema = new Schema({
   id: ObjectId,
   anonymous: String,
   confessee: String,
-  messages: [ObjectId],
   updatedAt: {
     type: Date,
     default: DateTime.local,

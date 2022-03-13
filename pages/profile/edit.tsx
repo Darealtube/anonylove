@@ -19,7 +19,7 @@ import {
 import { getSession, useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER_QUERY } from "../../apollo/query/userQuery";
-import { getUserResult, getUserVariables } from "../../types/Queries";
+import { GetUserResult, GetUserVariables } from "../../types/Queries";
 import { MutableRefObject, ReactNode, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { addApolloState } from "../../apollo/apolloClient";
@@ -38,7 +38,7 @@ const EditProfile = () => {
   const cover = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
   const [editProfile] = useMutation(EDIT_USER_PROFILE);
-  const { data: user } = useQuery<getUserResult, getUserVariables>(
+  const { data: { getUser } = {} } = useQuery<GetUserResult, GetUserVariables>(
     GET_USER_QUERY,
     {
       variables: {
@@ -48,11 +48,11 @@ const EditProfile = () => {
   );
 
   const [profile, setProfile] = useState({
-    name: user?.getUser?.name,
-    image: user?.getUser?.image,
-    cover: user?.getUser?.cover,
-    bio: user?.getUser?.bio,
-    status: user?.getUser?.status ?? "Single",
+    name: getUser?.name,
+    image: getUser?.image,
+    cover: getUser?.cover,
+    bio: getUser?.bio,
+    status: getUser?.status ?? "Single",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,7 +108,7 @@ const EditProfile = () => {
             ? profile.image
             : await uploadImage(profile.image as string),
         cover:
-          user?.getUser?.cover === profile.cover
+          getUser?.cover === profile.cover
             ? profile.cover
             : await uploadImage(profile.cover as string),
         originalName: session?.user?.name,
@@ -200,7 +200,7 @@ const EditProfile = () => {
           <Grid item xs={12} sm={6} md={12} lg={6}>
             <Information title="Email Address">
               <Typography align="center" variant="h6">
-                {user?.getUser?.email}
+                {getUser?.email}
               </Typography>
             </Information>
             <Information title="Relationship Status">

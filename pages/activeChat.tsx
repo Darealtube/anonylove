@@ -1,7 +1,8 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   AppBar,
   Box,
+  CircularProgress,
   Container,
   IconButton,
   inputLabelClasses,
@@ -25,6 +26,10 @@ import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import React, { SyntheticEvent, useState } from "react";
 import dynamic from "next/dynamic";
 import { BaseEmoji } from "emoji-mart";
+import { SEND_MESSAGE } from "../apollo/mutation/chatMutation";
+import { getUserChatResult, getUserChatVariables } from "../types/Queries";
+import { MessageEdge } from "../types/models";
+import MessageList from "../Components/Chat/MessageList";
 
 const EmojiPicker = dynamic(() => import("../Components/Chat/EmojiPopover"));
 
@@ -60,14 +65,49 @@ const ActiveChat = ({ name }: { name: string }) => {
   );
   const [message, setMessage] = useState("");
   const { data: session } = useSession();
-  const {
-    data: { getUserActiveChat },
-  } = useQuery(GET_USER_ACTIVE_CHAT, {
+  // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
+  const { data: { getUserActiveChat } = {} } = useQuery<
+    getUserChatResult,
+    getUserChatVariables
+  >(GET_USER_ACTIVE_CHAT, {
     variables: {
       name,
     },
   });
-  const confessedTo = session?.user?.name === getUserActiveChat.confessee.name;
+
+  const [sendMessage] = useMutation(SEND_MESSAGE, {
+    update: (cache, result) => {
+      const newMessage = result?.data?.sendMessage;
+      const query = cache.readQuery<getUserChatResult>({
+        query: GET_USER_ACTIVE_CHAT,
+        variables: {
+          name,
+        },
+      });
+
+      cache.writeQuery({
+        query: GET_USER_ACTIVE_CHAT,
+        variables: {
+          name,
+        },
+        data: {
+          getUserActiveChat: {
+            ...query?.getUserActiveChat,
+            messages: {
+              ...query?.getUserActiveChat?.messages,
+              edges: [
+                ...(query?.getUserActiveChat?.messages?.edges as [MessageEdge]),
+                { __typename: "MessageEdge", node: newMessage },
+              ],
+            },
+          },
+        },
+      });
+      setMessage("");
+    },
+  });
+
+  const confessedTo = session?.user?.name === getUserActiveChat?.confessee.name;
 
   const handleOpenEmoji = (e: React.MouseEvent<HTMLButtonElement>) => {
     setEmojiAnchor(e.currentTarget);
@@ -83,6 +123,17 @@ const ActiveChat = ({ name }: { name: string }) => {
 
   const handleEmoji = (emoji: BaseEmoji, _event: SyntheticEvent) => {
     setMessage(message + emoji.native);
+  };
+
+  const handleMessage = () => {
+    sendMessage({
+      variables: {
+        chat: getUserActiveChat?._id,
+        message,
+        anonymous: confessedTo ? false : true,
+        sender: session?.user?.name,
+      },
+    });
   };
 
   return (
@@ -102,7 +153,7 @@ const ActiveChat = ({ name }: { name: string }) => {
                 src={
                   confessedTo
                     ? Anonymous
-                    : (getUserActiveChat.confessee.image as string)
+                    : (getUserActiveChat?.confessee.image as string)
                 }
                 alt="PFP"
                 width={40}
@@ -111,7 +162,7 @@ const ActiveChat = ({ name }: { name: string }) => {
               />
 
               <Typography variant="h6" ml={2}>
-                {confessedTo ? "Anonymous" : getUserActiveChat.confessee.name}
+                {confessedTo ? "Anonymous" : getUserActiveChat?.confessee.name}
               </Typography>
             </Box>
 
@@ -125,8 +176,17 @@ const ActiveChat = ({ name }: { name: string }) => {
           sx={{
             flexGrow: 1,
             overflow: "auto",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "end",
           }}
-        ></Container>
+        >
+          {getUserActiveChat?.messages ? (
+            <MessageList messages={getUserActiveChat?.messages} />
+          ) : (
+            <CircularProgress />
+          )}
+        </Container>
 
         <AppBar className={styles.textbar} elevation={6}>
           <Container className={styles.textbarContainer}>
@@ -143,7 +203,11 @@ const ActiveChat = ({ name }: { name: string }) => {
             >
               <EmojiEmotionsIcon />
             </IconButton>
-            <IconButton sx={{ ml: 2, color: "white" }}>
+            <IconButton
+              sx={{ ml: 2, color: "white" }}
+              onClick={handleMessage}
+              disabled={message.trim().length == 0}
+            >
               <SendIcon />
             </IconButton>
           </Container>

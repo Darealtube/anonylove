@@ -2,6 +2,7 @@ import { Context } from "@apollo/client";
 import { GraphQLResolveInfo } from "graphql";
 import { ObjectId } from "mongodb";
 import Chat from "../../models/Chat";
+import Message from "../../models/Message";
 import Request from "../../models/Request";
 import User from "../../models/User";
 import { Decursorify } from "../../utils/Pagination/cursorify";
@@ -78,6 +79,27 @@ export const resolvers: Resolvers = {
     confessee: async (parent, _args, _context, _info) => {
       return await User.findOne({ name: parent.confessee });
     },
+    messages: async (parent, args, _context, _info) => {
+      const totalCount = await Message.count({ chat: parent._id });
+      const messages = await Message.find({
+        chat: parent._id,
+        ...(args.after && { date: { $gt: Decursorify(args.after) } }),
+      })
+        .limit(10)
+        .sort({ date: 1 });
+
+      const data = relayPaginate({
+        finalArray: messages,
+        cursorIdentifier: "date",
+        limit: args.limit,
+      });
+      return { ...data, totalCount };
+    },
+  },
+  Message: {
+    sender: async (parent, _args, _context, _info) => {
+      return await User.findOne({ name: parent.sender });
+    },
   },
   Query: {
     searchUser: async (_parent, args, _context, _info) => {
@@ -150,6 +172,10 @@ export const resolvers: Resolvers = {
         { activeChat: newChat._id }
       );
       return newChat;
+    },
+    sendMessage: async (_parent, args, _context, _info) => {
+      const message = await Message.create(args);
+      return message;
     },
   },
 };

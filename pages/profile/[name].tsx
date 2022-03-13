@@ -10,7 +10,7 @@ import { addApolloState } from "../../apollo/apolloClient";
 import { GET_USER_QUERY } from "../../apollo/query/userQuery";
 import { useMutation, useQuery } from "@apollo/client";
 import { getUserInfo } from "../../utils/SSR/profile";
-import { getUserResult, getUserVariables } from "../../types/Queries";
+import { GetUserResult, GetUserVariables } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
 import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
@@ -20,7 +20,8 @@ import { ActiveChatContext } from "../../Components/Wrapper/AppWrap";
 const Profile = ({ name }: { name: string }) => {
   const hasActiveChat = useContext(ActiveChatContext);
   const { data: session } = useSession();
-  const { data: user } = useQuery<getUserResult, getUserVariables>(
+  // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
+  const { data: { getUser } = {} } = useQuery<GetUserResult, GetUserVariables>(
     GET_USER_QUERY,
     {
       variables: {
@@ -28,7 +29,7 @@ const Profile = ({ name }: { name: string }) => {
       },
     }
   );
-  const ownProfile = session?.user?.name === user?.getUser?.name;
+  const ownProfile = session?.user?.name === getUser?.name;
   const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
 
   const handleRequest = () => {
@@ -46,7 +47,7 @@ const Profile = ({ name }: { name: string }) => {
       </Head>
       <Box className={styles.cover}>
         <Image
-          src={user?.getUser?.cover ?? NoBg}
+          src={getUser?.cover ?? NoBg}
           alt="No Background Image"
           objectFit="cover"
           layout="fill"
@@ -56,7 +57,7 @@ const Profile = ({ name }: { name: string }) => {
       <Box className={styles.main}>
         <Box className={styles.pfp}>
           <Image
-            src={user?.getUser?.image ?? anonyUser}
+            src={getUser?.image ?? anonyUser}
             alt="PFP"
             width={160}
             height={160}
@@ -65,7 +66,7 @@ const Profile = ({ name }: { name: string }) => {
         </Box>
 
         <Typography align="center" variant="h3" mt={1}>
-          {user?.getUser?.name}
+          {getUser?.name}
         </Typography>
       </Box>
 
@@ -74,12 +75,12 @@ const Profile = ({ name }: { name: string }) => {
           <Grid item xs={12} sm={6} md={12} lg={6}>
             <Information title="Email Address">
               <Typography align="center" variant="h6">
-                {user?.getUser?.email}
+                {getUser?.email}
               </Typography>
             </Information>
             <Information title="Relationship Status">
               <Typography align="center" variant="h6">
-                {user?.getUser?.status ?? "Unknown"}
+                {getUser?.status ?? "Unknown"}
               </Typography>
             </Information>
             {ownProfile ? (
@@ -128,7 +129,7 @@ const Profile = ({ name }: { name: string }) => {
               sx={{ color: "#f6f7f8" }}
               elevation={6}
             >
-              {user?.getUser?.bio ?? ""}
+              {getUser?.bio ?? ""}
             </Paper>
           </Grid>
         </Grid>

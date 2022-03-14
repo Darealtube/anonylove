@@ -37,3 +37,11 @@
 .avatar {
   border-radius: 50%;
 }
+
+.messagebox {
+  margin-left: 16px;
+  margin-right: 16px;
+  max-width: 50%;
+  background-color: #f6f7f8;
+  color: #70161e;
+}

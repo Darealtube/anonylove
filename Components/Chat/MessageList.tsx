@@ -16,6 +16,7 @@ const MessageList = ({ messages }: { messages: MessageConnection }) => {
             id={node._id}
             key={node._id}
             display="flex"
+            mt={2}
             mb={2}
             flexDirection={
               node.sender.name === session?.user?.name ? "row-reverse" : "row"
@@ -41,18 +42,9 @@ const MessageList = ({ messages }: { messages: MessageConnection }) => {
                 node.sender.name === session?.user?.name ? "left" : "right"
               }
             >
-              <Paper
-                sx={{
-                  ml: 2,
-                  mr: 2,
-                  maxWidth: "50%",
-                  backgroundColor: "#f6f7f8",
-                  color: "#70161E",
-                }}
-                elevation={6}
-              >
+              <Paper className={styles.messagebox} elevation={6}>
                 <Container sx={{ mt: 2, mb: 2 }}>
-                  <Typography paragraph variant="body1" textAlign="center">
+                  <Typography paragraph variant="body1" whiteSpace="pre-wrap">
                     {node.message}
                   </Typography>
                 </Container>

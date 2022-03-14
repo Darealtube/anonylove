@@ -23,7 +23,7 @@ import Anonymous from "../public/anonyUser.png";
 import styles from "../styles/Chat.module.css";
 import SendIcon from "@mui/icons-material/Send";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { BaseEmoji } from "emoji-mart";
 import { SEND_MESSAGE } from "../apollo/mutation/chatMutation";
@@ -60,6 +60,7 @@ const StyledTextField = styled(TextField)({
 });
 
 const ActiveChat = ({ name }: { name: string }) => {
+  const chatMain = useRef<HTMLElement>();
   const [emojiAnchor, setEmojiAnchor] = useState<HTMLButtonElement | null>(
     null
   );
@@ -136,6 +137,14 @@ const ActiveChat = ({ name }: { name: string }) => {
     });
   };
 
+  useEffect(() => {
+    if (chatMain) {
+      (chatMain as React.MutableRefObject<HTMLElement>).current.scrollTop =
+        (chatMain as React.MutableRefObject<HTMLElement>).current.scrollHeight -
+        (chatMain as React.MutableRefObject<HTMLElement>).current.clientHeight;
+    }
+  }, []);
+
   return (
     <>
       <Head>
@@ -172,21 +181,21 @@ const ActiveChat = ({ name }: { name: string }) => {
           </Container>
         </AppBar>
 
-        <Container
-          sx={{
-            flexGrow: 1,
-            overflow: "auto",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "end",
-          }}
-        >
-          {getUserActiveChat?.messages ? (
-            <MessageList messages={getUserActiveChat?.messages} />
-          ) : (
-            <CircularProgress />
-          )}
-        </Container>
+        <Box flexGrow={1} height="100%" overflow="auto" ref={chatMain}>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "end",
+            }}
+          >
+            {getUserActiveChat?.messages ? (
+              <MessageList messages={getUserActiveChat?.messages} />
+            ) : (
+              <CircularProgress />
+            )}
+          </Container>
+        </Box>
 
         <AppBar className={styles.textbar} elevation={6}>
           <Container className={styles.textbarContainer}>

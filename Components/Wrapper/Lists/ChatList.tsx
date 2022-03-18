@@ -17,6 +17,11 @@ import Link from "next/link";
 const ChatList = ({ chat }: { chat?: Chat }) => {
   const { data: session } = useSession();
   const confessedTo = session?.user?.name === chat?.confessee.name;
+  const lastSeen = confessedTo ? chat?.confesseeLastSeen : chat?.anonLastSeen;
+  const chatUnseen = chat
+    ? (chat as Chat).updatedAt > (lastSeen as number)
+    : false;
+
   return (
     <>
       <List sx={{ width: "100%" }}>
@@ -48,7 +53,11 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
                           variant="body2"
                           color="text.primary"
                         >
-                          Sample Latest Message
+                          {chatUnseen ? (
+                            <strong>{chat?.latestMessage.message}</strong>
+                          ) : (
+                            chat?.latestMessage.message
+                          )}
                         </Typography>
                       </>
                     }

@@ -35,8 +35,16 @@ export const typeDefs = gql`
     _id: ID!
     anonymous: User!
     confessee: User!
-    updatedAt: String
+    updatedAt: Float
     messages(limit: Int, after: String): MessageConnection
+    latestMessage: Message
+    anonLastSeen: Float
+    confesseeLastSeen: Float
+  }
+
+  type SeenChatResult {
+    anonLastSeen: Float
+    confesseeLastSeen: Float
   }
 
   type Message {
@@ -81,6 +89,7 @@ export const typeDefs = gql`
       message: String!
       anonymous: Boolean!
     ): Message
+    seenChat(person: String!, chat: ID!): SeenChatResult
     editUser(
       originalName: String!
       name: String!

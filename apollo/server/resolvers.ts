@@ -1,5 +1,6 @@
 import { Context } from "@apollo/client";
 import { GraphQLResolveInfo } from "graphql";
+import { DateTime } from "luxon";
 import { ObjectId } from "mongodb";
 import Chat from "../../models/Chat";
 import Message from "../../models/Message";
@@ -95,6 +96,14 @@ export const resolvers: Resolvers = {
       });
       return { ...data, totalCount };
     },
+    latestMessage: async (parent, _args, _context, _info) => {
+      const latestMessage = await Message.find({ chat: parent._id })
+        .sort({
+          date: -1,
+        })
+        .limit(1);
+      return latestMessage[0];
+    },
   },
   Message: {
     sender: async (parent, _args, _context, _info) => {
@@ -175,7 +184,28 @@ export const resolvers: Resolvers = {
     },
     sendMessage: async (_parent, args, _context, _info) => {
       const message = await Message.create(args);
+      await Chat.findByIdAndUpdate(args.chat, {
+        updatedAt: DateTime.local(),
+        ...(args.anonymous
+          ? { anonLastSeen: DateTime.local() }
+          : { confesseeLastSeen: DateTime.local() }),
+      });
       return message;
+    },
+    seenChat: async (_parent, args, _context, _info) => {
+      const updatedChat = await Chat.findByIdAndUpdate(
+        args.chat,
+        {
+          ...(args.person === "anonymous"
+            ? { anonLastSeen: DateTime.local() }
+            : { confesseeLastSeen: DateTime.local() }),
+        },
+        { new: true }
+      );
+      return {
+        anonLastSeen: updatedChat.anonLastSeen,
+        confesseeLastSeen: updatedChat.confesseeLastSeen,
+      };
     },
   },
 };

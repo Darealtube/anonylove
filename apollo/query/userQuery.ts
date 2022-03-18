@@ -37,6 +37,12 @@ export const GET_USER_SOCIALS = gql`
           name
           image
         }
+        latestMessage {
+          _id
+          message
+        }
+        anonLastSeen
+        confesseeLastSeen
         updatedAt
       }
     }

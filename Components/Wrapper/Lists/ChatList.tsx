@@ -23,53 +23,55 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
     : false;
 
   return (
-    <>
-      <List sx={{ width: "100%" }}>
-        {chat && (
-          <>
-            <Link href="/activeChat" passHref>
-              <a>
-                <ListItem alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Image
-                      src={
-                        confessedTo
-                          ? Anonymous
-                          : (chat.confessee.image as string)
-                      }
-                      alt="PFP"
-                      width={40}
-                      height={40}
-                      className={styles.avatar}
-                    />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={confessedTo ? "Anonymous" : chat.confessee.name}
-                    secondary={
-                      <>
-                        <Typography
-                          sx={{ display: "inline" }}
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                          {chatUnseen ? (
-                            <strong>{chat?.latestMessage.message}</strong>
-                          ) : (
-                            chat?.latestMessage.message
-                          )}
-                        </Typography>
-                      </>
+    <List sx={{ width: "100%" }}>
+      {chat && (
+        <>
+          <Link href="/activeChat" passHref>
+            <a>
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Image
+                    src={
+                      confessedTo ? Anonymous : (chat.confessee.image as string)
                     }
+                    alt="PFP"
+                    width={40}
+                    height={40}
+                    className={styles.avatar}
                   />
-                </ListItem>
-              </a>
-            </Link>
-            <Divider />
-          </>
-        )}
-      </List>
-    </>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={confessedTo ? "Anonymous" : chat.confessee.name}
+                  secondary={
+                    <Typography
+                      variant="body2"
+                      color="text.primary"
+                      whiteSpace="nowrap"
+                      textOverflow="ellipsis"
+                      overflow="hidden"
+                      width="100%"
+                    >
+                      {chatUnseen ? (
+                        <strong>{chat?.latestMessage.message}</strong>
+                      ) : (
+                        chat?.latestMessage.message
+                      )}
+                      {chat?.latestMessage.message}
+                      {chat?.latestMessage.message}
+                      {chat?.latestMessage.message}
+                      {chat?.latestMessage.message}
+                      {chat?.latestMessage.message}
+                      {chat?.latestMessage.message}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            </a>
+          </Link>
+          <Divider />
+        </>
+      )}
+    </List>
   );
 };
 

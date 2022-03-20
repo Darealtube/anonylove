@@ -8,6 +8,13 @@ import Request from "../../models/Request";
 import User from "../../models/User";
 import { Decursorify } from "../../utils/Pagination/cursorify";
 import relayPaginate from "../../utils/Pagination/relayPaginate";
+import { PubSub } from "graphql-subscriptions";
+
+const pubsub = new PubSub();
+
+type SubscriptionFn = {
+  subscribe: () => AsyncIterator<unknown, any, undefined>;
+};
 
 type ResolverFn = (
   parent: any,
@@ -17,7 +24,7 @@ type ResolverFn = (
 ) => any;
 
 interface ResolverMap {
-  [field: string]: ResolverFn;
+  [field: string]: ResolverFn | SubscriptionFn;
 }
 interface Resolvers {
   [resolver: string]: ResolverMap;
@@ -190,6 +197,7 @@ export const resolvers: Resolvers = {
           ? { anonLastSeen: DateTime.local() }
           : { confesseeLastSeen: DateTime.local() }),
       });
+      pubsub.publish("NEW_MESSAGE", { newMessage: message });
       return message;
     },
     seenChat: async (_parent, args, _context, _info) => {
@@ -206,6 +214,12 @@ export const resolvers: Resolvers = {
         anonLastSeen: updatedChat.anonLastSeen,
         confesseeLastSeen: updatedChat.confesseeLastSeen,
       };
+    },
+  },
+
+  Subscription: {
+    newMessage: {
+      subscribe: () => pubsub.asyncIterator(["NEW_MESSAGE"]),
     },
   },
 };

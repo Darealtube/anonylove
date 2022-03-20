@@ -99,4 +99,8 @@ export const typeDefs = gql`
       status: String
     ): Boolean
   }
+
+  type Subscription {
+    newMessage: Message
+  }
 `;

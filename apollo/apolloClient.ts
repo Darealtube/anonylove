@@ -17,11 +17,14 @@ const httpLink = new HttpLink({
   credentials: "same-origin",
 });
 
-const wsLink = new GraphQLWsLink(
-  createClient({
-    url: "wss://anonylove.vercel.app/api/graphql",
-  })
-);
+const wsLink =
+  typeof window !== "undefined"
+    ? new GraphQLWsLink(
+        createClient({
+          url: "wss://anonylove.vercel.app/api/graphql",
+        })
+      )
+    : null;
 // The split function takes three parameters:
 //
 // * A function that's called for each operation to execute
@@ -37,7 +40,7 @@ const splitLink =
             definition.operation === "subscription"
           );
         },
-        wsLink,
+        wsLink as GraphQLWsLink,
         httpLink
       )
     : httpLink;

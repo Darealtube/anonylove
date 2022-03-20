@@ -1,17 +1,27 @@
-import { User } from "./models";
+import { Chat, User } from "./models";
 
-export type getUserVariables = {
+export interface GetUserVariables {
   name: string;
-};
+}
 
-export type getUserResult = {
+export interface GetUserResult {
   getUser: User;
-};
+}
 
-export type searchUserResult = {
+export interface searchUserResult {
   searchUser: User[];
-};
+}
 
-export type searchUserVariables = {
+export interface searchUserVariables {
   key: string;
-};
+}
+
+export interface getUserChatResult {
+  getUserActiveChat: Chat;
+}
+
+export interface getUserChatVariables {
+  name: string;
+  after?: string;
+  limit?: number;
+}

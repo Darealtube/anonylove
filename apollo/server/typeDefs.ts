@@ -35,8 +35,35 @@ export const typeDefs = gql`
     _id: ID!
     anonymous: User!
     confessee: User!
-    updatedAt: String
-    messages: [ID]
+    updatedAt: Float
+    messages(limit: Int, after: String): MessageConnection
+    latestMessage: Message
+    anonLastSeen: Float
+    confesseeLastSeen: Float
+  }
+
+  type SeenChatResult {
+    anonLastSeen: Float
+    confesseeLastSeen: Float
+  }
+
+  type Message {
+    _id: ID!
+    chat: ID!
+    date: String!
+    sender: User
+    message: String!
+    anonymous: Boolean
+  }
+
+  type MessageConnection {
+    totalCount: Int
+    pageInfo: PageInfo
+    edges: [MessageEdge]
+  }
+
+  type MessageEdge {
+    node: Message
   }
 
   type PageInfo {
@@ -47,6 +74,7 @@ export const typeDefs = gql`
   type Query {
     getUser(name: String!): User
     searchUser(key: String): [User]
+    getUserActiveChat(name: String!): Chat
   }
 
   type Mutation {
@@ -55,6 +83,13 @@ export const typeDefs = gql`
     sendConfessionRequest(anonymous: String!, receiver: String!): Request
     rejectConfessionRequest(requestID: ID!): Boolean
     acceptConfessionRequest(requestID: ID!): Chat
+    sendMessage(
+      chat: ID!
+      sender: String!
+      message: String!
+      anonymous: Boolean!
+    ): Message
+    seenChat(person: String!, chat: ID!): SeenChatResult
     editUser(
       originalName: String!
       name: String!
@@ -63,5 +98,9 @@ export const typeDefs = gql`
       bio: String
       status: String
     ): Boolean
+  }
+
+  type Subscription {
+    newMessage: Message
   }
 `;

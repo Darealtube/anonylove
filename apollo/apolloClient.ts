@@ -6,6 +6,44 @@ import {
   NormalizedCacheObject,
 } from "@apollo/client";
 import { relayStylePagination } from "@apollo/client/utilities";
+import { split } from "@apollo/client";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+
+import { createClient } from "graphql-ws";
+
+const httpLink = new HttpLink({
+  uri: "https://anonylove.vercel.app/api/graphql",
+  credentials: "same-origin",
+});
+
+const wsLink =
+  typeof window !== "undefined"
+    ? new GraphQLWsLink(
+        createClient({
+          url: "wss://anonylove.vercel.app/api/graphql",
+        })
+      )
+    : null;
+// The split function takes three parameters:
+//
+// * A function that's called for each operation to execute
+// * The Link to use for an operation if the function returns a "truthy" value
+// * The Link to use for an operation if the function returns a "falsy" value
+const splitLink =
+  typeof window !== "undefined"
+    ? split(
+        ({ query }) => {
+          const definition = getMainDefinition(query);
+          return (
+            definition.kind === "OperationDefinition" &&
+            definition.operation === "subscription"
+          );
+        },
+        wsLink as GraphQLWsLink,
+        httpLink
+      )
+    : httpLink;
 
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
@@ -18,10 +56,7 @@ let apolloClient: null | ApolloClient<NormalizedCacheObject>;
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: new HttpLink({
-      uri: `https://anonylove.vercel.app/api/graphql`,
-      credentials: "same-origin",
-    }),
+    link: splitLink,
     cache: new InMemoryCache({
       typePolicies: {
         User: {

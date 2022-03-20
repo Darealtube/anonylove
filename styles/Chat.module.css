@@ -4,3 +4,44 @@
   align-items: center !important;
   justify-content: center !important;
 }
+
+.appbar {
+  position: sticky !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: #efa9ae !important;
+  color: white;
+  height: 60px;
+}
+
+.textbar {
+  position: sticky !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: #eda9ae !important;
+  color: white;
+  top: auto;
+  bottom: 0;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.textbarContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.avatar {
+  border-radius: 50%;
+}
+
+.messagebox {
+  margin-left: 16px;
+  margin-right: 16px;
+  max-width: 50%;
+  background-color: #f6f7f8;
+  color: #70161e;
+}

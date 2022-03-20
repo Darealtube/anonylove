@@ -11,7 +11,7 @@ import {
 import { useSession } from "next-auth/react";
 import { ACCEPT_CONFESSION_REQUEST } from "../../../apollo/mutation/requestMutation";
 import { GET_USER_SOCIALS } from "../../../apollo/query/userQuery";
-import { getUserResult } from "../../../types/Queries";
+import { GetUserResult } from "../../../types/Queries";
 
 type AcceptRequestDialog = {
   open: boolean;
@@ -28,7 +28,7 @@ const AcceptRequestDialog = ({
   const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST, {
     update: (cache, result) => {
       const newChat = result?.data?.acceptConfessionRequest;
-      const user = cache.readQuery<getUserResult>({
+      const user = cache.readQuery<GetUserResult>({
         query: GET_USER_SOCIALS,
         variables: {
           limit: 10,

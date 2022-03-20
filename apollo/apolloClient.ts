@@ -13,13 +13,13 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:4000/api/graphql",
+  uri: "https://anonylove.vercel.app/api/graphql",
   credentials: "same-origin",
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:4000/api/graphql",
+    url: "wss://anonylove.vercel.app/api/graphql",
   })
 );
 // The split function takes three parameters:

@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-micro";
+import { gql } from "@apollo/client/core";
 
 export const GET_USER_ACTIVE_CHAT = gql`
   query GetUserActiveChat($name: String!, $after: String, $limit: Int) {

@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-micro";
+import { gql } from "@apollo/client/core";
 
 export const SEARCH_USER_QUERY = gql`
   query searchUser($key: String) {

@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-micro";
+import { gql } from "@apollo/client/core";
 
 export const SEND_CONFESSION_REQUEST = gql`
   mutation SendConfessionRequest($anonymous: String!, $receiver: String!) {

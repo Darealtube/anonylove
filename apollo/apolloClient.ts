@@ -9,19 +9,21 @@ import { relayStylePagination } from "@apollo/client/utilities";
 import { split } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
-
 import { createClient } from "graphql-ws";
 
 const httpLink = new HttpLink({
-  uri: "https://anonylove.vercel.app/api/graphql",
-  credentials: "same-origin",
+  uri: "https://anonylove-server.vercel.app/graphql",
+  credentials: "include",
+  fetchOptions: {
+    mode: "cors", // This should always be CORS as our API server is on another domain.
+  },
 });
 
 const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: "wss://anonylove.vercel.app/api/graphql",
+          url: "wss://anonylove-server.vercel.app/graphql",
         })
       )
     : null;

@@ -56,12 +56,6 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
                       ) : (
                         chat?.latestMessage.message
                       )}
-                      {chat?.latestMessage.message}
-                      {chat?.latestMessage.message}
-                      {chat?.latestMessage.message}
-                      {chat?.latestMessage.message}
-                      {chat?.latestMessage.message}
-                      {chat?.latestMessage.message}
                     </Typography>
                   }
                 />

@@ -30,6 +30,8 @@ import { SEND_MESSAGE } from "../apollo/mutation/chatMutation";
 import { getUserChatResult, getUserChatVariables } from "../types/Queries";
 import { MessageEdge } from "../types/models";
 import MessageList from "../Components/Chat/MessageList";
+import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
+import { NewMessageData } from "../types/Subscriptions";
 
 const EmojiPicker = dynamic(() => import("../Components/Chat/EmojiPopover"));
 
@@ -67,7 +69,7 @@ const ActiveChat = ({ name }: { name: string }) => {
   const [message, setMessage] = useState("");
   const { data: session } = useSession();
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
-  const { data: { getUserActiveChat } = {} } = useQuery<
+  const { data: { getUserActiveChat } = {}, subscribeToMore } = useQuery<
     getUserChatResult,
     getUserChatVariables
   >(GET_USER_ACTIVE_CHAT, {
@@ -143,7 +145,32 @@ const ActiveChat = ({ name }: { name: string }) => {
         (chatMain as React.MutableRefObject<HTMLElement>).current.scrollHeight -
         (chatMain as React.MutableRefObject<HTMLElement>).current.clientHeight;
     }
-  }, []);
+
+    subscribeToMore({
+      document: NEW_MSG_SUBSCRIPTION,
+      updateQuery: (
+        prev,
+        { subscriptionData }: { subscriptionData: NewMessageData }
+      ) => {
+        if (!subscriptionData.data) return prev;
+        const newMessage = subscriptionData.data.newMessage;
+
+        console.log(prev);
+        return Object.assign({}, prev, {
+          getUserActiveChat: {
+            ...prev.getUserActiveChat,
+            messages: {
+              ...prev.getUserActiveChat.messages,
+              edges: [
+                ...prev.getUserActiveChat.messages.edges,
+                { _typename: "MessageEdge", node: newMessage },
+              ],
+            },
+          },
+        });
+      },
+    });
+  }, [getUserActiveChat]);
 
   return (
     <>

@@ -28,7 +28,6 @@ import dynamic from "next/dynamic";
 import { BaseEmoji } from "emoji-mart";
 import { SEND_MESSAGE } from "../apollo/mutation/chatMutation";
 import { getUserChatResult, getUserChatVariables } from "../types/Queries";
-import { MessageEdge } from "../types/models";
 import MessageList from "../Components/Chat/MessageList";
 import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
 import { NewMessageData } from "../types/Subscriptions";
@@ -66,6 +65,7 @@ const ActiveChat = ({ name }: { name: string }) => {
   const [emojiAnchor, setEmojiAnchor] = useState<HTMLButtonElement | null>(
     null
   );
+  const [sendMessage] = useMutation(SEND_MESSAGE);
   const [message, setMessage] = useState("");
   const { data: session } = useSession();
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
@@ -77,39 +77,6 @@ const ActiveChat = ({ name }: { name: string }) => {
       name,
     },
   });
-
-  const [sendMessage] = useMutation(SEND_MESSAGE, {
-    update: (cache, result) => {
-      const newMessage = result?.data?.sendMessage;
-      const query = cache.readQuery<getUserChatResult>({
-        query: GET_USER_ACTIVE_CHAT,
-        variables: {
-          name,
-        },
-      });
-
-      cache.writeQuery({
-        query: GET_USER_ACTIVE_CHAT,
-        variables: {
-          name,
-        },
-        data: {
-          getUserActiveChat: {
-            ...query?.getUserActiveChat,
-            messages: {
-              ...query?.getUserActiveChat?.messages,
-              edges: [
-                ...(query?.getUserActiveChat?.messages?.edges as [MessageEdge]),
-                { __typename: "MessageEdge", node: newMessage },
-              ],
-            },
-          },
-        },
-      });
-      setMessage("");
-    },
-  });
-
   const confessedTo = session?.user?.name === getUserActiveChat?.confessee.name;
 
   const handleOpenEmoji = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -137,6 +104,7 @@ const ActiveChat = ({ name }: { name: string }) => {
         sender: session?.user?.name,
       },
     });
+    setMessage("");
   };
 
   useEffect(() => {
@@ -154,20 +122,27 @@ const ActiveChat = ({ name }: { name: string }) => {
       ) => {
         if (!subscriptionData.data) return prev;
         const newMessage = subscriptionData.data.newMessage;
+        const idAlreadyExists =
+          prev.getUserActiveChat.messages.edges.filter((item) => {
+            return item.node._id === newMessage._id;
+          }).length > 0;
 
-        console.log(prev);
-        return Object.assign({}, prev, {
-          getUserActiveChat: {
-            ...prev.getUserActiveChat,
-            messages: {
-              ...prev.getUserActiveChat.messages,
-              edges: [
-                ...prev.getUserActiveChat.messages.edges,
-                { _typename: "MessageEdge", node: newMessage },
-              ],
+        if (!idAlreadyExists) {
+          return Object.assign({}, prev, {
+            getUserActiveChat: {
+              ...prev.getUserActiveChat,
+              messages: {
+                ...prev.getUserActiveChat.messages,
+                edges: [
+                  ...prev.getUserActiveChat.messages.edges,
+                  { _typename: "MessageEdge", node: newMessage },
+                ],
+              },
             },
-          },
-        });
+          });
+        } else {
+          return prev;
+        }
       },
     });
   }, [getUserActiveChat]);

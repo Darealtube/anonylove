@@ -23,7 +23,7 @@ const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: "wss://anony-api-xi.vercel.app/subscriptions",
+          url: "wss://anony-api-xi.vercel.app/graphql",
         })
       )
     : null;

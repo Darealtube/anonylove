@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useSubscription } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   AppBar,
   Box,
@@ -78,9 +78,6 @@ const ActiveChat = ({ name }: { name: string }) => {
     },
   });
 
-  const { data: newMessage } = useSubscription(NEW_MSG_SUBSCRIPTION);
-
-  console.log(newMessage);
   const confessedTo = session?.user?.name === getUserActiveChat?.confessee.name;
 
   const handleOpenEmoji = (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -92,7 +92,9 @@ const ActiveChat = ({ name }: { name: string }) => {
   );
 
   const confessedTo = session?.user?.name === getUserActiveChat?.confessee.name;
-  const chatSeen = confessedTo ? getUserActiveChat?.confesseeSeen : getUserActiveChat?.anonSeen;
+  const chatSeen = confessedTo
+    ? getUserActiveChat?.confesseeSeen
+    : getUserActiveChat?.anonSeen;
 
   const handleOpenEmoji = (e: React.MouseEvent<HTMLButtonElement>) => {
     setEmojiAnchor(e.currentTarget);
@@ -283,7 +285,15 @@ const ActiveChat = ({ name }: { name: string }) => {
         </Box>
 
         <AppBar className={styles.textbar} elevation={6}>
-          <Container className={styles.textbarContainer}>
+          <Container
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <StyledTextField
               sx={{ flexGrow: 1, height: "100%" }}
               multiline

@@ -87,7 +87,15 @@ const MessageList = ({
               >
                 <Paper className={styles.messagebox} elevation={6}>
                   <Container sx={{ mt: 2, mb: 2 }}>
-                    <Typography paragraph variant="body1" whiteSpace="pre-wrap">
+                    <Typography
+                      paragraph
+                      variant="body1"
+                      whiteSpace="pre-wrap"
+                      sx={{
+                        wordBreak: "break-word",
+                        overflowWrap: "break-word",
+                      }}
+                    >
                       {node.message}
                     </Typography>
                   </Container>

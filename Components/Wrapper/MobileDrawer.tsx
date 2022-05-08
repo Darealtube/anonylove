@@ -26,6 +26,9 @@ const MobileDrawer = ({
       open={open}
       onClose={handleChatList}
       onOpen={handleChatList}
+      PaperProps={{
+        style: { maxWidth: "90%" },
+      }}
     >
       <AppBar className={styles.appbar} elevation={0}>
         <Link href="/home" passHref>

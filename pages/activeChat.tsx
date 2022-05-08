@@ -221,8 +221,6 @@ const ActiveChat = ({ name }: { name: string }) => {
     }
   }, [pageVisible, seeChat, chatSeen]);
 
-  console.log(getUserActiveChat?.messages.edges);
-
   return (
     <>
       <Head>

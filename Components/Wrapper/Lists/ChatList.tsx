@@ -18,6 +18,7 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
   const { data: session } = useSession();
   const confessedTo = session?.user?.name === chat?.confessee.name;
   const chatSeen = confessedTo ? chat?.confesseeSeen : chat?.anonSeen;
+  const sentByYou = chat?.latestMessage.sender.name === session?.user?.name;
 
   return (
     <List sx={{ width: "100%" }}>
@@ -49,9 +50,13 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
                       width="100%"
                     >
                       {!chatSeen ? (
-                        <strong>{chat?.latestMessage.message}</strong>
+                        <strong>
+                          {sentByYou && "You:"} {chat?.latestMessage.message}
+                        </strong>
                       ) : (
-                        chat?.latestMessage.message
+                        <>
+                          {sentByYou && "You:"} {chat?.latestMessage.message}
+                        </>
                       )}
                     </Typography>
                   }

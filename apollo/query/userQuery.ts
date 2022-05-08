@@ -40,6 +40,10 @@ export const GET_USER_SOCIALS = gql`
         latestMessage {
           _id
           message
+          sender {
+            _id
+            name
+          }
         }
         anonSeen
         confesseeSeen

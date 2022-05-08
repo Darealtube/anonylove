@@ -56,8 +56,8 @@ export interface MessageEdge {
 export interface Chat {
   _id: string;
   updatedAt: number;
-  anonLastSeen: number;
-  confesseeLastSeen: number;
+  anonSeen: boolean;
+  confesseeSeen: boolean;
   anonymous: User;
   confessee: User;
   messages: MessageConnection;

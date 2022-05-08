@@ -17,10 +17,7 @@ import Link from "next/link";
 const ChatList = ({ chat }: { chat?: Chat }) => {
   const { data: session } = useSession();
   const confessedTo = session?.user?.name === chat?.confessee.name;
-  const lastSeen = confessedTo ? chat?.confesseeLastSeen : chat?.anonLastSeen;
-  const chatUnseen = chat
-    ? (chat as Chat).updatedAt > (lastSeen as number)
-    : false;
+  const chatSeen = confessedTo ? chat?.confesseeSeen : chat?.anonSeen;
 
   return (
     <List sx={{ width: "100%" }}>
@@ -51,7 +48,7 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
                       overflow="hidden"
                       width="100%"
                     >
-                      {chatUnseen ? (
+                      {!chatSeen ? (
                         <strong>{chat?.latestMessage.message}</strong>
                       ) : (
                         chat?.latestMessage.message

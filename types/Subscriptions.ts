@@ -9,3 +9,15 @@ export interface NewMessage {
   message: string;
   _id: string;
 }
+
+export interface SeenChatData {
+  data: {
+    seenChat: SeenChat;
+  };
+}
+
+export interface SeenChat {
+  anonSeen: boolean;
+  confesseeSeen: boolean;
+  updatedAt: number;
+}

@@ -9,6 +9,7 @@ export const getUserActiveChat = async (name: string) => {
     query: GET_USER_ACTIVE_CHAT,
     variables: {
       name,
+      limit: 10,
     },
   });
 

@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 import { createContext, ReactNode, useState } from "react";
 import ChatList from "./Lists/ChatList";
 import styles from "../../styles/AppWrap.module.css";
-import { useQuery } from "@apollo/client";
+import { useQuery, useSubscription } from "@apollo/client";
 import BrandLogo from "../../public/brandlogoblack.png";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -23,6 +23,7 @@ import Image from "next/image";
 import RequestList from "./Lists/RequestList";
 import { GET_USER_SOCIALS } from "../../apollo/query/userQuery";
 import Tabs from "./Tabs";
+import { SEEN_CHAT_SUBSCRIPTION } from "../../apollo/subscription/messageSub";
 
 export const ActiveChatContext = createContext(true);
 const MobileDrawer = dynamic(() => import("./MobileDrawer"));
@@ -45,6 +46,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
     skip: !session,
   });
 
+  const { data } = useSubscription(SEEN_CHAT_SUBSCRIPTION);
   const handleChatOpen = () => {
     setChatOpen(!chatOpen);
   };

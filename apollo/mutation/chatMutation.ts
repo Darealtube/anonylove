@@ -28,9 +28,6 @@ export const SEND_MESSAGE = gql`
 
 export const SEEN_CHAT = gql`
   mutation seeMessage($person: String!, $chat: ID!) {
-    seenChat(person: $person, chat: $chat) {
-      anonLastSeen
-      confesseeLastSeen
-    }
+    seenChat(person: $person, chat: $chat)
   }
 `;

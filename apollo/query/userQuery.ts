@@ -41,8 +41,8 @@ export const GET_USER_SOCIALS = gql`
           _id
           message
         }
-        anonLastSeen
-        confesseeLastSeen
+        anonSeen
+        confesseeSeen
         updatedAt
       }
     }

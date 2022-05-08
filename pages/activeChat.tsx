@@ -26,7 +26,7 @@ import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { BaseEmoji } from "emoji-mart";
-import { SEND_MESSAGE } from "../apollo/mutation/chatMutation";
+import { SEEN_CHAT, SEND_MESSAGE } from "../apollo/mutation/chatMutation";
 import { getUserChatResult, getUserChatVariables } from "../types/Queries";
 import MessageList from "../Components/Chat/MessageList";
 import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
@@ -62,23 +62,37 @@ const StyledTextField = styled(TextField)({
 
 const ActiveChat = ({ name }: { name: string }) => {
   const chatMain = useRef<HTMLElement>();
+  const [pageVisible, setPageVisible] = useState(false);
   const [emojiAnchor, setEmojiAnchor] = useState<HTMLButtonElement | null>(
     null
   );
+  const {
+    data: { getUserActiveChat } = {},
+    subscribeToMore,
+    fetchMore: moreMessages,
+  } = useQuery<getUserChatResult, getUserChatVariables>(GET_USER_ACTIVE_CHAT, {
+    variables: {
+      name,
+      limit: 10,
+    },
+  });
   const [sendMessage] = useMutation(SEND_MESSAGE);
   const [message, setMessage] = useState("");
   const { data: session } = useSession();
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
-  const { data: { getUserActiveChat } = {}, subscribeToMore } = useQuery<
-    getUserChatResult,
-    getUserChatVariables
-  >(GET_USER_ACTIVE_CHAT, {
+  const [seeChat] = useMutation(SEEN_CHAT, {
     variables: {
-      name,
+      person: name === getUserActiveChat?.confessee.name ? name : "anonymous",
+      chat: getUserActiveChat?._id,
     },
   });
 
+  const [hasMore, setHasMore] = useState(
+    getUserActiveChat?.messages.pageInfo.hasNextPage
+  );
+
   const confessedTo = session?.user?.name === getUserActiveChat?.confessee.name;
+  const chatSeen = confessedTo ? getUserActiveChat?.confesseeSeen : getUserActiveChat?.anonSeen;
 
   const handleOpenEmoji = (e: React.MouseEvent<HTMLButtonElement>) => {
     setEmojiAnchor(e.currentTarget);
@@ -108,13 +122,30 @@ const ActiveChat = ({ name }: { name: string }) => {
     setMessage("");
   };
 
+  const loadMoreMessages = () => {
+    moreMessages({
+      variables: {
+        after: getUserActiveChat?.messages.pageInfo.endCursor,
+        limit: 10,
+      },
+    }).then((fetchMoreResult: { data: getUserChatResult }) => {
+      if (
+        !fetchMoreResult.data?.getUserActiveChat?.messages?.pageInfo
+          ?.hasNextPage
+      ) {
+        setHasMore(false);
+      }
+    });
+  };
+
+  // Put the scrollbar at the end on page mount
+  // Setup chat subscription on mount
   useEffect(() => {
     if (chatMain) {
       (chatMain as React.MutableRefObject<HTMLElement>).current.scrollTop =
         (chatMain as React.MutableRefObject<HTMLElement>).current.scrollHeight -
         (chatMain as React.MutableRefObject<HTMLElement>).current.clientHeight;
     }
-
     subscribeToMore({
       document: NEW_MSG_SUBSCRIPTION,
       updateQuery: (
@@ -135,8 +166,8 @@ const ActiveChat = ({ name }: { name: string }) => {
               messages: {
                 ...prev.getUserActiveChat.messages,
                 edges: [
-                  ...prev.getUserActiveChat.messages.edges,
                   { _typename: "MessageEdge", node: newMessage },
+                  ...prev.getUserActiveChat.messages.edges,
                 ],
               },
             },
@@ -146,7 +177,47 @@ const ActiveChat = ({ name }: { name: string }) => {
         }
       },
     });
-  }, [getUserActiveChat]);
+  }, [subscribeToMore]);
+
+  // Handle Page Visibility Changes
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        setPageVisible(false);
+      } else {
+        setPageVisible(true);
+      }
+    }
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibilityChange,
+      false
+    );
+    window.addEventListener(
+      "focus",
+      () => {
+        setPageVisible(true);
+      },
+      false
+    );
+    window.addEventListener("blur", () => setPageVisible(false), false);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", () => {
+        setPageVisible(true);
+      });
+      window.removeEventListener("blur", () => {
+        setPageVisible(false);
+      });
+    };
+  }, []);
+
+  // If the page is visible and the chat hasn't been seen yet, seen the chat.
+  useEffect(() => {
+    if (pageVisible && !chatSeen) {
+      seeChat();
+    }
+  }, [pageVisible, seeChat, chatSeen]);
 
   return (
     <>
@@ -156,48 +227,59 @@ const ActiveChat = ({ name }: { name: string }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box display="flex" flexDirection="column" height="100%">
-        <AppBar className={styles.appbar}>
-          <Container
-            sx={{ height: "100%", display: "flex", alignItems: "center" }}
-          >
-            <Box flexGrow={1} display="flex" alignItems="center">
-              <Image
-                src={
-                  confessedTo
-                    ? Anonymous
-                    : (getUserActiveChat?.confessee.image as string)
-                }
-                alt="PFP"
-                width={40}
-                height={40}
-                className={styles.avatar}
-              />
+        {
+          <AppBar className={styles.appbar}>
+            <Container
+              sx={{ height: "100%", display: "flex", alignItems: "center" }}
+            >
+              <Box flexGrow={1} display="flex" alignItems="center">
+                <Image
+                  src={
+                    confessedTo
+                      ? Anonymous
+                      : (getUserActiveChat?.confessee.image as string)
+                  }
+                  alt="PFP"
+                  width={40}
+                  height={40}
+                  className={styles.avatar}
+                />
 
-              <Typography variant="h6" ml={2}>
-                {confessedTo ? "Anonymous" : getUserActiveChat?.confessee.name}
-              </Typography>
-            </Box>
+                <Typography variant="h6" ml={2}>
+                  {confessedTo
+                    ? "Anonymous"
+                    : getUserActiveChat?.confessee.name}
+                </Typography>
+              </Box>
 
-            <IconButton>
-              <SettingsIcon />
-            </IconButton>
-          </Container>
-        </AppBar>
+              <IconButton>
+                <SettingsIcon />
+              </IconButton>
+            </Container>
+          </AppBar>
+        }
 
-        <Box flexGrow={1} height="100%" overflow="auto" ref={chatMain}>
-          <Container
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "end",
-            }}
-          >
-            {getUserActiveChat?.messages ? (
-              <MessageList messages={getUserActiveChat?.messages} />
-            ) : (
-              <CircularProgress />
-            )}
-          </Container>
+        <Box
+          flexGrow={1}
+          height="100%"
+          overflow="auto"
+          ref={chatMain}
+          id="chatMain"
+          sx={{
+            display: "flex",
+            flexDirection: "column-reverse",
+            justifyContent: "end",
+          }}
+        >
+          {getUserActiveChat?.messages ? (
+            <MessageList
+              messages={getUserActiveChat?.messages}
+              loadMoreMessages={loadMoreMessages}
+              hasMore={hasMore}
+            />
+          ) : (
+            <CircularProgress />
+          )}
         </Box>
 
         <AppBar className={styles.textbar} elevation={6}>

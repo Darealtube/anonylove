@@ -10,8 +10,8 @@ export const GET_USER_ACTIVE_CHAT = gql`
         image
       }
       updatedAt
-      anonLastSeen
-      confesseeLastSeen
+      anonSeen
+      confesseeSeen
       messages(after: $after, limit: $limit) {
         totalCount
         edges {
@@ -26,6 +26,10 @@ export const GET_USER_ACTIVE_CHAT = gql`
             message
             date
           }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }

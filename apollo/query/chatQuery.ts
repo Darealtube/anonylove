@@ -12,6 +12,7 @@ export const GET_USER_ACTIVE_CHAT = gql`
       updatedAt
       anonSeen
       confesseeSeen
+      expiresAt
       messages(after: $after, limit: $limit) {
         totalCount
         edges {
@@ -32,6 +33,20 @@ export const GET_USER_ACTIVE_CHAT = gql`
           endCursor
         }
       }
+    }
+  }
+`;
+
+export const REVEAL_USER_CHAT = gql`
+  query RevealUserChat($name: String!) {
+    getUserActiveChat(name: $name) {
+      _id
+      anonymous {
+        _id
+        name
+        image
+      }
+      expiresAt
     }
   }
 `;

@@ -32,6 +32,7 @@ export const SEEN_CHAT_SUBSCRIPTION = gql`
       anonSeen
       confesseeSeen
       updatedAt
+      expiresAt
     }
   }
 `;

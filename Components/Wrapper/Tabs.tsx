@@ -20,7 +20,7 @@ const Tabs = ({
 
   return (
     <>
-      <TabContext value={tab}>
+      <TabContext value={hasActiveChat ? "chat" : tab}>
         <Box sx={{ borderColor: "divider" }} className={styles.tabs}>
           <TabList onChange={handleTabChange} centered>
             <Tab label="Chats" value="chat" />

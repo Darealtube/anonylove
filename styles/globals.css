@@ -15,3 +15,15 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.anonybutton {
+  background: transparent;
+  color: #f6f7f8;
+  background: linear-gradient(to left, transparent 50%, #70161e 50%) right;
+  background-size: 200%;
+  transition: 0.2s ease-out;
+}
+
+.anonybutton:hover {
+  background-position: left;
+}

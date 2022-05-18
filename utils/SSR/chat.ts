@@ -1,5 +1,9 @@
+import { DateTime } from "luxon";
 import { initializeApollo } from "../../apollo/apolloClient";
-import { GET_USER_ACTIVE_CHAT } from "../../apollo/query/chatQuery";
+import {
+  GET_USER_ACTIVE_CHAT,
+  REVEAL_USER_CHAT,
+} from "../../apollo/query/chatQuery";
 
 export const getUserActiveChat = async (name: string) => {
   const apolloClient = initializeApollo();
@@ -14,4 +18,26 @@ export const getUserActiveChat = async (name: string) => {
   });
 
   return { data: apolloClient, exists: getUserActiveChat };
+};
+
+export const revealChatInfo = async (name: string) => {
+  const apolloClient = initializeApollo();
+  const {
+    data: { getUserActiveChat },
+  } = await apolloClient.query({
+    query: REVEAL_USER_CHAT,
+    variables: {
+      name,
+    },
+  });
+
+  const expired =
+    DateTime.local().toMillis() > (getUserActiveChat?.expiresAt as number);
+
+  return {
+    data: apolloClient,
+    exists: getUserActiveChat,
+    expired,
+    chatId: getUserActiveChat._id,
+  };
 };

@@ -2,13 +2,10 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   AppBar,
   Box,
+  Button,
   CircularProgress,
   Container,
   IconButton,
-  inputLabelClasses,
-  outlinedInputClasses,
-  styled,
-  TextField,
   Typography,
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -21,51 +18,21 @@ import { GET_USER_ACTIVE_CHAT } from "../apollo/query/chatQuery";
 import { getUserActiveChat } from "../utils/SSR/chat";
 import Anonymous from "../public/anonyUser.png";
 import styles from "../styles/Chat.module.css";
-import SendIcon from "@mui/icons-material/Send";
-import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
-import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
-import { BaseEmoji } from "emoji-mart";
-import { SEEN_CHAT, SEND_MESSAGE } from "../apollo/mutation/chatMutation";
+import React, { useEffect, useRef, useState } from "react";
+import { SEEN_CHAT } from "../apollo/mutation/chatMutation";
 import { getUserChatResult, getUserChatVariables } from "../types/Queries";
 import MessageList from "../Components/Chat/MessageList";
 import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
 import { NewMessageData } from "../types/Subscriptions";
-
-const EmojiPicker = dynamic(() => import("../Components/Chat/EmojiPopover"));
-
-const StyledTextField = styled(TextField)({
-  [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
-    borderColor: "#F6F7F8",
-  },
-  [`&:hover .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]:
-    {
-      borderColor: "#70161E",
-    },
-  [`& .${outlinedInputClasses.root}.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]:
-    {
-      borderColor: "#F6F7F8",
-    },
-  [`& .${outlinedInputClasses.input}`]: {
-    color: "#F6F7F8",
-  },
-  [`& .${inputLabelClasses.outlined}`]: {
-    color: "#F6F7F8",
-  },
-  [`&:hover .${inputLabelClasses.outlined}`]: {
-    color: "#70161E",
-  },
-  [`& .${inputLabelClasses.outlined}.${inputLabelClasses.focused}`]: {
-    color: "#F6F7F8",
-  },
-});
+import Textbar from "../Components/Chat/Textbar";
+import CountdownTimer from "../Components/CountdownTimer";
+import { DateTime } from "luxon";
+import Link from "next/link";
 
 const ActiveChat = ({ name }: { name: string }) => {
   const chatMain = useRef<HTMLElement>();
+  const { data: session } = useSession();
   const [pageVisible, setPageVisible] = useState(false);
-  const [emojiAnchor, setEmojiAnchor] = useState<HTMLButtonElement | null>(
-    null
-  );
   const {
     data: { getUserActiveChat } = {},
     subscribeToMore,
@@ -76,9 +43,9 @@ const ActiveChat = ({ name }: { name: string }) => {
       limit: 10,
     },
   });
-  const [sendMessage] = useMutation(SEND_MESSAGE);
-  const [message, setMessage] = useState("");
-  const { data: session } = useSession();
+  const expiredChat =
+    DateTime.local().toMillis() > (getUserActiveChat?.expiresAt as number);
+
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const [seeChat] = useMutation(SEEN_CHAT, {
     variables: {
@@ -95,34 +62,6 @@ const ActiveChat = ({ name }: { name: string }) => {
   const chatSeen = confessedTo
     ? getUserActiveChat?.confesseeSeen
     : getUserActiveChat?.anonSeen;
-
-  const handleOpenEmoji = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setEmojiAnchor(e.currentTarget);
-  };
-
-  const handleCloseEmoji = () => {
-    setEmojiAnchor(null);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.currentTarget.value);
-  };
-
-  const handleEmoji = (emoji: BaseEmoji, _event: SyntheticEvent) => {
-    setMessage(message + emoji.native);
-  };
-
-  const handleMessage = () => {
-    sendMessage({
-      variables: {
-        chat: getUserActiveChat?._id,
-        message,
-        anonymous: confessedTo ? false : true,
-        sender: session?.user?.name,
-      },
-    });
-    setMessage("");
-  };
 
   const loadMoreMessages = () => {
     moreMessages({
@@ -229,37 +168,35 @@ const ActiveChat = ({ name }: { name: string }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box display="flex" flexDirection="column" height="100%">
-        {
-          <AppBar className={styles.appbar}>
-            <Container
-              sx={{ height: "100%", display: "flex", alignItems: "center" }}
-            >
-              <Box flexGrow={1} display="flex" alignItems="center">
-                <Image
-                  src={
-                    confessedTo
-                      ? Anonymous
-                      : (getUserActiveChat?.confessee.image as string)
-                  }
-                  alt="PFP"
-                  width={40}
-                  height={40}
-                  className={styles.avatar}
-                />
+        <AppBar className={styles.appbar}>
+          <Container
+            sx={{ height: "100%", display: "flex", alignItems: "center" }}
+          >
+            <Box flexGrow={1} display="flex" alignItems="center">
+              <Image
+                src={
+                  confessedTo
+                    ? Anonymous
+                    : (getUserActiveChat?.confessee.image as string)
+                }
+                alt="PFP"
+                width={40}
+                height={40}
+                className={styles.avatar}
+              />
 
-                <Typography variant="h6" ml={2}>
-                  {confessedTo
-                    ? "Anonymous"
-                    : getUserActiveChat?.confessee.name}
-                </Typography>
-              </Box>
+              <Typography variant="h6" ml={2}>
+                {confessedTo ? "Anonymous" : getUserActiveChat?.confessee.name}
+              </Typography>
+            </Box>
 
-              <IconButton>
-                <SettingsIcon />
-              </IconButton>
-            </Container>
-          </AppBar>
-        }
+            <CountdownTimer endsIn={getUserActiveChat?.expiresAt as number} />
+
+            <IconButton>
+              <SettingsIcon />
+            </IconButton>
+          </Container>
+        </AppBar>
 
         <Box
           flexGrow={1}
@@ -284,45 +221,22 @@ const ActiveChat = ({ name }: { name: string }) => {
           )}
         </Box>
 
-        <AppBar className={styles.textbar} elevation={6}>
-          <Container
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <StyledTextField
-              sx={{ flexGrow: 1, height: "100%" }}
-              multiline
-              maxRows={4}
-              onChange={handleChange}
-              value={message}
-            />
-            <IconButton
-              sx={{ ml: 2, color: "white" }}
-              onClick={handleOpenEmoji}
-            >
-              <EmojiEmotionsIcon />
-            </IconButton>
-            <IconButton
-              sx={{ ml: 2, color: "white" }}
-              onClick={handleMessage}
-              disabled={message.trim().length == 0}
-            >
-              <SendIcon />
-            </IconButton>
-          </Container>
-        </AppBar>
+        {!expiredChat ? (
+          <Textbar chatId={getUserActiveChat?._id} confessedTo={confessedTo} />
+        ) : (
+          <>
+            <Link href="/reveal" passHref>
+              <Button
+                className="anonybutton"
+                sx={{ height: "120px", fontSize: "24px" }}
+                component="a"
+              >
+                Reveal Confesser!
+              </Button>
+            </Link>
+          </>
+        )}
       </Box>
-
-      <EmojiPicker
-        anchor={emojiAnchor}
-        handleClose={handleCloseEmoji}
-        handleEmoji={handleEmoji}
-      />
     </>
   );
 };

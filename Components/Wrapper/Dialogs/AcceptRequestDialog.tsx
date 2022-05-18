@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { ACCEPT_CONFESSION_REQUEST } from "../../../apollo/mutation/requestMutation";
 import { GET_USER_SOCIALS } from "../../../apollo/query/userQuery";
 import { GetUserResult } from "../../../types/Queries";
@@ -24,6 +25,7 @@ const AcceptRequestDialog = ({
   handleClose,
   requestID,
 }: AcceptRequestDialog) => {
+  const router = useRouter();
   const { data: session } = useSession();
   const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST, {
     update: (cache, result) => {
@@ -53,6 +55,7 @@ const AcceptRequestDialog = ({
       cache.evict({ id: `Request:${requestID}` });
       cache.gc();
       handleClose();
+      router.replace("/activeChat");
     },
   });
 

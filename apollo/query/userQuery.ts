@@ -45,6 +45,7 @@ export const GET_USER_SOCIALS = gql`
             name
           }
         }
+        expiresAt
         anonSeen
         confesseeSeen
         updatedAt

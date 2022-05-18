@@ -37,6 +37,18 @@ export const ACCEPT_CONFESSION_REQUEST = gql`
         name
         image
       }
+      latestMessage {
+        _id
+        message
+        sender {
+          _id
+          name
+        }
+      }
+      expiresAt
+      anonSeen
+      confesseeSeen
+      updatedAt
     }
   }
 `;

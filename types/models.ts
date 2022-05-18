@@ -41,6 +41,7 @@ export interface Message {
   sender: User;
   message: string;
   anonymous: boolean;
+  expiresAt: number;
 }
 
 export interface MessageConnection {
@@ -62,4 +63,5 @@ export interface Chat {
   confessee: User;
   messages: MessageConnection;
   latestMessage: Message;
+  expiresAt: number;
 }

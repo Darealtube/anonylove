@@ -31,3 +31,9 @@ export const SEEN_CHAT = gql`
     seenChat(person: $person, chat: $chat)
   }
 `;
+
+export const END_CHAT = gql`
+  mutation EndChat($chat: ID!) {
+    endChat(chat: $chat)
+  }
+`;

@@ -12,6 +12,7 @@ import Anonymous from "../../../public/anonyUser.png";
 import { useSession } from "next-auth/react";
 import styles from "../../../styles/List.module.css";
 import Link from "next/link";
+import { DateTime } from "luxon";
 
 //  Set parameter "chats" as optional for now
 const ChatList = ({ chat }: { chat?: Chat }) => {
@@ -19,7 +20,7 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
   const confessedTo = session?.user?.name === chat?.confessee.name;
   const chatSeen = confessedTo ? chat?.confesseeSeen : chat?.anonSeen;
   const sentByYou = chat?.latestMessage?.sender.name === session?.user?.name;
-
+  const chatExpired = (chat?.expiresAt as number) < DateTime.local().toMillis();
   return (
     <List sx={{ width: "100%" }}>
       {chat && (
@@ -49,7 +50,14 @@ const ChatList = ({ chat }: { chat?: Chat }) => {
                       overflow="hidden"
                       width="100%"
                     >
-                      {!chat.latestMessage && <strong>Send a Message!</strong>}
+                      {!chat.latestMessage && !chatExpired && (
+                        <strong>Send a Message!</strong>
+                      )}
+                      {chatExpired && (
+                        <Typography sx={{ color: "red" }}>
+                          <strong>Chat Expired!</strong>{" "}
+                        </Typography>
+                      )}
                       {!chatSeen ? (
                         <strong>
                           {sentByYou && "You:"} {chat?.latestMessage?.message}

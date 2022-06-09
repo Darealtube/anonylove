@@ -11,12 +11,14 @@ import {
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ACCEPT_CONFESSION_REQUEST } from "../../../apollo/mutation/requestMutation";
-import { GET_USER_SOCIALS } from "../../../apollo/query/userQuery";
+import { GET_USER_CHAT } from "../../../apollo/query/userQuery";
 import { GetUserResult } from "../../../types/Queries";
 
 type AcceptRequestDialog = {
   open: boolean;
-  handleClose: () => void;
+  handleClose:
+    | ((e: React.MouseEvent<HTMLButtonElement>) => void)
+    | (() => void);
   requestID: string;
 };
 
@@ -31,7 +33,7 @@ const AcceptRequestDialog = ({
     update: (cache, result) => {
       const newChat = result?.data?.acceptConfessionRequest;
       const user = cache.readQuery<GetUserResult>({
-        query: GET_USER_SOCIALS,
+        query: GET_USER_CHAT,
         variables: {
           limit: 10,
           name: session?.user?.name,
@@ -39,7 +41,7 @@ const AcceptRequestDialog = ({
       });
 
       cache.writeQuery({
-        query: GET_USER_SOCIALS,
+        query: GET_USER_CHAT,
         variables: {
           limit: 10,
           name: session?.user?.name,
@@ -54,13 +56,13 @@ const AcceptRequestDialog = ({
 
       cache.evict({ id: `Request:${requestID}` });
       cache.gc();
-      handleClose();
       router.replace("/activeChat");
     },
   });
 
-  const handleAcceptRequest = () => {
+  const handleAcceptRequest = (e: React.MouseEvent<HTMLButtonElement>) => {
     acceptRequest({ variables: { requestID } });
+    handleClose(e);
   };
 
   return (
@@ -79,8 +81,10 @@ const AcceptRequestDialog = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>I&apos;m not ready yet. Cancel</Button>
-          <Button onClick={handleAcceptRequest}>
+          <Button onClick={handleClose} value="accept">
+            I&apos;m not ready yet. Cancel
+          </Button>
+          <Button onClick={handleAcceptRequest} value="accept">
             Let&apos;s do this! Accept
           </Button>
         </DialogActions>

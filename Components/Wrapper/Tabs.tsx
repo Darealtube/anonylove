@@ -3,13 +3,7 @@ import { Box, Tab } from "@mui/material";
 import { useState, SyntheticEvent, ReactNode } from "react";
 import styles from "../../styles/AppWrap.module.css";
 
-const Tabs = ({
-  children,
-  hasActiveChat,
-}: {
-  children: ReactNode;
-  hasActiveChat: boolean;
-}) => {
+const Tabs = ({ children }: { children: ReactNode }) => {
   const [tab, setTab] = useState("chat");
   const handleTabChange = (
     _event: SyntheticEvent<Element, Event>,
@@ -20,11 +14,12 @@ const Tabs = ({
 
   return (
     <>
-      <TabContext value={hasActiveChat ? "chat" : tab}>
+      <TabContext value={tab}>
         <Box sx={{ borderColor: "divider" }} className={styles.tabs}>
           <TabList onChange={handleTabChange} centered>
             <Tab label="Chats" value="chat" />
-            <Tab label="Requests" value="request" disabled={hasActiveChat} />
+            <Tab label="Requests" value="request" />
+            <Tab label="Your Requests" value="yourRequest" />
           </TabList>
         </Box>
         {children}

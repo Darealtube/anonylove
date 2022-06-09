@@ -2,6 +2,9 @@ import { Chat, User } from "./models";
 
 export interface GetUserVariables {
   name: string;
+  from?: string;
+  limit?: number;
+  after?: string;
 }
 
 export interface GetUserResult {

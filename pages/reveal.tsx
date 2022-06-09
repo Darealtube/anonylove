@@ -78,7 +78,7 @@ const RevealConfession = ({
           />
         </Box>
 
-        <Typography variant="h5" align="center" mb={4}>
+        <Typography variant="h3" align="center" mb={4}>
           {getUserActiveChat?.anonymous.name}
         </Typography>
 

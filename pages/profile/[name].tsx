@@ -14,11 +14,17 @@ import { GetUserResult, GetUserVariables } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
 import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
-import { useContext } from "react";
-import { ActiveChatContext } from "../../Components/Wrapper/AppWrap";
+import { useState } from "react";
+import LinkTree from "../../Components/Profile/LinkTree";
 
-const Profile = ({ name }: { name: string }) => {
-  const hasActiveChat = useContext(ActiveChatContext);
+const Profile = ({
+  name,
+  youSentRequest,
+}: {
+  name: string;
+  youSentRequest: boolean;
+}) => {
+  const [disableRequest, setDisableRequest] = useState(false);
   const { data: session } = useSession();
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const { data: { getUser } = {} } = useQuery<GetUserResult, GetUserVariables>(
@@ -26,13 +32,16 @@ const Profile = ({ name }: { name: string }) => {
     {
       variables: {
         name,
+        from: session?.user?.name as string,
       },
+      skip: !session,
     }
   );
   const ownProfile = session?.user?.name === getUser?.name;
   const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
 
   const handleRequest = () => {
+    setDisableRequest(true);
     sendRequest({
       variables: { anonymous: session?.user?.name, receiver: name },
     });
@@ -54,28 +63,47 @@ const Profile = ({ name }: { name: string }) => {
         />
       </Box>
 
-      <Box className={styles.main}>
-        <Box className={styles.pfp}>
-          <Image
-            src={getUser?.image ?? anonyUser}
-            alt="PFP"
-            width={160}
-            height={160}
-            className={styles.avatar}
-          />
-        </Box>
+      <Grid container className={styles.main}>
+        <Grid item xs={6} sx={{ position: "relative", bottom: "80px" }}>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Box className={styles.pfp}>
+              <Image
+                src={getUser?.image ?? anonyUser}
+                alt="PFP"
+                width={160}
+                height={160}
+                className={styles.avatar}
+              />
+            </Box>
 
-        <Typography align="center" variant="h3" mt={1}>
-          {getUser?.name}
-        </Typography>
-      </Box>
+            <Typography
+              align="center"
+              variant="h5"
+              sx={{ wordBreak: "break-word", overflowWrap: "break-word" }}
+              mt={1}
+            >
+              {getUser?.name}
+            </Typography>
+          </Container>
+        </Grid>
+
+        <Grid item xs={6}>
+          <LinkTree />
+        </Grid>
+      </Grid>
 
       <Container sx={{ position: "relative", bottom: "40px" }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={12} lg={6}>
             <Information title="Email Address">
               <Typography align="center" variant="h6">
-                {getUser?.email}
+                {getUser?.email ?? "Not Provided"}
               </Typography>
             </Information>
             <Information title="Relationship Status">
@@ -95,26 +123,25 @@ const Profile = ({ name }: { name: string }) => {
                 </Button>
               </Link>
             ) : (
-              <Button
-                variant="outlined"
-                className={styles.reqButton}
-                onClick={handleRequest}
-                fullWidth
-                disabled={hasActiveChat}
-              >
-                Send Request
-              </Button>
-            )}
-            {!ownProfile && (
-              <Button
-                component="a"
-                variant="outlined"
-                className={styles.reqButton}
-                fullWidth
-                disabled={hasActiveChat}
-              >
-                Report User
-              </Button>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Button
+                  component="a"
+                  variant="outlined"
+                  className={styles.reqButton}
+                  fullWidth
+                >
+                  Report User
+                </Button>
+                <Button
+                  variant="outlined"
+                  className={styles.reqButton}
+                  onClick={handleRequest}
+                  fullWidth
+                  disabled={disableRequest || youSentRequest}
+                >
+                  Send Request
+                </Button>
+              </Box>
             )}
           </Grid>
           <Grid item xs={12} sm={6} md={12} lg={6}>
@@ -126,7 +153,11 @@ const Profile = ({ name }: { name: string }) => {
             </Typography>
             <Paper
               className={styles.bio}
-              sx={{ color: "#f6f7f8" }}
+              sx={{
+                color: "#f6f7f8",
+                wordBreak: "break-word",
+                overflowWrap: "break-word",
+              }}
               elevation={6}
             >
               {getUser?.bio ?? ""}
@@ -140,7 +171,10 @@ const Profile = ({ name }: { name: string }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data, exists } = await getUserInfo(context.params?.name as string);
+  const { data, exists, youSentRequest } = await getUserInfo(
+    context.params?.name as string,
+    session?.user?.name as string
+  );
 
   if (!exists) {
     return {
@@ -152,6 +186,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       session,
       name: context.params?.name,
+      youSentRequest,
     },
   });
 };

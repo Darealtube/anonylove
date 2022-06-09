@@ -35,6 +35,7 @@ const ActiveChat = ({ name }: { name: string }) => {
   const [pageVisible, setPageVisible] = useState(false);
   const {
     data: { getUserActiveChat } = {},
+    previousData,
     subscribeToMore,
     fetchMore: moreMessages,
   } = useQuery<getUserChatResult, getUserChatVariables>(GET_USER_ACTIVE_CHAT, {
@@ -79,6 +80,7 @@ const ActiveChat = ({ name }: { name: string }) => {
     });
   };
 
+  console.log(previousData);
   // Put the scrollbar at the end on page mount
   // Setup chat subscription on mount
   useEffect(() => {

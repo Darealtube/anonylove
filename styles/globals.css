@@ -24,6 +24,42 @@ a {
   transition: 0.2s ease-out;
 }
 
-.anonybutton:hover {
+.fbbutton {
+  background: transparent;
+  color: #f6f7f8;
+  background: linear-gradient(to left, transparent 50%, #284b63 50%) right;
+  background-size: 200%;
+  transition: 0.2s ease-out;
+}
+
+.snapbutton {
+  background: transparent;
+  color: #f6f7f8;
+  background: linear-gradient(to left, transparent 50%, #eac435 50%) right;
+  background-size: 200%;
+  transition: 0.2s ease-out;
+}
+
+.twtbutton {
+  background: transparent;
+  color: #f6f7f8;
+  background: linear-gradient(to left, transparent 50%, #0075c4 50%) right;
+  background-size: 200%;
+  transition: 0.2s ease-out;
+}
+
+.instabutton {
+  background: transparent;
+  color: #f6f7f8;
+  background: linear-gradient(to left, transparent 50%, #f397d6 50%) right;
+  background-size: 200%;
+  transition: 0.2s ease-out;
+}
+
+.anonybutton:hover,
+.fbbutton:hover,
+.snapbutton:hover,
+.twtbutton:hover,
+.instabutton:hover {
   background-position: left;
 }

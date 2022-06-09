@@ -4,6 +4,17 @@ export interface NewMessageData {
   };
 }
 
+export interface NewSentRequestData {
+  data: {
+    newSentRequest: NewSentRequest;
+  };
+}
+
+export interface NewSentRequest {
+  date: string;
+  _id: string;
+}
+
 export interface NewMessage {
   date: string;
   message: string;

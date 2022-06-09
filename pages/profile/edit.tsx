@@ -118,7 +118,7 @@ const EditProfile = () => {
         if (res.errors) {
           throw new Error("An error occurred. Try again.");
         } else {
-          router.replace(`/profile/${session?.user?.name}`);
+          router.replace(`/profile/${profile.name}`);
         }
       })
       .catch((err) => console.log(err));
@@ -281,7 +281,10 @@ export default EditProfile;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data } = await getUserInfo(session?.user?.name as string);
+  const { data } = await getUserInfo(
+    context.params?.name as string,
+    session?.user?.name as string
+  );
 
   if (!session) {
     return {

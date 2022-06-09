@@ -6,27 +6,23 @@ import {
   Box,
   AppBar,
   IconButton,
-  CircularProgress,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import { createContext, ReactNode, useState } from "react";
-import ChatList from "./Lists/ChatList";
+import { ReactNode, useState } from "react";
 import styles from "../../styles/AppWrap.module.css";
-import { useQuery, useSubscription } from "@apollo/client";
 import BrandLogo from "../../public/brandlogoblack.png";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { TabPanel } from "@mui/lab";
 import Link from "next/link";
 import Image from "next/image";
-import RequestList from "./Lists/RequestList";
-import { GET_USER_SOCIALS } from "../../apollo/query/userQuery";
 import Tabs from "./Tabs";
-import { SEEN_CHAT_SUBSCRIPTION } from "../../apollo/subscription/messageSub";
 
-export const ActiveChatContext = createContext(true);
 const MobileDrawer = dynamic(() => import("./MobileDrawer"));
+const ChatTab = dynamic(() => import("./Tabs/ChatTab"));
+const RequestTab = dynamic(() => import("./Tabs/RequestTab"));
+const YourRequestTab = dynamic(() => import("./Tabs/YourRequestTab"));
 
 const AppWrap = ({ children }: { children: ReactNode }) => {
   const theme = useTheme();
@@ -34,24 +30,9 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
 
-  const {
-    data: infoQuery,
-    fetchMore: moreRequests,
-    loading,
-  } = useQuery(GET_USER_SOCIALS, {
-    variables: {
-      limit: 10,
-      name: session?.user?.name,
-    },
-    skip: !session,
-  });
-
-  const { data } = useSubscription(SEEN_CHAT_SUBSCRIPTION);
   const handleChatOpen = () => {
     setChatOpen(!chatOpen);
   };
-
-  const hasActiveChat = infoQuery?.getUser?.activeChat ? true : false;
 
   return (
     <Grid
@@ -99,37 +80,28 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Link>
           </AppBar>
 
-          <Tabs hasActiveChat={loading ? true : hasActiveChat}>
+          <Tabs>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
-                {!loading ? (
-                  <ChatList chat={infoQuery?.getUser?.activeChat} />
-                ) : (
-                  <Box className={styles.loading}>
-                    <CircularProgress />
-                  </Box>
-                )}
+                <ChatTab />
               </Container>
             </TabPanel>
             <TabPanel value="request">
               <Container sx={{ zIndex: 1 }}>
-                {!loading ? (
-                  <RequestList
-                    requests={infoQuery?.getUser?.receivedConfessionRequests}
-                    moreRequests={moreRequests}
-                  />
-                ) : (
-                  <Box className={styles.loading}>
-                    <CircularProgress />
-                  </Box>
-                )}
+                <RequestTab />
+              </Container>
+            </TabPanel>
+
+            <TabPanel value="yourRequest">
+              <Container sx={{ zIndex: 1 }}>
+                <YourRequestTab />
               </Container>
             </TabPanel>
           </Tabs>
         </Grid>
       ) : (
         <MobileDrawer open={chatOpen} handleChatList={handleChatOpen}>
-          <Tabs hasActiveChat={loading ? true : hasActiveChat}>
+          {/* <Tabs hasActiveChat={loading ? true : hasActiveChat}>
             <TabPanel value="chat">
               <Container sx={{ zIndex: 1 }}>
                 {infoQuery?.getUser?.activeChat ? (
@@ -155,7 +127,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
                 )}
               </Container>
             </TabPanel>
-          </Tabs>
+          </Tabs> */}
         </MobileDrawer>
       )}
       <Grid
@@ -164,9 +136,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
         md={8}
         sx={{ color: "white", height: "100%", overflow: "auto" }}
       >
-        <ActiveChatContext.Provider value={loading ? true : hasActiveChat}>
-          {children}
-        </ActiveChatContext.Provider>
+        {children}
       </Grid>
     </Grid>
   );

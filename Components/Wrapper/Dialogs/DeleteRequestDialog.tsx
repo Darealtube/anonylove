@@ -12,7 +12,9 @@ import { REJECT_CONFESSION_REQUEST } from "../../../apollo/mutation/requestMutat
 
 type DeleteRequestDialogProps = {
   open: boolean;
-  handleClose: () => void;
+  handleClose:
+    | ((e: React.MouseEvent<HTMLButtonElement>) => void)
+    | (() => void);
   requestID: string;
 };
 
@@ -22,14 +24,13 @@ const DeleteRequestDialog = ({
   requestID,
 }: DeleteRequestDialogProps) => {
   const [deleteRequest] = useMutation(REJECT_CONFESSION_REQUEST);
-
-  const handleDeleteRequest = () => {
+  const handleDeleteRequest = (e: React.MouseEvent<HTMLButtonElement>) => {
+    handleClose(e);
     deleteRequest({
       variables: { requestID },
       update: (cache, _result) => {
         cache.evict({ id: `Request:${requestID}` });
         cache.gc();
-        handleClose();
       },
     });
   };
@@ -49,8 +50,10 @@ const DeleteRequestDialog = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>You&apos;re right. Cancel</Button>
-          <Button onClick={handleDeleteRequest}>
+          <Button onClick={handleClose} value="reject">
+            You&apos;re right. Cancel
+          </Button>
+          <Button onClick={handleDeleteRequest} value="reject">
             I don&apos;t care. Delete
           </Button>
         </DialogActions>

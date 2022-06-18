@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import GoogleProvider from "next-auth/providers/google";
+import TwitterProvider from "next-auth/providers/twitter";
 import clientPromise from "../../../lib/dbAdapter";
 import { initializeApollo } from "../../../apollo/apolloClient";
 import { CREATE_UNIQUE_TAG } from "../../../apollo/mutation/createUniqueTag";
@@ -13,6 +14,11 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+    TwitterProvider({
+      clientId: process.env.TWITTER_OAUTH_CLIENT_ID as string,
+      clientSecret: process.env.TWITTER_OAUTH_CLIENT_SECRET as string,
+      version: "2.0",
     }),
   ],
   adapter: MongoDBAdapter(clientPromise),

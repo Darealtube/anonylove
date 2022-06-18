@@ -38,6 +38,5 @@ export const revealChatInfo = async (name: string) => {
     data: apolloClient,
     exists: getUserActiveChat,
     expired,
-    chatId: getUserActiveChat._id,
   };
 };

@@ -9,6 +9,7 @@ export interface User {
   sentConfessionRequests: RequestConnection;
   receivedConfessionRequests: RequestConnection;
   activeChat?: Chat;
+  sentUserRequest: Boolean;
 }
 
 export interface Request {
@@ -25,7 +26,7 @@ export interface RequestConnection {
   edges: [RequestEdge];
 }
 
-interface RequestEdge {
+export interface RequestEdge {
   node: Request;
 }
 

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 
 export const GET_USER_QUERY = gql`
-  query GetUser($name: String!) {
+  query GetUser($name: String!, $from: String) {
     getUser(name: $name) {
       _id
       name
@@ -10,26 +10,15 @@ export const GET_USER_QUERY = gql`
       cover
       bio
       status
+      userSentRequest(from: $from)
     }
   }
 `;
 
-export const GET_USER_SOCIALS = gql`
-  query UserConfessionRequests($name: String!, $after: String, $limit: Int) {
+export const GET_USER_CHAT = gql`
+  query UserChat($name: String!) {
     getUser(name: $name) {
       _id
-      receivedConfessionRequests(limit: $limit, after: $after) {
-        edges {
-          node {
-            _id
-            date
-          }
-        }
-        pageInfo {
-          endCursor
-          hasNextPage
-        }
-      }
       activeChat {
         _id
         confessee {
@@ -49,6 +38,46 @@ export const GET_USER_SOCIALS = gql`
         anonSeen
         confesseeSeen
         updatedAt
+      }
+    }
+  }
+`;
+
+export const GET_USER_RECEIVED_REQUESTS = gql`
+  query UserReceivedRequests($name: String!, $after: String, $limit: Int) {
+    getUser(name: $name) {
+      _id
+      receivedConfessionRequests(limit: $limit, after: $after) {
+        edges {
+          node {
+            _id
+            date
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+`;
+
+export const GET_USER_SENT_REQUESTS = gql`
+  query UserSentRequests($name: String!, $after: String, $limit: Int) {
+    getUser(name: $name) {
+      _id
+      sentConfessionRequests(limit: $limit, after: $after) {
+        edges {
+          node {
+            _id
+            date
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
       }
     }
   }

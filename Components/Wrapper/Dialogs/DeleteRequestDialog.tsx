@@ -24,14 +24,13 @@ const DeleteRequestDialog = ({
   requestID,
 }: DeleteRequestDialogProps) => {
   const [deleteRequest] = useMutation(REJECT_CONFESSION_REQUEST);
-
   const handleDeleteRequest = (e: React.MouseEvent<HTMLButtonElement>) => {
+    handleClose(e);
     deleteRequest({
       variables: { requestID },
       update: (cache, _result) => {
         cache.evict({ id: `Request:${requestID}` });
         cache.gc();
-        handleClose(e);
       },
     });
   };

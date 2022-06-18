@@ -4,6 +4,7 @@ import { GetUserResult, GetUserVariables } from "../../../types/Queries";
 import { GET_USER_RECEIVED_REQUESTS } from "../../../apollo/query/userQuery";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
+import { Box, CircularProgress } from "@mui/material";
 
 const RequestList = dynamic(() => import("../Lists/RequestList"));
 const DeleteDialog = dynamic(() => import("../Dialogs/DeleteRequestDialog"));
@@ -49,7 +50,11 @@ const RequestTab = () => {
 
   return (
     <>
-      {query?.getUser?.receivedConfessionRequests && (
+      {loading ? (
+        <Box display="flex" justifyContent="center">
+          <CircularProgress />
+        </Box>
+      ) : (
         <RequestList
           requests={query?.getUser?.receivedConfessionRequests}
           moreRequests={moreRequests}

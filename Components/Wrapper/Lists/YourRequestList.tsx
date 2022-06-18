@@ -56,7 +56,7 @@ const YourRequestList = ({
           hasMore={hasMore as boolean}
           loader={<CircularProgress />}
           style={{ textAlign: "center", overflow: "hidden" }}
-          scrollableTarget="chatDrawer"
+          scrollableTarget="mainContent"
         >
           <List sx={{ width: "100%" }}>
             {requests?.edges.map(({ node: request }) => (
@@ -77,25 +77,29 @@ const YourRequestList = ({
                       secondary={
                         <>
                           <Typography
-                            sx={{ display: "inline" }}
+                            sx={{ display: "inline", color: "#f6f7f8" }}
                             component="span"
                             variant="body2"
                             color="text.primary"
                           >
                             Sent Request.
+                            {` - ${Math.floor(
+                              dateNow.diff(DateTime.fromMillis(+request.date), [
+                                "days",
+                                "hours",
+                                "minutes",
+                              ]).minutes
+                            )}m`}
                           </Typography>
-                          {` - ${Math.floor(
-                            dateNow.diff(DateTime.fromMillis(+request.date), [
-                              "days",
-                              "hours",
-                              "minutes",
-                            ]).minutes
-                          )}m`}
                         </>
                       }
                     />
                   </ListItem>
-                  <IconButton id={request._id} onClick={handleOpenDialog}>
+                  <IconButton
+                    id={request._id}
+                    onClick={handleOpenDialog}
+                    sx={{ color: "#f6f7f8" }}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </Box>

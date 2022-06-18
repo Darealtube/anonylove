@@ -60,7 +60,7 @@ const RequestList = ({
           hasMore={hasMore as boolean}
           loader={<CircularProgress />}
           style={{ textAlign: "center", overflow: "hidden" }}
-          scrollableTarget="chatDrawer"
+          scrollableTarget="mainContent"
         >
           <List sx={{ width: "100%" }}>
             {requests?.edges.map(({ node: request }) => (
@@ -81,7 +81,7 @@ const RequestList = ({
                       secondary={
                         <>
                           <Typography
-                            sx={{ display: "inline" }}
+                            sx={{ display: "inline", color: "#f6f7f8" }}
                             component="span"
                             variant="body2"
                             color="text.primary"
@@ -89,17 +89,22 @@ const RequestList = ({
                             I want to confess to you!
                           </Typography>
                           <br />
-                          {`${dateNow
-                            .diff(DateTime.fromMillis(+request.date), [
-                              "days",
-                              "hours",
-                              "minutes",
-                            ])
-                            .toHuman({
-                              maximumSignificantDigits: 1,
-                              minimumIntegerDigits: 1,
-                              listStyle: "narrow",
-                            })} ago`}
+                          <Typography
+                            sx={{ color: "#f6f7f8" }}
+                            variant="caption"
+                          >
+                            {`${dateNow
+                              .diff(DateTime.fromMillis(+request.date), [
+                                "days",
+                                "hours",
+                                "minutes",
+                              ])
+                              .toHuman({
+                                maximumSignificantDigits: 1,
+                                minimumIntegerDigits: 1,
+                                listStyle: "narrow",
+                              })} ago`}
+                          </Typography>
                         </>
                       }
                     />
@@ -114,6 +119,7 @@ const RequestList = ({
                       id={request._id}
                       onClick={handleOpenDialog}
                       value="reject"
+                      sx={{ color: "#f6f7f8" }}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -121,6 +127,7 @@ const RequestList = ({
                       id={request._id}
                       onClick={handleOpenDialog}
                       value="accept"
+                      sx={{ color: "#f6f7f8" }}
                     >
                       <CheckIcon />
                     </IconButton>

@@ -2,7 +2,6 @@ import { SwipeableDrawer, AppBar, IconButton, Box } from "@mui/material";
 import BrandLogo from "../../public/brandlogoblack.png";
 import styles from "../../styles/AppWrap.module.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import SettingsIcon from "@mui/icons-material/Settings";
 import Image from "next/image";
 import Link from "next/link";
 import React, { ReactNode } from "react";
@@ -42,13 +41,6 @@ const MobileDrawer = ({
           className={styles.appbaroptions}
         >
           <NotificationsIcon />
-        </IconButton>
-
-        <IconButton
-          sx={{ height: 40, width: 40 }}
-          className={styles.appbaroptions}
-        >
-          <SettingsIcon />
         </IconButton>
 
         <Link href={`/profile/${session?.user?.name}`} passHref>

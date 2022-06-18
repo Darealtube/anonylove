@@ -16,23 +16,6 @@ export const NEW_MSG_SUBSCRIPTION = gql`
   }
 `;
 
-export const NEW_SENT_REQUEST_SUBSCRIPTION = gql`
-  subscription newSentRequest {
-    newSentRequest {
-      _id
-      date
-      anonymous {
-        name
-        image
-      }
-      receiver {
-        name
-        image
-      }
-    }
-  }
-`;
-
 export const SEEN_CHAT_SUBSCRIPTION = gql`
   subscription seenChat {
     seenChat {

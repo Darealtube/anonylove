@@ -2,37 +2,61 @@ import {
   useMediaQuery,
   useTheme,
   Grid,
-  Container,
   Box,
   AppBar,
   IconButton,
+  List,
+  ListItem,
+  Divider,
+  ListItemButton,
+  Typography,
+  Button,
+  Skeleton,
 } from "@mui/material";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { ReactNode, useState } from "react";
 import styles from "../../styles/AppWrap.module.css";
 import BrandLogo from "../../public/brandlogoblack.png";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import SettingsIcon from "@mui/icons-material/Settings";
-import { TabPanel } from "@mui/lab";
 import Link from "next/link";
 import Image from "next/image";
-import Tabs from "./Tabs";
+import ChatList from "./Lists/ChatList";
+import { useSubscription, useQuery } from "@apollo/client";
+import { GET_USER_CHAT } from "../../apollo/query/userQuery";
+import { SEEN_CHAT_SUBSCRIPTION } from "../../apollo/subscription/messageSub";
+import { GetUserResult, GetUserVariables } from "../../types/Queries";
+import { Chat } from "../../types/models";
+import { DateTime } from "luxon";
 
 const MobileDrawer = dynamic(() => import("./MobileDrawer"));
-const ChatTab = dynamic(() => import("./Tabs/ChatTab"));
-const RequestTab = dynamic(() => import("./Tabs/RequestTab"));
-const YourRequestTab = dynamic(() => import("./Tabs/YourRequestTab"));
 
 const AppWrap = ({ children }: { children: ReactNode }) => {
   const theme = useTheme();
   const sm = useMediaQuery(theme.breakpoints.down("md"));
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
+  const { data } = useSubscription(SEEN_CHAT_SUBSCRIPTION);
+  const { data: { getUser } = {}, loading } = useQuery<
+    GetUserResult,
+    GetUserVariables
+  >(GET_USER_CHAT, {
+    variables: {
+      name: session?.user?.name as string,
+    },
+    skip: !session,
+    fetchPolicy: "network-only",
+  });
 
   const handleChatOpen = () => {
     setChatOpen(!chatOpen);
   };
+
+  const handleSignOut = () => signOut({ callbackUrl: "/" });
+
+  const chatExpired =
+    getUser?.activeChat &&
+    (getUser?.activeChat?.expiresAt as number) < DateTime.local().toMillis();
 
   return (
     <Grid
@@ -56,13 +80,6 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
               <NotificationsIcon />
             </IconButton>
 
-            <IconButton
-              sx={{ height: 40, width: 40 }}
-              className={styles.appbaroptions}
-            >
-              <SettingsIcon />
-            </IconButton>
-
             <Link href={`/profile/${session?.user?.name}`} passHref>
               <a>
                 <Box ml={2}>
@@ -80,54 +97,120 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             </Link>
           </AppBar>
 
-          <Tabs>
-            <TabPanel value="chat">
-              <Container sx={{ zIndex: 1 }}>
-                <ChatTab />
-              </Container>
-            </TabPanel>
-            <TabPanel value="request">
-              <Container sx={{ zIndex: 1 }}>
-                <RequestTab />
-              </Container>
-            </TabPanel>
+          <List sx={{ flexGrow: 1 }}>
+            <ListItem sx={{ pl: 4 }}>
+              <Typography>Active Chat</Typography>
+            </ListItem>
+            <ListItem sx={{ display: "flex", flexDirection: "column" }}>
+              {loading && !getUser?.activeChat ? (
+                <Skeleton variant="rectangular" width="100%" height={80} />
+              ) : !loading && getUser?.activeChat ? (
+                <ChatList chat={getUser?.activeChat as Chat} />
+              ) : (
+                <Typography variant="h5">No Active Chats</Typography>
+              )}
 
-            <TabPanel value="yourRequest">
-              <Container sx={{ zIndex: 1 }}>
-                <YourRequestTab />
-              </Container>
-            </TabPanel>
-          </Tabs>
+              {chatExpired && (
+                <Typography sx={{ color: "red" }}>
+                  <strong>Chat has expired.</strong>
+                </Typography>
+              )}
+            </ListItem>
+            <Divider />
+            <Link href="/requests/" passHref>
+              <ListItemButton divider sx={{ pl: 4, height: "64px" }}>
+                <Typography variant="button">Confession Requests</Typography>
+              </ListItemButton>
+            </Link>
+            <ListItemButton divider sx={{ pl: 4, height: "64px" }}>
+              <Typography variant="button">User Settings</Typography>
+            </ListItemButton>
+            <ListItemButton divider sx={{ pl: 4, height: "64px" }}>
+              <Typography variant="button">Reports</Typography>
+            </ListItemButton>
+          </List>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-evenly",
+              mb: 2,
+            }}
+          >
+            <Button sx={{ width: "40%" }} variant="outlined">
+              Terms
+            </Button>
+            <Button sx={{ width: "40%" }} variant="outlined">
+              Conditions
+            </Button>
+          </Box>
+          <Button
+            fullWidth
+            sx={{ color: "#FFC2C2" }}
+            className="anonybutton"
+            onClick={() => signOut({ callbackUrl: "/" })}
+          >
+            <strong>Log Out</strong>
+          </Button>
         </Grid>
       ) : (
         <MobileDrawer open={chatOpen} handleChatList={handleChatOpen}>
-          {/* <Tabs hasActiveChat={loading ? true : hasActiveChat}>
-            <TabPanel value="chat">
-              <Container sx={{ zIndex: 1 }}>
-                {infoQuery?.getUser?.activeChat ? (
-                  <ChatList chat={infoQuery?.getUser?.activeChat} />
-                ) : (
-                  <Box className={styles.loading}>
-                    <CircularProgress />
-                  </Box>
-                )}
-              </Container>
-            </TabPanel>
-            <TabPanel value="request">
-              <Container sx={{ zIndex: 1 }}>
-                {infoQuery?.getUser?.receivedConfessionRequests ? (
-                  <RequestList
-                    requests={infoQuery?.getUser?.receivedConfessionRequests}
-                    moreRequests={moreRequests}
-                  />
-                ) : (
-                  <Box className={styles.loading}>
-                    <CircularProgress />
-                  </Box>
-                )}
-              </Container>
-            </TabPanel>
-          </Tabs> */}
+          <List sx={{ flexGrow: 1 }}>
+            <ListItem sx={{ pl: 4 }}>
+              <Typography>Active Chat</Typography>
+            </ListItem>
+            <ListItem sx={{ display: "flex", flexDirection: "column" }}>
+              {loading && !getUser?.activeChat ? (
+                <Skeleton variant="rectangular" width="100%" height={80} />
+              ) : !loading && getUser?.activeChat ? (
+                <ChatList chat={getUser?.activeChat as Chat} />
+              ) : (
+                <Typography variant="h5">No Active Chats</Typography>
+              )}
+
+              {chatExpired && (
+                <Typography sx={{ color: "red" }}>
+                  <strong>Chat has expired.</strong>
+                </Typography>
+              )}
+            </ListItem>
+            <Divider />
+            <Link href="/requests/" passHref>
+              <ListItemButton divider sx={{ pl: 4, height: "64px" }}>
+                <Typography variant="button">Confession Requests</Typography>
+              </ListItemButton>
+            </Link>
+            <ListItemButton divider sx={{ pl: 4, height: "64px" }}>
+              <Typography variant="button">User Settings</Typography>
+            </ListItemButton>
+            <ListItemButton divider sx={{ pl: 4, height: "64px" }}>
+              <Typography variant="button">Reports</Typography>
+            </ListItemButton>
+          </List>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              paddingLeft: "16px",
+              paddingRight: "16px",
+
+              mb: 2,
+            }}
+          >
+            <Button fullWidth variant="outlined" sx={{ mb: 2 }}>
+              Terms
+            </Button>
+            <Button fullWidth variant="outlined">
+              Conditions
+            </Button>
+          </Box>
+          <Button
+            fullWidth
+            sx={{ color: "#FFC2C2" }}
+            className="anonybutton"
+            onClick={handleSignOut}
+          >
+            <strong>Log Out</strong>
+          </Button>
         </MobileDrawer>
       )}
       <Grid
@@ -135,6 +218,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
         xs={12}
         md={8}
         sx={{ color: "white", height: "100%", overflow: "auto" }}
+        id="mainContent"
       >
         {children}
       </Grid>

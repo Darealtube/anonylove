@@ -1,26 +1,26 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { addApolloState } from "../apollo/apolloClient";
 import { REVEAL_USER_CHAT } from "../apollo/query/chatQuery";
-import { getUserChatResult, getUserChatVariables } from "../types/Queries";
+import {
+  getUserChatResult,
+  getUserChatVariables,
+  GetUserResult,
+} from "../types/Queries";
 import { revealChatInfo } from "../utils/SSR/chat";
 import NoPicture from "../public/anonyUser.png";
 import styles from "../styles/RevealChat.module.css";
 import { END_CHAT } from "../apollo/mutation/chatMutation";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { GET_USER_CHAT } from "../apollo/query/userQuery";
 
-const RevealConfession = ({
-  name,
-  chatId,
-}: {
-  name: string;
-  chatId: string;
-}) => {
+const RevealConfession = ({ name }: { name: string }) => {
+  const { data: session } = useSession();
   const router = useRouter();
   const { data: { getUserActiveChat } = {} } = useQuery<
     getUserChatResult,
@@ -34,9 +34,28 @@ const RevealConfession = ({
   const [endChat] = useMutation(END_CHAT, {
     variables: { chat: getUserActiveChat?._id },
     update: (cache) => {
-      cache.evict({ id: `Chat:${chatId}` });
-      cache.gc();
-      router.replace("/");
+      // We can't use cache evict() because the query data disappears when changing tabs.
+      const user = cache.readQuery<GetUserResult>({
+        query: GET_USER_CHAT,
+        variables: {
+          limit: 10,
+          name: session?.user?.name,
+        },
+      });
+
+      cache.writeQuery({
+        query: GET_USER_CHAT,
+        variables: {
+          limit: 10,
+          name: session?.user?.name,
+        },
+        data: {
+          getUser: {
+            ...user?.getUser,
+            activeChat: null,
+          },
+        },
+      });
     },
   });
 
@@ -99,7 +118,7 @@ const RevealConfession = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data, exists, expired, chatId } = await revealChatInfo(
+  const { data, exists, expired } = await revealChatInfo(
     session?.user?.name as string
   );
 
@@ -122,7 +141,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       session,
       name: session?.user?.name,
-      chatId,
     },
   });
 };

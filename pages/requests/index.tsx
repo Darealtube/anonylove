@@ -1,14 +1,14 @@
 import { TabPanel } from "@mui/lab";
 import { Container } from "@mui/material";
 import Head from "next/head";
-import Tabs from "../../Components/Wrapper/Tabs";
+import Tabs from "../../Components/Requests/Tabs";
 import dynamic from "next/dynamic";
 
 const RequestTab = dynamic(
-  () => import("../../Components/Wrapper/Tabs/RequestTab")
+  () => import("../../Components/Requests/Tabs/RequestTab")
 );
 const YourRequestTab = dynamic(
-  () => import("../../Components/Wrapper/Tabs/YourRequestTab")
+  () => import("../../Components/Requests/Tabs/YourRequestTab")
 );
 
 const Requests = () => {

@@ -6,20 +6,20 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { MessageConnection } from "../../types/models";
 import Image from "next/image";
 import Anonymous from "../../public/anonyUser.png";
 import { useSession } from "next-auth/react";
 import styles from "../../styles/Chat.module.css";
 import { DateTime } from "luxon";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Message, QueryConnection } from "../../types/models";
 
 const MessageList = ({
   messages,
   loadMoreMessages,
   hasMore,
 }: {
-  messages: MessageConnection;
+  messages: QueryConnection<Message>;
   loadMoreMessages: () => void;
   hasMore: boolean | undefined;
 }) => {

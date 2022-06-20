@@ -7,7 +7,7 @@ import { useQuery } from "@apollo/client";
 import { Box, CircularProgress } from "@mui/material";
 
 const YourRequestList = dynamic(() => import("../Lists/YourRequestList"));
-const DeleteDialog = dynamic(() => import("../Dialogs/DeleteRequestDialog"));
+const DeleteDialog = dynamic(() => import("../../Wrapper/Dialogs/DeleteRequestDialog"));
 
 //  Set parameter "requests" as optional for now
 const YourRequestTab = () => {

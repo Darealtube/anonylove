@@ -15,6 +15,20 @@ export const GET_USER_QUERY = gql`
   }
 `;
 
+export const EDIT_USER_QUERY = gql`
+  query GetUser($name: String!) {
+    getUser(name: $name) {
+      _id
+      name
+      email
+      image
+      cover
+      bio
+      status
+    }
+  }
+`;
+
 export const GET_USER_CHAT = gql`
   query UserChat($name: String!) {
     getUser(name: $name) {
@@ -72,6 +86,30 @@ export const GET_USER_SENT_REQUESTS = gql`
           node {
             _id
             date
+          }
+        }
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+`;
+
+export const GET_USER_NOTIFICATIONS = gql`
+  query UserNotifications($name: String!, $after: String, $limit: Int) {
+    getUser(name: $name) {
+      _id
+      userNotifications(limit: $limit, after: $after) {
+        edges {
+          node {
+            _id
+            date
+            receiver {
+              _id
+              name
+            }
           }
         }
         pageInfo {

@@ -23,11 +23,11 @@ import { SEEN_CHAT } from "../apollo/mutation/chatMutation";
 import { getUserChatResult, getUserChatVariables } from "../types/Queries";
 import MessageList from "../Components/Chat/MessageList";
 import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
-import { NewMessageData } from "../types/Subscriptions";
 import Textbar from "../Components/Chat/Textbar";
-import CountdownTimer from "../Components/CountdownTimer";
+import CountdownTimer from "../Components/Chat/CountdownTimer";
 import { DateTime } from "luxon";
 import Link from "next/link";
+import { NewMessage, SubscriptionData } from "../types/Subscriptions";
 
 const ActiveChat = ({ name }: { name: string }) => {
   const chatMain = useRef<HTMLElement>();
@@ -80,7 +80,6 @@ const ActiveChat = ({ name }: { name: string }) => {
     });
   };
 
-  console.log(previousData);
   // Put the scrollbar at the end on page mount
   // Setup chat subscription on mount
   useEffect(() => {
@@ -93,7 +92,7 @@ const ActiveChat = ({ name }: { name: string }) => {
       document: NEW_MSG_SUBSCRIPTION,
       updateQuery: (
         prev,
-        { subscriptionData }: { subscriptionData: NewMessageData }
+        { subscriptionData }: { subscriptionData: SubscriptionData<NewMessage> }
       ) => {
         if (!subscriptionData.data) return prev;
         const newMessage = subscriptionData.data.newMessage;

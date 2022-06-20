@@ -11,13 +11,13 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
-import { RequestConnection } from "../../../types/models";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DateTime } from "luxon";
 import { GetUserResult } from "../../../types/Queries";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Anonymous from "../../../public/anonyUser.png";
 import styles from "../../../styles/List.module.css";
+import { QueryConnection, Request } from "../../../types/models";
 
 //  Set parameter "requests" as optional for now
 const YourRequestList = ({
@@ -25,7 +25,7 @@ const YourRequestList = ({
   moreRequests,
   handleOpenDialog,
 }: {
-  requests?: RequestConnection;
+  requests?: QueryConnection<Request>;
   moreRequests?: any;
   handleOpenDialog: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {

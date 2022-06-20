@@ -15,14 +15,12 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Button,
 } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 import { SyntheticEvent, useState } from "react";
 import useSearch from "../utils/Hooks/useSearch";
 import BrandLogo from "../public/brandlogo.png";
-import { signOut } from "next-auth/react";
 import { User } from "../types/models";
 import NoUserImg from "../public/anonyUser.png";
 import Link from "next/link";
@@ -83,7 +81,6 @@ const Home = () => {
         <Box mt={4}>
           <Image src={BrandLogo} alt="LOGO" width={304} height={192} />
         </Box>
-        <Button onClick={() => signOut({ callbackUrl: "/" })}>Logout</Button>
         <StyledAutoComplete
           id="anonylove-searchbar"
           sx={{ width: "80%", color: "white", mt: 4, mb: 4 }}

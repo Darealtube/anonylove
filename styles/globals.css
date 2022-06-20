@@ -63,3 +63,7 @@ a {
 .instabutton:hover {
   background-position: left;
 }
+
+.avatar {
+  border-radius: 50%;
+}

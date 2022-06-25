@@ -18,12 +18,12 @@ import {
 } from "@mui/material";
 import { getSession, useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_USER_QUERY } from "../../apollo/query/userQuery";
+import { EDIT_USER_QUERY } from "../../apollo/query/userQuery";
 import { GetUserResult, GetUserVariables } from "../../types/Queries";
-import { MutableRefObject, ReactNode, useRef, useState } from "react";
+import { MutableRefObject, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { addApolloState } from "../../apollo/apolloClient";
-import { getUserInfo } from "../../utils/SSR/profile";
+import { editUserInfo } from "../../utils/SSR/profile";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { getImages } from "../../utils/Media/getImage";
 import Information from "../../Components/Profile/Information";
@@ -39,7 +39,7 @@ const EditProfile = () => {
   const { data: session } = useSession();
   const [editProfile] = useMutation(EDIT_USER_PROFILE);
   const { data: { getUser } = {} } = useQuery<GetUserResult, GetUserVariables>(
-    GET_USER_QUERY,
+    EDIT_USER_QUERY,
     {
       variables: {
         name: session?.user?.name as string,
@@ -62,7 +62,7 @@ const EditProfile = () => {
     });
   };
 
-  const handleSelect = (e: SelectChangeEvent<string>, child: ReactNode) => {
+  const handleSelect = (e: SelectChangeEvent<string>) => {
     setProfile({
       ...profile,
       [e.target.name]: e.target.value,
@@ -281,10 +281,7 @@ export default EditProfile;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data } = await getUserInfo(
-    context.params?.name as string,
-    session?.user?.name as string
-  );
+  const { data } = await editUserInfo(session?.user?.name as string);
 
   if (!session) {
     return {

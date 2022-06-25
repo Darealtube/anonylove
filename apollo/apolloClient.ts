@@ -65,6 +65,7 @@ function createApolloClient() {
           fields: {
             sentConfessionRequests: relayStylePagination(),
             receivedConfessionRequests: relayStylePagination(),
+            userNotifications: relayStylePagination(),
           },
         },
         Chat: {

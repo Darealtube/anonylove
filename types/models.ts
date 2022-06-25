@@ -6,10 +6,12 @@ export interface User {
   cover?: string;
   bio?: string;
   status?: string;
-  sentConfessionRequests: RequestConnection;
-  receivedConfessionRequests: RequestConnection;
   activeChat?: Chat;
+  notifSeen?: boolean;
+  sentConfessionRequests: QueryConnection<Request>;
+  receivedConfessionRequests: QueryConnection<Request>;
   sentUserRequest: Boolean;
+  userNotifications: QueryConnection<NotificationModel>;
 }
 
 export interface Request {
@@ -18,21 +20,6 @@ export interface Request {
   anonymous: User;
   receiver: User;
   accepted: boolean;
-}
-
-export interface RequestConnection {
-  totalCount: number;
-  pageInfo: PageInfo;
-  edges: [RequestEdge];
-}
-
-export interface RequestEdge {
-  node: Request;
-}
-
-export interface PageInfo {
-  endCursor: string;
-  hasNextPage: boolean;
 }
 
 export interface Message {
@@ -45,16 +32,6 @@ export interface Message {
   expiresAt: number;
 }
 
-export interface MessageConnection {
-  totalCount: number;
-  pageInfo: PageInfo;
-  edges: [MessageEdge];
-}
-
-export interface MessageEdge {
-  node: Message;
-}
-
 export interface Chat {
   _id: string;
   updatedAt: number;
@@ -62,7 +39,28 @@ export interface Chat {
   confesseeSeen: boolean;
   anonymous: User;
   confessee: User;
-  messages: MessageConnection;
+  messages: QueryConnection<Message>;
   latestMessage: Message;
   expiresAt: number;
+}
+
+export interface NotificationModel {
+  _id: string;
+  date: Date;
+  receiver: User;
+}
+
+export interface QueryConnection<T> {
+  totalCount: number;
+  pageInfo: PageInfo;
+  edges: [QueryEdge<T>];
+}
+
+export interface QueryEdge<T> {
+  node: T;
+}
+
+export interface PageInfo {
+  endCursor: string;
+  hasNextPage: boolean;
 }

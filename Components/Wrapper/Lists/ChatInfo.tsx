@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Chat } from "../../../types/models";
 
 //  Set parameter "chats" as optional for now
-const ChatList = ({ chat }: { chat: Chat }) => {
+const ChatInfo = ({ chat }: { chat: Chat }) => {
   const { data: session } = useSession();
   const confessedTo = session?.user?.name === chat?.confessee.name;
   const chatSeen = confessedTo ? chat?.confesseeSeen : chat?.anonSeen;
@@ -66,4 +66,4 @@ const ChatList = ({ chat }: { chat: Chat }) => {
   );
 };
 
-export default ChatList;
+export default ChatInfo;

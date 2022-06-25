@@ -25,10 +25,12 @@ const RequestList = ({
   requests,
   moreRequests,
   handleOpenDialog,
+  hasActiveChat,
 }: {
   requests: QueryConnection<Request> | undefined;
   moreRequests?: any;
   handleOpenDialog: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  hasActiveChat: boolean;
 }) => {
   const dateNow = DateTime.local();
   const [hasMore, setHasMore] = useState(requests?.pageInfo.hasNextPage);
@@ -123,14 +125,20 @@ const RequestList = ({
                     >
                       <DeleteIcon />
                     </IconButton>
-                    <IconButton
-                      id={request._id}
-                      onClick={handleOpenDialog}
-                      value="accept"
-                      sx={{ color: "#f6f7f8" }}
-                    >
-                      <CheckIcon />
-                    </IconButton>
+                    {!hasActiveChat ? (
+                      <IconButton
+                        id={request._id}
+                        onClick={handleOpenDialog}
+                        value="accept"
+                        sx={{ color: "#f6f7f8" }}
+                      >
+                        <CheckIcon />
+                      </IconButton>
+                    ) : (
+                      <Typography variant="subtitle2">
+                        Cannot accept requests with an active chat.
+                      </Typography>
+                    )}
                   </Box>
                 </Box>
                 <Divider />

@@ -62,6 +62,9 @@ export const GET_USER_RECEIVED_REQUESTS = gql`
   query UserReceivedRequests($name: String!, $after: String, $limit: Int) {
     getUser(name: $name) {
       _id
+      activeChat {
+        _id
+      }
       receivedConfessionRequests(limit: $limit, after: $after) {
         edges {
           node {

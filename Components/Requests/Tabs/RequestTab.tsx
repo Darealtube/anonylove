@@ -7,14 +7,18 @@ import { useQuery } from "@apollo/client";
 import { Box, CircularProgress } from "@mui/material";
 
 const RequestList = dynamic(() => import("../Lists/RequestList"));
-const DeleteDialog = dynamic(() => import("../../Wrapper/Dialogs/DeleteRequestDialog"));
-const AcceptDialog = dynamic(() => import("../../Wrapper/Dialogs/AcceptRequestDialog"));
+const DeleteDialog = dynamic(
+  () => import("../../Wrapper/Dialogs/DeleteRequestDialog")
+);
+const AcceptDialog = dynamic(
+  () => import("../../Wrapper/Dialogs/AcceptRequestDialog")
+);
 
 //  Set parameter "requests" as optional for now
 const RequestTab = () => {
   const { data: session } = useSession();
   const {
-    data: query,
+    data: { getUser } = {},
     fetchMore: moreRequests,
     loading,
   } = useQuery<GetUserResult, GetUserVariables>(GET_USER_RECEIVED_REQUESTS, {
@@ -56,9 +60,10 @@ const RequestTab = () => {
         </Box>
       ) : (
         <RequestList
-          requests={query?.getUser?.receivedConfessionRequests}
+          requests={getUser?.receivedConfessionRequests}
           moreRequests={moreRequests}
           handleOpenDialog={handleOpenDialog}
+          hasActiveChat={Boolean(getUser?.activeChat)}
         />
       )}
 

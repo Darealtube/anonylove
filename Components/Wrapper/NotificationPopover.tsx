@@ -1,5 +1,5 @@
 import { useLazyQuery } from "@apollo/client";
-import { Box, Popover } from "@mui/material";
+import { Box, Popover, useMediaQuery, useTheme } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { GET_USER_NOTIFICATIONS } from "../../apollo/query/userQuery";
 import { NotificationModel, QueryConnection } from "../../types/models";
@@ -10,10 +10,14 @@ import { useEffect } from "react";
 const NotificationPopover = ({
   anchor,
   handleClose,
+  seenNotif,
 }: {
   anchor: HTMLElement | null;
   handleClose: () => void;
+  seenNotif: boolean | undefined;
 }) => {
+  const theme = useTheme();
+  const sm = useMediaQuery(theme.breakpoints.down("md"));
   const { data: session } = useSession();
   const [getNotifs, { data, fetchMore: moreNotifications, refetch }] =
     useLazyQuery<GetUserResult, GetUserVariables>(GET_USER_NOTIFICATIONS, {
@@ -24,11 +28,16 @@ const NotificationPopover = ({
     });
 
   useEffect(() => {
-    if (Boolean(anchor) === true) {
-      getNotifs();
+    if (Boolean(anchor) === true && seenNotif === false) {
       refetch();
     }
-  }, [anchor, refetch, getNotifs]);
+  }, [anchor, refetch, getNotifs, seenNotif]);
+
+  useEffect(() => {
+    if (Boolean(anchor) === true) {
+      getNotifs();
+    }
+  }, [getNotifs, anchor]);
 
   return (
     <>
@@ -38,15 +47,14 @@ const NotificationPopover = ({
         anchorEl={anchor}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
+          vertical: "center",
+          horizontal: "center",
         }}
       >
         <Box
           sx={{
-            width: "40vw",
+            width: sm ? "80vw" : "40vw",
             height: "400px",
-            maxWidth: "40vw",
             maxHeight: "400px",
             overflow: "auto",
           }}

@@ -1,7 +1,6 @@
 import {
   SwipeableDrawer,
   AppBar,
-  IconButton,
   Box,
   List,
   ListItem,
@@ -12,22 +11,24 @@ import {
 } from "@mui/material";
 import BrandLogo from "../../public/brandlogoblack.png";
 import styles from "../../styles/AppWrap.module.css";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import Image from "next/image";
 import Link from "next/link";
 import React, { ReactNode } from "react";
 import { signOut, useSession } from "next-auth/react";
+import Notifications from "./Notifications";
 
 type MobileDrawerProps = {
   children: ReactNode;
   open: boolean;
   handleChatList: () => void;
+  notifSeen: boolean | undefined;
 };
 
 const MobileSideBar = ({
   children,
   open,
   handleChatList,
+  notifSeen,
 }: MobileDrawerProps) => {
   const { data: session } = useSession();
   const handleSignOut = () => signOut({ callbackUrl: "/" });
@@ -48,12 +49,7 @@ const MobileSideBar = ({
           </a>
         </Link>
         <Box flexGrow={1} />
-        <IconButton
-          sx={{ height: 40, width: 40 }}
-          className={styles.appbaroptions}
-        >
-          <NotificationsIcon />
-        </IconButton>
+        {notifSeen !== undefined && <Notifications />}
 
         <Link href={`/profile/${session?.user?.name}`} passHref>
           <a>

@@ -6,9 +6,10 @@ export interface User {
   cover?: string;
   bio?: string;
   status?: string;
+  activeChat?: Chat;
+  notifSeen?: boolean;
   sentConfessionRequests: QueryConnection<Request>;
   receivedConfessionRequests: QueryConnection<Request>;
-  activeChat?: Chat;
   sentUserRequest: Boolean;
   userNotifications: QueryConnection<NotificationModel>;
 }

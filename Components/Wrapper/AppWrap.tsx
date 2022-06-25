@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import { ReactNode, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
 import styles from "../../styles/AppWrap.module.css";
 import ChatInfo from "./Lists/ChatInfo";
 import { useSubscription, useQuery } from "@apollo/client";
@@ -19,6 +19,9 @@ import { Chat } from "../../types/models";
 import { DateTime } from "luxon";
 import SideBar from "./SideBar";
 
+export const NotificationContext = createContext<{ notifSeen?: boolean }>({
+  notifSeen: undefined,
+});
 const MobileSideBar = dynamic(() => import("./MobileSideBar"));
 
 const AppWrap = ({ children }: { children: ReactNode }) => {
@@ -53,25 +56,9 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
         sx={{ height: "100vh", color: "black" }}
         className={styles.mainmenu}
       >
-        {!sm ? (
-          <SideBar>
-            {loading && !getUser?.activeChat ? (
-              <Skeleton variant="rectangular" width="100%" height={80} />
-            ) : !loading && getUser?.activeChat ? (
-              <ChatInfo chat={getUser?.activeChat as Chat} />
-            ) : (
-              <Typography variant="h5">No Active Chats</Typography>
-            )}
-
-            {chatExpired && (
-              <Typography sx={{ color: "red" }}>
-                <strong>Chat has expired.</strong>
-              </Typography>
-            )}
-          </SideBar>
-        ) : (
-          <MobileSideBar open={chatOpen} handleChatList={handleChatOpen}>
-            <ListItem sx={{ display: "flex", flexDirection: "column" }}>
+        <NotificationContext.Provider value={{ notifSeen: getUser?.notifSeen }}>
+          {!sm ? (
+            <SideBar notifSeen={getUser?.notifSeen}>
               {loading && !getUser?.activeChat ? (
                 <Skeleton variant="rectangular" width="100%" height={80} />
               ) : !loading && getUser?.activeChat ? (
@@ -85,9 +72,31 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
                   <strong>Chat has expired.</strong>
                 </Typography>
               )}
-            </ListItem>
-          </MobileSideBar>
-        )}
+            </SideBar>
+          ) : (
+            <MobileSideBar
+              open={chatOpen}
+              handleChatList={handleChatOpen}
+              notifSeen={getUser?.notifSeen}
+            >
+              <ListItem sx={{ display: "flex", flexDirection: "column" }}>
+                {loading && !getUser?.activeChat ? (
+                  <Skeleton variant="rectangular" width="100%" height={80} />
+                ) : !loading && getUser?.activeChat ? (
+                  <ChatInfo chat={getUser?.activeChat as Chat} />
+                ) : (
+                  <Typography variant="h5">No Active Chats</Typography>
+                )}
+
+                {chatExpired && (
+                  <Typography sx={{ color: "red" }}>
+                    <strong>Chat has expired.</strong>
+                  </Typography>
+                )}
+              </ListItem>
+            </MobileSideBar>
+          )}
+        </NotificationContext.Provider>
         <Grid
           item
           xs={12}

@@ -2,6 +2,7 @@ import {
   Box,
   CircularProgress,
   Divider,
+  IconButton,
   List,
   ListItem,
   ListItemAvatar,
@@ -13,6 +14,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { NotificationModel, QueryConnection } from "../../../types/models";
 import Image from "next/image";
 import Anonymous from "../../../public/anonyUser.png";
+import { useMutation } from "@apollo/client";
+import { DELETE_NOTIFICATION } from "../../../apollo/mutation/notifMutation";
+import React from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const NotificationList = ({
   notifications,
@@ -24,12 +29,25 @@ const NotificationList = ({
   hasMore: boolean;
 }) => {
   const dateNow = DateTime.local();
-
+  const [deleteNotif] = useMutation(DELETE_NOTIFICATION);
   const loadMoreNotifs = () => {
     moreNotifications({
       variables: {
         after: notifications?.pageInfo.endCursor,
         limit: 10,
+      },
+    });
+  };
+
+  const handleDeleteNotif = (e: React.MouseEvent<HTMLButtonElement>) => {
+    let notifId = e.currentTarget?.value;
+    deleteNotif({
+      variables: {
+        notifID: notifId,
+      },
+      update: (cache) => {
+        cache.evict({ id: `Notification:${notifId}` });
+        cache.gc();
       },
     });
   };
@@ -49,7 +67,20 @@ const NotificationList = ({
             {notifications?.edges.map(({ node: notification }) => (
               <Box key={notification._id}>
                 <Box display="flex">
-                  <ListItem alignItems="flex-start">
+                  <ListItem
+                    alignItems="flex-start"
+                    secondaryAction={
+                      <>
+                        <IconButton
+                          edge="end"
+                          value={notification._id}
+                          onClick={handleDeleteNotif}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    }
+                  >
                     <ListItemAvatar>
                       <Image
                         src={Anonymous}

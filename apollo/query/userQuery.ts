@@ -53,6 +53,7 @@ export const GET_USER_CHAT = gql`
         confesseeSeen
         updatedAt
       }
+      notifSeen
     }
   }
 `;

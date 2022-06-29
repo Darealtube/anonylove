@@ -7,7 +7,7 @@ export const DELETE_NOTIFICATION = gql`
 `;
 
 export const SEEN_NOTIFICATION = gql`
-  mutation SeenNotification($userName: String!) {
-    seenNotification(userName: $userName)
+  mutation SeenNotification($userId: ID!) {
+    seenNotification(userId: $userId)
   }
 `;

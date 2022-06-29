@@ -3,7 +3,7 @@ import { gql } from "@apollo/client/core";
 export const SEND_MESSAGE = gql`
   mutation SendMessage(
     $chat: ID!
-    $sender: String!
+    $sender: ID!
     $message: String!
     $anonymous: Boolean!
   ) {

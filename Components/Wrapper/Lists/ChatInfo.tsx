@@ -14,9 +14,9 @@ import { Chat } from "../../../types/models";
 //  Set parameter "chats" as optional for now
 const ChatInfo = ({ chat }: { chat: Chat }) => {
   const { data: session } = useSession();
-  const confessedTo = session?.user?.name === chat?.confessee.name;
+  const confessedTo = session?.user?.id === chat?.confessee._id;
   const chatSeen = confessedTo ? chat?.confesseeSeen : chat?.anonSeen;
-  const sentByYou = chat?.latestMessage?.sender.name === session?.user?.name;
+  const sentByYou = chat?.latestMessage?.sender._id === session?.user?.id;
   return (
     <>
       <Link href="/activeChat" passHref>

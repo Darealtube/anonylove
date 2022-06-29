@@ -1,27 +1,32 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { GetUserResult, GetUserVariables } from "../../../types/Queries";
-import { GET_USER_SENT_REQUESTS } from "../../../apollo/query/userQuery";
+import { GetProfileResult, GetProfileVariables } from "../../../types/Queries";
+import { GET_PROFILE_SENT_REQUESTS } from "../../../apollo/query/userQuery";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
 import { Box, CircularProgress } from "@mui/material";
 
 const YourRequestList = dynamic(() => import("../Lists/YourRequestList"));
-const DeleteDialog = dynamic(() => import("../../Wrapper/Dialogs/DeleteRequestDialog"));
+const DeleteDialog = dynamic(
+  () => import("../../Wrapper/Dialogs/DeleteRequestDialog")
+);
 
 //  Set parameter "requests" as optional for now
 const YourRequestTab = () => {
   const { data: session } = useSession();
   const {
-    data: { getUser } = {},
+    data: { getProfile } = {},
     fetchMore: moreRequests,
     loading,
-  } = useQuery<GetUserResult, GetUserVariables>(GET_USER_SENT_REQUESTS, {
-    variables: {
-      name: session?.user?.name as string,
-      limit: 10,
-    },
-  });
+  } = useQuery<GetProfileResult, GetProfileVariables>(
+    GET_PROFILE_SENT_REQUESTS,
+    {
+      variables: {
+        id: session?.user?.id as string,
+        limit: 10,
+      },
+    }
+  );
   const [openDelete, setOpenDelete] = useState(false);
   const [targetId, setTargetId] = useState("");
 
@@ -43,7 +48,7 @@ const YourRequestTab = () => {
         </Box>
       ) : (
         <YourRequestList
-          requests={getUser?.sentConfessionRequests}
+          requests={getProfile?.sentConfessionRequests}
           moreRequests={moreRequests}
           handleOpenDialog={handleOpenDialog}
         />

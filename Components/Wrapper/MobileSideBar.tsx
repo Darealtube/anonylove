@@ -38,9 +38,7 @@ const MobileSideBar = ({
       open={open}
       onClose={handleChatList}
       onOpen={handleChatList}
-      PaperProps={{
-        style: { maxWidth: "90%" },
-      }}
+      PaperProps={{ style: { maxWidth: "90%" } }}
     >
       <AppBar className={styles.appbar} elevation={0}>
         <Link href="/home" passHref>
@@ -51,7 +49,7 @@ const MobileSideBar = ({
         <Box flexGrow={1} />
         {notifSeen !== undefined && <Notifications />}
 
-        <Link href={`/profile/${session?.user?.name}`} passHref>
+        <Link href={`/profile/`} passHref>
           <a>
             <Box ml={2}>
               {session?.user?.image && (

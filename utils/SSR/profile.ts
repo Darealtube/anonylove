@@ -1,7 +1,11 @@
 import { initializeApollo } from "../../apollo/apolloClient";
-import { EDIT_USER_QUERY, GET_USER_QUERY } from "../../apollo/query/userQuery";
+import {
+  EDIT_PROFILE_QUERY,
+  GET_PROFILE_QUERY,
+  GET_USER_QUERY,
+} from "../../apollo/query/userQuery";
 
-export const getUserInfo = async (name: string, sessionName: string) => {
+export const getUserInfo = async (name: string, sessionId: string) => {
   const apolloClient = initializeApollo();
   const {
     data: { getUser },
@@ -9,22 +13,31 @@ export const getUserInfo = async (name: string, sessionName: string) => {
     query: GET_USER_QUERY,
     variables: {
       name,
-      from: sessionName,
+      from: sessionId,
     },
   });
   const youSentRequest = getUser?.userSentRequest;
   return { data: apolloClient, exists: getUser, youSentRequest };
 };
 
-export const editUserInfo = async (name: string) => {
+export const getProfileInfo = async (id: string) => {
   const apolloClient = initializeApollo();
   const {
-    data: { getUser },
+    data: { getProfile },
   } = await apolloClient.query({
-    query: EDIT_USER_QUERY,
-    variables: {
-      name,
-    },
+    query: GET_PROFILE_QUERY,
+    variables: { id },
   });
-  return { data: apolloClient, exists: getUser };
+  return { data: apolloClient, exists: getProfile };
+};
+
+export const editProfileInfo = async (id: string) => {
+  const apolloClient = initializeApollo();
+  const {
+    data: { getProfile },
+  } = await apolloClient.query({
+    query: EDIT_PROFILE_QUERY,
+    variables: { id },
+  });
+  return { data: apolloClient, exists: getProfile };
 };

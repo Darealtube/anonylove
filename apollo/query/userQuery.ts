@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 
 export const GET_USER_QUERY = gql`
-  query GetUser($name: String!, $from: String) {
+  query GetUser($name: String!, $from: ID!) {
     getUser(name: $name) {
       _id
       name
@@ -15,9 +15,9 @@ export const GET_USER_QUERY = gql`
   }
 `;
 
-export const EDIT_USER_QUERY = gql`
-  query GetUser($name: String!) {
-    getUser(name: $name) {
+export const GET_PROFILE_QUERY = gql`
+  query GetProfile($id: ID!) {
+    getProfile(id: $id) {
       _id
       name
       email
@@ -29,9 +29,23 @@ export const EDIT_USER_QUERY = gql`
   }
 `;
 
-export const GET_USER_CHAT = gql`
-  query UserChat($name: String!) {
-    getUser(name: $name) {
+export const EDIT_PROFILE_QUERY = gql`
+  query EditProfileInfo($id: ID!) {
+    getProfile(id: $id) {
+      _id
+      name
+      email
+      image
+      cover
+      bio
+      status
+    }
+  }
+`;
+
+export const GET_PROFILE_CHAT = gql`
+  query ProfileChat($id: ID!) {
+    getProfile(id: $id) {
       _id
       activeChat {
         _id
@@ -58,9 +72,9 @@ export const GET_USER_CHAT = gql`
   }
 `;
 
-export const GET_USER_RECEIVED_REQUESTS = gql`
-  query UserReceivedRequests($name: String!, $after: String, $limit: Int) {
-    getUser(name: $name) {
+export const GET_PROFILE_RECEIVED_REQUESTS = gql`
+  query ProfileRequests($id: ID!, $after: String, $limit: Int) {
+    getProfile(id: $id) {
       _id
       activeChat {
         _id
@@ -81,9 +95,9 @@ export const GET_USER_RECEIVED_REQUESTS = gql`
   }
 `;
 
-export const GET_USER_SENT_REQUESTS = gql`
-  query UserSentRequests($name: String!, $after: String, $limit: Int) {
-    getUser(name: $name) {
+export const GET_PROFILE_SENT_REQUESTS = gql`
+  query ProfileSentRequests($id: ID!, $after: String, $limit: Int) {
+    getProfile(id: $id) {
       _id
       sentConfessionRequests(limit: $limit, after: $after) {
         edges {
@@ -101,9 +115,9 @@ export const GET_USER_SENT_REQUESTS = gql`
   }
 `;
 
-export const GET_USER_NOTIFICATIONS = gql`
-  query UserNotifications($name: String!, $after: String, $limit: Int) {
-    getUser(name: $name) {
+export const GET_PROFILE_NOTIFICATIONS = gql`
+  query ProfileNotifications($id: ID!, $after: String, $limit: Int) {
+    getProfile(id: $id) {
       _id
       userNotifications(limit: $limit, after: $after) {
         edges {

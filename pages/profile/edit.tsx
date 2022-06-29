@@ -18,12 +18,12 @@ import {
 } from "@mui/material";
 import { getSession, useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@apollo/client";
-import { EDIT_USER_QUERY } from "../../apollo/query/userQuery";
-import { GetUserResult, GetUserVariables } from "../../types/Queries";
+import { EDIT_PROFILE_QUERY } from "../../apollo/query/userQuery";
+import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
 import { MutableRefObject, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { addApolloState } from "../../apollo/apolloClient";
-import { editUserInfo } from "../../utils/SSR/profile";
+import { editProfileInfo } from "../../utils/SSR/profile";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { getImages } from "../../utils/Media/getImage";
 import Information from "../../Components/Profile/Information";
@@ -31,6 +31,7 @@ import Link from "next/link";
 import { EDIT_USER_PROFILE } from "../../apollo/mutation/userMutation";
 import { useRouter } from "next/router";
 import { uploadImage } from "../../utils/Media/uploadMedia";
+import LinkTree from "../../Components/Profile/LinkTree";
 
 const EditProfile = () => {
   const router = useRouter();
@@ -38,21 +39,21 @@ const EditProfile = () => {
   const cover = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
   const [editProfile] = useMutation(EDIT_USER_PROFILE);
-  const { data: { getUser } = {} } = useQuery<GetUserResult, GetUserVariables>(
-    EDIT_USER_QUERY,
-    {
-      variables: {
-        name: session?.user?.name as string,
-      },
-    }
-  );
+  const { data: { getProfile } = {} } = useQuery<
+    GetProfileResult,
+    GetProfileVariables
+  >(EDIT_PROFILE_QUERY, {
+    variables: {
+      id: session?.user?.id as string,
+    },
+  });
 
   const [profile, setProfile] = useState({
-    name: getUser?.name,
-    image: getUser?.image,
-    cover: getUser?.cover,
-    bio: getUser?.bio,
-    status: getUser?.status ?? "Single",
+    name: getProfile?.name,
+    image: getProfile?.image,
+    cover: getProfile?.cover,
+    bio: getProfile?.bio,
+    status: getProfile?.status ?? "Single",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,17 +109,17 @@ const EditProfile = () => {
             ? profile.image
             : await uploadImage(profile.image as string),
         cover:
-          getUser?.cover === profile.cover
+          getProfile?.cover === profile.cover
             ? profile.cover
             : await uploadImage(profile.cover as string),
-        originalName: session?.user?.name,
+        userId: session?.user?.id,
       },
     })
       .then((res) => {
         if (res.errors) {
           throw new Error("An error occurred. Try again.");
         } else {
-          router.replace(`/profile/${profile.name}`);
+          router.replace(`/profile/`);
         }
       })
       .catch((err) => console.log(err));
@@ -154,53 +155,67 @@ const EditProfile = () => {
         />
       </Box>
 
-      <Box className={styles.main}>
-        <Box className={styles.pfp}>
-          <Image
-            src={profile.image ?? anonyUser}
-            alt="PFP"
-            layout="fill"
-            objectFit="cover"
-            className={styles.avatar}
-          />
-          <IconButton
-            sx={{ position: "absolute", color: "#f6f7f8" }}
-            onClick={handleChangePFPClick}
+      <Grid container className={styles.main}>
+        <Grid item xs={6} sx={{ position: "relative", bottom: "80px" }}>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           >
-            <CameraAltIcon />
-          </IconButton>
-          <input
-            type="file"
-            hidden={true}
-            accept="image/*"
-            ref={pfp}
-            onChange={handleChangePFP}
-          />
-        </Box>
+            <Box className={styles.pfp}>
+              <Image
+                src={profile.image ?? anonyUser}
+                alt="PFP"
+                layout="fill"
+                objectFit="cover"
+                className={styles.avatar}
+              />
+              <IconButton
+                sx={{ position: "absolute", color: "#f6f7f8" }}
+                onClick={handleChangePFPClick}
+              >
+                <CameraAltIcon />
+              </IconButton>
+              <input
+                type="file"
+                hidden={true}
+                accept="image/*"
+                ref={pfp}
+                onChange={handleChangePFP}
+              />
+            </Box>
 
-        <TextField
-          id="name"
-          name="name"
-          variant="standard"
-          sx={{ width: "80%" }}
-          value={profile.name}
-          onChange={handleChange}
-          inputProps={{
-            style: {
-              color: "white",
-              fontSize: "40px",
-              textAlign: "center",
-            },
-          }}
-        />
-      </Box>
+            <TextField
+              id="name"
+              name="name"
+              variant="standard"
+              sx={{ width: "80%" }}
+              value={profile.name}
+              onChange={handleChange}
+              inputProps={{
+                style: {
+                  color: "white",
+                  fontSize: "20px",
+                  textAlign: "center",
+                },
+              }}
+            />
+          </Container>
+        </Grid>
+
+        <Grid item xs={6}>
+          <LinkTree />
+        </Grid>
+      </Grid>
 
       <Container sx={{ position: "relative", bottom: "40px" }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={12} lg={6}>
             <Information title="Email Address">
               <Typography align="center" variant="h6">
-                {getUser?.email}
+                {getProfile?.email}
               </Typography>
             </Information>
             <Information title="Relationship Status">
@@ -281,7 +296,7 @@ export default EditProfile;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data } = await editUserInfo(session?.user?.name as string);
+  const { data } = await editProfileInfo(session?.user?.id as string);
 
   if (!session) {
     return {

@@ -7,9 +7,10 @@ import Image from "next/image";
 import { addApolloState } from "../apollo/apolloClient";
 import { REVEAL_USER_CHAT } from "../apollo/query/chatQuery";
 import {
-  getUserChatResult,
-  getUserChatVariables,
-  GetUserResult,
+  getProfileChatResult,
+  getProfileChatVariables,
+  GetProfileResult,
+  GetProfileVariables,
 } from "../types/Queries";
 import { revealChatInfo } from "../utils/SSR/chat";
 import NoPicture from "../public/anonyUser.png";
@@ -17,41 +18,37 @@ import styles from "../styles/RevealChat.module.css";
 import { END_CHAT } from "../apollo/mutation/chatMutation";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { GET_USER_CHAT } from "../apollo/query/userQuery";
+import { GET_PROFILE_CHAT } from "../apollo/query/userQuery";
 
-const RevealConfession = ({ name }: { name: string }) => {
+const RevealConfession = ({ id }: { id: string }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const { data: { getUserActiveChat } = {} } = useQuery<
-    getUserChatResult,
-    getUserChatVariables
-  >(REVEAL_USER_CHAT, {
-    variables: {
-      name,
-    },
-  });
+  const { data: { getProfileActiveChat } = {} } = useQuery<
+    getProfileChatResult,
+    getProfileChatVariables
+  >(REVEAL_USER_CHAT, { variables: { id } });
 
   const [endChat] = useMutation(END_CHAT, {
-    variables: { chat: getUserActiveChat?._id },
+    variables: { chat: getProfileActiveChat?._id },
     update: (cache) => {
       // We can't use cache evict() because the query data disappears when changing tabs.
-      const user = cache.readQuery<GetUserResult>({
-        query: GET_USER_CHAT,
+      const user = cache.readQuery<GetProfileResult, GetProfileVariables>({
+        query: GET_PROFILE_CHAT,
         variables: {
           limit: 10,
-          name: session?.user?.name,
+          id: session?.user?.id as string,
         },
       });
 
       cache.writeQuery({
-        query: GET_USER_CHAT,
+        query: GET_PROFILE_CHAT,
         variables: {
           limit: 10,
-          name: session?.user?.name,
+          id: session?.user?.id,
         },
         data: {
-          getUser: {
-            ...user?.getUser,
+          getProfile: {
+            ...user?.getProfile,
             activeChat: null,
           },
         },
@@ -89,7 +86,7 @@ const RevealConfession = ({ name }: { name: string }) => {
 
         <Box mb={16}>
           <Image
-            src={getUserActiveChat?.anonymous.image ?? NoPicture}
+            src={getProfileActiveChat?.anonymous.image ?? NoPicture}
             alt="Confesser PFP"
             className={styles.avatar}
             width={320}
@@ -98,11 +95,14 @@ const RevealConfession = ({ name }: { name: string }) => {
         </Box>
 
         <Typography variant="h3" align="center" mb={4}>
-          {getUserActiveChat?.anonymous.name}
+          {getProfileActiveChat?.anonymous.name}
         </Typography>
 
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Link href={`/profile/${getUserActiveChat?.anonymous.name}`} passHref>
+          <Link
+            href={`/profile/${getProfileActiveChat?.anonymous.name}`}
+            passHref
+          >
             <Button className="anonybutton" fullWidth component="a">
               Visit Profile
             </Button>
@@ -119,7 +119,7 @@ const RevealConfession = ({ name }: { name: string }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
   const { data, exists, expired } = await revealChatInfo(
-    session?.user?.name as string
+    session?.user?.id as string
   );
 
   if (!exists) {
@@ -140,7 +140,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return addApolloState(data, {
     props: {
       session,
-      name: session?.user?.name,
+      id: session?.user?.id,
     },
   });
 };

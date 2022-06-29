@@ -11,8 +11,8 @@ import {
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ACCEPT_CONFESSION_REQUEST } from "../../../apollo/mutation/requestMutation";
-import { GET_USER_CHAT } from "../../../apollo/query/userQuery";
-import { GetUserResult } from "../../../types/Queries";
+import { GET_PROFILE_CHAT } from "../../../apollo/query/userQuery";
+import { GetProfileResult, GetProfileVariables } from "../../../types/Queries";
 
 type AcceptRequestDialog = {
   open: boolean;
@@ -32,23 +32,23 @@ const AcceptRequestDialog = ({
   const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST, {
     update: (cache, result) => {
       const newChat = result?.data?.acceptConfessionRequest;
-      const user = cache.readQuery<GetUserResult>({
-        query: GET_USER_CHAT,
+      const user = cache.readQuery<GetProfileResult, GetProfileVariables>({
+        query: GET_PROFILE_CHAT,
         variables: {
           limit: 10,
-          name: session?.user?.name,
+          id: session?.user?.id as string,
         },
       });
 
       cache.writeQuery({
-        query: GET_USER_CHAT,
+        query: GET_PROFILE_CHAT,
         variables: {
           limit: 10,
           name: session?.user?.name,
         },
         data: {
-          getUser: {
-            ...user?.getUser,
+          getProfile: {
+            ...user?.getProfile,
             activeChat: newChat,
           },
         },

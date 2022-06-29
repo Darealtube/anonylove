@@ -42,9 +42,7 @@ const NotificationList = ({
   const handleDeleteNotif = (e: React.MouseEvent<HTMLButtonElement>) => {
     let notifId = e.currentTarget?.value;
     deleteNotif({
-      variables: {
-        notifID: notifId,
-      },
+      variables: { notifID: notifId },
       update: (cache) => {
         cache.evict({ id: `Notification:${notifId}` });
         cache.gc();

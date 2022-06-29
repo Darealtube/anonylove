@@ -12,9 +12,9 @@ import { createContext, ReactNode, useState } from "react";
 import styles from "../../styles/AppWrap.module.css";
 import ChatInfo from "./Lists/ChatInfo";
 import { useSubscription, useQuery } from "@apollo/client";
-import { GET_USER_CHAT } from "../../apollo/query/userQuery";
+import { GET_PROFILE_CHAT } from "../../apollo/query/userQuery";
 import { SEEN_CHAT_SUBSCRIPTION } from "../../apollo/subscription/messageSub";
-import { GetUserResult, GetUserVariables } from "../../types/Queries";
+import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
 import { Chat } from "../../types/models";
 import { DateTime } from "luxon";
 import SideBar from "./SideBar";
@@ -30,13 +30,11 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
   const { data } = useSubscription(SEEN_CHAT_SUBSCRIPTION);
-  const { data: { getUser } = {}, loading } = useQuery<
-    GetUserResult,
-    GetUserVariables
-  >(GET_USER_CHAT, {
-    variables: {
-      name: session?.user?.name as string,
-    },
+  const { data: { getProfile } = {}, loading } = useQuery<
+    GetProfileResult,
+    GetProfileVariables
+  >(GET_PROFILE_CHAT, {
+    variables: { id: session?.user?.id as string },
     skip: !session,
     fetchPolicy: "network-only",
   });
@@ -46,8 +44,8 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   };
 
   const chatExpired =
-    getUser?.activeChat &&
-    (getUser?.activeChat?.expiresAt as number) < DateTime.local().toMillis();
+    getProfile?.activeChat &&
+    (getProfile?.activeChat?.expiresAt as number) < DateTime.local().toMillis();
 
   return (
     <>
@@ -56,13 +54,15 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
         sx={{ height: "100vh", color: "black" }}
         className={styles.mainmenu}
       >
-        <NotificationContext.Provider value={{ notifSeen: getUser?.notifSeen }}>
+        <NotificationContext.Provider
+          value={{ notifSeen: getProfile?.notifSeen }}
+        >
           {!sm ? (
-            <SideBar notifSeen={getUser?.notifSeen}>
-              {loading && !getUser?.activeChat ? (
+            <SideBar notifSeen={getProfile?.notifSeen}>
+              {loading && !getProfile?.activeChat ? (
                 <Skeleton variant="rectangular" width="100%" height={80} />
-              ) : !loading && getUser?.activeChat ? (
-                <ChatInfo chat={getUser?.activeChat as Chat} />
+              ) : !loading && getProfile?.activeChat ? (
+                <ChatInfo chat={getProfile?.activeChat as Chat} />
               ) : (
                 <Typography variant="h5">No Active Chats</Typography>
               )}
@@ -77,13 +77,13 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
             <MobileSideBar
               open={chatOpen}
               handleChatList={handleChatOpen}
-              notifSeen={getUser?.notifSeen}
+              notifSeen={getProfile?.notifSeen}
             >
               <ListItem sx={{ display: "flex", flexDirection: "column" }}>
-                {loading && !getUser?.activeChat ? (
+                {loading && !getProfile?.activeChat ? (
                   <Skeleton variant="rectangular" width="100%" height={80} />
-                ) : !loading && getUser?.activeChat ? (
-                  <ChatInfo chat={getUser?.activeChat as Chat} />
+                ) : !loading && getProfile?.activeChat ? (
+                  <ChatInfo chat={getProfile?.activeChat as Chat} />
                 ) : (
                   <Typography variant="h5">No Active Chats</Typography>
                 )}

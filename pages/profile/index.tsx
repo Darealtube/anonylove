@@ -7,45 +7,24 @@ import anonyUser from "../../public/anonyUser.png";
 import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { addApolloState } from "../../apollo/apolloClient";
-import { GET_USER_QUERY } from "../../apollo/query/userQuery";
-import { useMutation, useQuery } from "@apollo/client";
-import { getUserInfo } from "../../utils/SSR/profile";
-import { GetUserResult, GetUserVariables } from "../../types/Queries";
+import { GET_PROFILE_QUERY } from "../../apollo/query/userQuery";
+import { useQuery } from "@apollo/client";
+import { getProfileInfo } from "../../utils/SSR/profile";
+import { GetProfileVariables, GetProfileResult } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
-import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
-import { useState } from "react";
 import LinkTree from "../../Components/Profile/LinkTree";
 
-const User = ({
-  name,
-  youSentRequest,
-}: {
-  name: string;
-  youSentRequest: boolean;
-}) => {
-  const [disableRequest, setDisableRequest] = useState(false);
+const Profile = ({ id }: { id: string }) => {
   const { data: session } = useSession();
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
-  const { data: { getUser } = {} } = useQuery<GetUserResult, GetUserVariables>(
-    GET_USER_QUERY,
-    {
-      variables: {
-        name,
-        from: session?.user?.id as string,
-      },
-      skip: !session,
-    }
-  );
-  const ownProfile = session?.user?.name === getUser?.name;
-  const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
-
-  const handleRequest = () => {
-    setDisableRequest(true);
-    sendRequest({
-      variables: { anonymous: session?.user?.id, receiver: getUser?._id },
-    });
-  };
+  const { data: { getProfile } = {} } = useQuery<
+    GetProfileResult,
+    GetProfileVariables
+  >(GET_PROFILE_QUERY, {
+    variables: { id },
+    skip: !session,
+  });
 
   return (
     <>
@@ -56,7 +35,7 @@ const User = ({
       </Head>
       <Box className={styles.cover}>
         <Image
-          src={getUser?.cover ?? NoBg}
+          src={getProfile?.cover ?? NoBg}
           alt="No Background Image"
           objectFit="cover"
           layout="fill"
@@ -74,7 +53,7 @@ const User = ({
           >
             <Box className={styles.pfp}>
               <Image
-                src={getUser?.image ?? anonyUser}
+                src={getProfile?.image ?? anonyUser}
                 alt="PFP"
                 width={160}
                 height={160}
@@ -88,7 +67,7 @@ const User = ({
               sx={{ wordBreak: "break-word", overflowWrap: "break-word" }}
               mt={1}
             >
-              {getUser?.name}
+              {getProfile?.name}
             </Typography>
           </Container>
         </Grid>
@@ -103,46 +82,24 @@ const User = ({
           <Grid item xs={12} sm={6} md={12} lg={6}>
             <Information title="Email Address">
               <Typography align="center" variant="h6">
-                {getUser?.email ?? "Not Provided"}
+                {getProfile?.email ?? "Not Provided"}
               </Typography>
             </Information>
             <Information title="Relationship Status">
               <Typography align="center" variant="h6">
-                {getUser?.status ?? "Unknown"}
+                {getProfile?.status ?? "Unknown"}
               </Typography>
             </Information>
-            {ownProfile ? (
-              <Link href="/profile/edit" passHref>
-                <Button
-                  component="a"
-                  variant="outlined"
-                  className={styles.reqButton}
-                  fullWidth
-                >
-                  Edit Profile
-                </Button>
-              </Link>
-            ) : (
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Button
-                  component="a"
-                  variant="outlined"
-                  className={styles.reqButton}
-                  fullWidth
-                >
-                  Report User
-                </Button>
-                <Button
-                  variant="outlined"
-                  className={styles.reqButton}
-                  onClick={handleRequest}
-                  fullWidth
-                  disabled={disableRequest || youSentRequest}
-                >
-                  Send Request
-                </Button>
-              </Box>
-            )}
+            <Link href="/profile/edit" passHref>
+              <Button
+                component="a"
+                variant="outlined"
+                className={styles.reqButton}
+                fullWidth
+              >
+                Edit Profile
+              </Button>
+            </Link>
           </Grid>
           <Grid item xs={12} sm={6} md={12} lg={6}>
             <Typography
@@ -160,7 +117,7 @@ const User = ({
               }}
               elevation={6}
             >
-              {getUser?.bio ?? ""}
+              {getProfile?.bio ?? ""}
             </Paper>
           </Grid>
         </Grid>
@@ -171,24 +128,18 @@ const User = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data, exists, youSentRequest } = await getUserInfo(
-    context.params?.name as string,
-    session?.user?.id as string
-  );
-
+  const { data, exists } = await getProfileInfo(session?.user?.id as string);
   if (!exists) {
     return {
       notFound: true,
     };
   }
-
   return addApolloState(data, {
     props: {
       session,
-      name: context.params?.name,
-      youSentRequest,
+      id: session?.user?.id,
     },
   });
 };
 
-export default User;
+export default Profile;

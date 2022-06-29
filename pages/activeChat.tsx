@@ -14,13 +14,16 @@ import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { addApolloState } from "../apollo/apolloClient";
-import { GET_USER_ACTIVE_CHAT } from "../apollo/query/chatQuery";
+import { GET_PROFILE_ACTIVE_CHAT } from "../apollo/query/chatQuery";
 import { getUserActiveChat } from "../utils/SSR/chat";
 import Anonymous from "../public/anonyUser.png";
 import styles from "../styles/Chat.module.css";
 import React, { useEffect, useRef, useState } from "react";
 import { SEEN_CHAT } from "../apollo/mutation/chatMutation";
-import { getUserChatResult, getUserChatVariables } from "../types/Queries";
+import {
+  getProfileChatResult,
+  getProfileChatVariables,
+} from "../types/Queries";
 import MessageList from "../Components/Chat/MessageList";
 import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
 import Textbar from "../Components/Chat/Textbar";
@@ -29,50 +32,52 @@ import { DateTime } from "luxon";
 import Link from "next/link";
 import { NewMessage, SubscriptionData } from "../types/Subscriptions";
 
-const ActiveChat = ({ name }: { name: string }) => {
+const ActiveChat = ({ id }: { id: string }) => {
   const chatMain = useRef<HTMLElement>();
   const { data: session } = useSession();
   const [pageVisible, setPageVisible] = useState(false);
   const {
-    data: { getUserActiveChat } = {},
-    previousData,
+    data: { getProfileActiveChat } = {},
     subscribeToMore,
     fetchMore: moreMessages,
-  } = useQuery<getUserChatResult, getUserChatVariables>(GET_USER_ACTIVE_CHAT, {
-    variables: {
-      name,
-      limit: 10,
-    },
-  });
+  } = useQuery<getProfileChatResult, getProfileChatVariables>(
+    GET_PROFILE_ACTIVE_CHAT,
+    {
+      variables: {
+        id: session?.user?.id as string,
+        limit: 10,
+      },
+    }
+  );
   const expiredChat =
-    DateTime.local().toMillis() > (getUserActiveChat?.expiresAt as number);
+    DateTime.local().toMillis() > (getProfileActiveChat?.expiresAt as number);
 
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const [seeChat] = useMutation(SEEN_CHAT, {
     variables: {
-      person: name === getUserActiveChat?.confessee.name ? name : "anonymous",
-      chat: getUserActiveChat?._id,
+      person: id === getProfileActiveChat?.confessee._id ? id : "anonymous",
+      chat: getProfileActiveChat?._id,
     },
   });
 
   const [hasMore, setHasMore] = useState(
-    getUserActiveChat?.messages.pageInfo.hasNextPage
+    getProfileActiveChat?.messages.pageInfo.hasNextPage
   );
 
-  const confessedTo = session?.user?.name === getUserActiveChat?.confessee.name;
+  const confessedTo = session?.user?.id === getProfileActiveChat?.confessee._id;
   const chatSeen = confessedTo
-    ? getUserActiveChat?.confesseeSeen
-    : getUserActiveChat?.anonSeen;
+    ? getProfileActiveChat?.confesseeSeen
+    : getProfileActiveChat?.anonSeen;
 
   const loadMoreMessages = () => {
     moreMessages({
       variables: {
-        after: getUserActiveChat?.messages.pageInfo.endCursor,
+        after: getProfileActiveChat?.messages.pageInfo.endCursor,
         limit: 10,
       },
-    }).then((fetchMoreResult: { data: getUserChatResult }) => {
+    }).then((fetchMoreResult: { data: getProfileChatResult }) => {
       if (
-        !fetchMoreResult.data?.getUserActiveChat?.messages?.pageInfo
+        !fetchMoreResult.data?.getProfileActiveChat?.messages?.pageInfo
           ?.hasNextPage
       ) {
         setHasMore(false);
@@ -97,19 +102,19 @@ const ActiveChat = ({ name }: { name: string }) => {
         if (!subscriptionData.data) return prev;
         const newMessage = subscriptionData.data.newMessage;
         const idAlreadyExists =
-          prev.getUserActiveChat.messages.edges.filter((item) => {
+          prev.getProfileActiveChat.messages.edges.filter((item) => {
             return item.node._id === newMessage._id;
           }).length > 0;
 
         if (!idAlreadyExists) {
           return Object.assign({}, prev, {
-            getUserActiveChat: {
-              ...prev.getUserActiveChat,
+            getProfileActiveChat: {
+              ...prev.getProfileActiveChat,
               messages: {
-                ...prev.getUserActiveChat.messages,
+                ...prev.getProfileActiveChat.messages,
                 edges: [
                   { _typename: "MessageEdge", node: newMessage },
-                  ...prev.getUserActiveChat.messages.edges,
+                  ...prev.getProfileActiveChat.messages.edges,
                 ],
               },
             },
@@ -135,22 +140,12 @@ const ActiveChat = ({ name }: { name: string }) => {
       handleVisibilityChange,
       false
     );
-    window.addEventListener(
-      "focus",
-      () => {
-        setPageVisible(true);
-      },
-      false
-    );
+    window.addEventListener("focus", () => setPageVisible(true), false);
     window.addEventListener("blur", () => setPageVisible(false), false);
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("focus", () => {
-        setPageVisible(true);
-      });
-      window.removeEventListener("blur", () => {
-        setPageVisible(false);
-      });
+      window.removeEventListener("focus", () => setPageVisible(true));
+      window.removeEventListener("blur", () => setPageVisible(false));
     };
   }, []);
 
@@ -178,7 +173,7 @@ const ActiveChat = ({ name }: { name: string }) => {
                 src={
                   confessedTo
                     ? Anonymous
-                    : (getUserActiveChat?.confessee.image as string)
+                    : (getProfileActiveChat?.confessee.image as string)
                 }
                 alt="PFP"
                 width={40}
@@ -187,11 +182,15 @@ const ActiveChat = ({ name }: { name: string }) => {
               />
 
               <Typography variant="h6" ml={2}>
-                {confessedTo ? "Anonymous" : getUserActiveChat?.confessee.name}
+                {confessedTo
+                  ? "Anonymous"
+                  : getProfileActiveChat?.confessee.name}
               </Typography>
             </Box>
 
-            <CountdownTimer endsIn={getUserActiveChat?.expiresAt as number} />
+            <CountdownTimer
+              endsIn={getProfileActiveChat?.expiresAt as number}
+            />
 
             <IconButton>
               <SettingsIcon />
@@ -211,9 +210,9 @@ const ActiveChat = ({ name }: { name: string }) => {
             justifyContent: "end",
           }}
         >
-          {getUserActiveChat?.messages ? (
+          {getProfileActiveChat?.messages ? (
             <MessageList
-              messages={getUserActiveChat?.messages}
+              messages={getProfileActiveChat?.messages}
               loadMoreMessages={loadMoreMessages}
               hasMore={hasMore}
             />
@@ -223,7 +222,10 @@ const ActiveChat = ({ name }: { name: string }) => {
         </Box>
 
         {!expiredChat ? (
-          <Textbar chatId={getUserActiveChat?._id} confessedTo={confessedTo} />
+          <Textbar
+            chatId={getProfileActiveChat?._id}
+            confessedTo={confessedTo}
+          />
         ) : (
           <>
             <Link href="/reveal" passHref>
@@ -244,9 +246,7 @@ const ActiveChat = ({ name }: { name: string }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data, exists } = await getUserActiveChat(
-    session?.user?.name as string
-  );
+  const { data, exists } = await getUserActiveChat(session?.user?.id as string);
 
   if (!exists) {
     return {
@@ -257,7 +257,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return addApolloState(data, {
     props: {
       session,
-      name: session?.user?.name,
+      id: session?.user?.id,
     },
   });
 };

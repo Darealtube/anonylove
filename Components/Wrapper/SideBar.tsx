@@ -38,7 +38,7 @@ const SideBar = ({ children, notifSeen }: SideBarProps) => {
 
           {notifSeen !== undefined && <Notifications />}
 
-          <Link href={`/profile/${session?.user?.name}`} passHref>
+          <Link href={`/profile/`} passHref>
             <a>
               <Box ml={2}>
                 {session?.user?.image && (

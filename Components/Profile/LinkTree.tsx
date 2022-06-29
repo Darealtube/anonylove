@@ -14,14 +14,8 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 const LinkTree = () => {
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.down("sm"));
-
   return (
-    <Container
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <Container sx={{ display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
         {xs ? (
           <>

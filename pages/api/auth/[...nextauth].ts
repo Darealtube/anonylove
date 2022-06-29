@@ -38,4 +38,10 @@ export default NextAuth({
       }
     },
   },
+  callbacks: {
+    session: async ({ session, user }) => {
+      session.user.id = user.id as string;
+      return session;
+    },
+  },
 });

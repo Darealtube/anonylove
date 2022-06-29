@@ -1,9 +1,9 @@
 import { useLazyQuery } from "@apollo/client";
 import { Box, Popover, useMediaQuery, useTheme } from "@mui/material";
 import { useSession } from "next-auth/react";
-import { GET_USER_NOTIFICATIONS } from "../../apollo/query/userQuery";
+import { GET_PROFILE_NOTIFICATIONS } from "../../apollo/query/userQuery";
 import { NotificationModel, QueryConnection } from "../../types/models";
-import { GetUserResult, GetUserVariables } from "../../types/Queries";
+import { GetProfileVariables, GetProfileResult } from "../../types/Queries";
 import NotificationList from "./Lists/NotificationList";
 import { useEffect } from "react";
 
@@ -20,12 +20,15 @@ const NotificationPopover = ({
   const sm = useMediaQuery(theme.breakpoints.down("md"));
   const { data: session } = useSession();
   const [getNotifs, { data, fetchMore: moreNotifications, refetch }] =
-    useLazyQuery<GetUserResult, GetUserVariables>(GET_USER_NOTIFICATIONS, {
-      variables: {
-        name: session?.user?.name as string,
-        limit: 10,
-      },
-    });
+    useLazyQuery<GetProfileResult, GetProfileVariables>(
+      GET_PROFILE_NOTIFICATIONS,
+      {
+        variables: {
+          id: session?.user?.id as string,
+          limit: 10,
+        },
+      }
+    );
 
   useEffect(() => {
     if (Boolean(anchor) === true && seenNotif === false) {
@@ -62,13 +65,13 @@ const NotificationPopover = ({
         >
           <NotificationList
             notifications={
-              data?.getUser
+              data?.getProfile
                 ?.userNotifications as QueryConnection<NotificationModel>
             }
             moreNotifications={moreNotifications}
             hasMore={
               (
-                data?.getUser
+                data?.getProfile
                   ?.userNotifications as QueryConnection<NotificationModel>
               )?.pageInfo.hasNextPage
             }

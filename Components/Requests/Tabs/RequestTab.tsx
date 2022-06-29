@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { GetUserResult, GetUserVariables } from "../../../types/Queries";
-import { GET_USER_RECEIVED_REQUESTS } from "../../../apollo/query/userQuery";
+import { GetProfileResult, GetProfileVariables } from "../../../types/Queries";
+import { GET_PROFILE_RECEIVED_REQUESTS } from "../../../apollo/query/userQuery";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@apollo/client";
 import { Box, CircularProgress } from "@mui/material";
@@ -18,16 +18,19 @@ const AcceptDialog = dynamic(
 const RequestTab = () => {
   const { data: session } = useSession();
   const {
-    data: { getUser } = {},
+    data: { getProfile } = {},
     fetchMore: moreRequests,
     loading,
-  } = useQuery<GetUserResult, GetUserVariables>(GET_USER_RECEIVED_REQUESTS, {
-    variables: {
-      name: session?.user?.name as string,
-      limit: 10,
-    },
-    skip: !session,
-  });
+  } = useQuery<GetProfileResult, GetProfileVariables>(
+    GET_PROFILE_RECEIVED_REQUESTS,
+    {
+      variables: {
+        id: session?.user?.id as string,
+        limit: 10,
+      },
+      skip: !session,
+    }
+  );
   const [openDelete, setOpenDelete] = useState(false);
   const [openAccept, setOpenAccept] = useState(false);
   const [targetId, setTargetId] = useState("");
@@ -60,10 +63,10 @@ const RequestTab = () => {
         </Box>
       ) : (
         <RequestList
-          requests={getUser?.receivedConfessionRequests}
+          requests={getProfile?.receivedConfessionRequests}
           moreRequests={moreRequests}
           handleOpenDialog={handleOpenDialog}
-          hasActiveChat={Boolean(getUser?.activeChat)}
+          hasActiveChat={Boolean(getProfile?.activeChat)}
         />
       )}
 

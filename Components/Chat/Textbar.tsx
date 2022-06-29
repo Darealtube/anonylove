@@ -80,7 +80,7 @@ const Textbar = ({
         chat: chatId,
         message,
         anonymous: confessedTo ? false : true,
-        sender: session?.user?.name,
+        sender: session?.user?.id,
       },
     });
     setMessage("");

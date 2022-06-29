@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 
 export const SEND_CONFESSION_REQUEST = gql`
-  mutation SendConfessionRequest($anonymous: String!, $receiver: String!) {
+  mutation SendConfessionRequest($anonymous: ID!, $receiver: ID!) {
     sendConfessionRequest(anonymous: $anonymous, receiver: $receiver) {
       _id
       date

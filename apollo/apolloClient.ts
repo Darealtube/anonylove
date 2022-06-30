@@ -12,7 +12,7 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:3000/graphql",
+  uri: "https://anony-api-3.herokuapp.com/graphql",
   credentials: "include",
   fetchOptions: {
     mode: "cors", // This should always be CORS as our API server is on another domain.
@@ -23,7 +23,7 @@ const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: "ws://localhost:3000/graphql",
+          url: "wss://anony-api-3.herokuapp.com/graphql",
         })
       )
     : null;

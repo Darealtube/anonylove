@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import { useContext, useState } from "react";
 import { SEEN_NOTIFICATION } from "../../apollo/mutation/notifMutation";
 import { NEW_NOTIF_SUBSCRIPTION } from "../../apollo/subscription/notifSub";
-import styles from "../../styles/AppWrap.module.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import dynamic from "next/dynamic";
 import { NotificationContext } from "./AppWrap";
@@ -41,8 +40,7 @@ const Notifications = () => {
     <>
       <Badge color="secondary" variant="dot" invisible={seenNotif === true}>
         <IconButton
-          sx={{ height: 40, width: 40 }}
-          className={styles.appbaroptions}
+          sx={{ height: 40, width: 40, ml: 2 }}
           onClick={handleNotification}
         >
           <NotificationsIcon />

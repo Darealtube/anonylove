@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
@@ -14,11 +14,11 @@ import {
 } from "../types/Queries";
 import { revealChatInfo } from "../utils/SSR/chat";
 import NoPicture from "../public/anonyUser.png";
-import styles from "../styles/RevealChat.module.css";
 import { END_CHAT } from "../apollo/mutation/chatMutation";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { GET_PROFILE_CHAT } from "../apollo/query/userQuery";
+import { AnonyButton } from "../Components/Style/Global/AnonyButton";
 
 const RevealConfession = ({ id }: { id: string }) => {
   const { data: session } = useSession();
@@ -88,7 +88,7 @@ const RevealConfession = ({ id }: { id: string }) => {
           <Image
             src={getProfileActiveChat?.anonymous.image ?? NoPicture}
             alt="Confesser PFP"
-            className={styles.avatar}
+            className="avatar"
             width={320}
             height={320}
           />
@@ -103,13 +103,11 @@ const RevealConfession = ({ id }: { id: string }) => {
             href={`/profile/${getProfileActiveChat?.anonymous.name}`}
             passHref
           >
-            <Button className="anonybutton" fullWidth component="a">
-              Visit Profile
-            </Button>
+            <AnonyButton fullWidth>Visit Profile</AnonyButton>
           </Link>
-          <Button className="anonybutton" fullWidth onClick={handleEndChat}>
+          <AnonyButton fullWidth onClick={handleEndChat}>
             End Chat
-          </Button>
+          </AnonyButton>
         </Box>
       </Container>
     </>

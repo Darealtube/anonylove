@@ -9,7 +9,6 @@ import {
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { createContext, ReactNode, useState } from "react";
-import styles from "../../styles/AppWrap.module.css";
 import ChatInfo from "./Lists/ChatInfo";
 import { useSubscription, useQuery } from "@apollo/client";
 import { GET_PROFILE_CHAT } from "../../apollo/query/userQuery";
@@ -18,6 +17,7 @@ import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
 import { Chat } from "../../types/models";
 import { DateTime } from "luxon";
 import SideBar from "./SideBar";
+import { AnonyMenu } from "../Style/AppWrap/AnonyMenu";
 
 export const NotificationContext = createContext<{ notifSeen?: boolean }>({
   notifSeen: undefined,
@@ -49,11 +49,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      <Grid
-        container
-        sx={{ height: "100vh", color: "black" }}
-        className={styles.mainmenu}
-      >
+      <AnonyMenu container>
         <NotificationContext.Provider
           value={{ notifSeen: getProfile?.notifSeen }}
         >
@@ -106,7 +102,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
         >
           {children}
         </Grid>
-      </Grid>
+      </AnonyMenu>
     </>
   );
 };

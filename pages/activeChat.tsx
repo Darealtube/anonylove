@@ -1,8 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import {
-  AppBar,
   Box,
-  Button,
   CircularProgress,
   Container,
   IconButton,
@@ -17,7 +15,6 @@ import { addApolloState } from "../apollo/apolloClient";
 import { GET_PROFILE_ACTIVE_CHAT } from "../apollo/query/chatQuery";
 import { getUserActiveChat } from "../utils/SSR/chat";
 import Anonymous from "../public/anonyUser.png";
-import styles from "../styles/Chat.module.css";
 import React, { useEffect, useRef, useState } from "react";
 import { SEEN_CHAT } from "../apollo/mutation/chatMutation";
 import {
@@ -31,6 +28,8 @@ import CountdownTimer from "../Components/Chat/CountdownTimer";
 import { DateTime } from "luxon";
 import Link from "next/link";
 import { NewMessage, SubscriptionData } from "../types/Subscriptions";
+import { AnonyChatHead } from "../Components/Style/Chat/AnonyChatHead";
+import { AnonyButton } from "../Components/Style/Global/AnonyButton";
 
 const ActiveChat = ({ id }: { id: string }) => {
   const chatMain = useRef<HTMLElement>();
@@ -164,7 +163,7 @@ const ActiveChat = ({ id }: { id: string }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box display="flex" flexDirection="column" height="100%">
-        <AppBar className={styles.appbar}>
+        <AnonyChatHead>
           <Container
             sx={{ height: "100%", display: "flex", alignItems: "center" }}
           >
@@ -178,7 +177,7 @@ const ActiveChat = ({ id }: { id: string }) => {
                 alt="PFP"
                 width={40}
                 height={40}
-                className={styles.avatar}
+                className="avatar"
               />
 
               <Typography variant="h6" ml={2}>
@@ -196,7 +195,7 @@ const ActiveChat = ({ id }: { id: string }) => {
               <SettingsIcon />
             </IconButton>
           </Container>
-        </AppBar>
+        </AnonyChatHead>
 
         <Box
           flexGrow={1}
@@ -229,13 +228,9 @@ const ActiveChat = ({ id }: { id: string }) => {
         ) : (
           <>
             <Link href="/reveal" passHref>
-              <Button
-                className="anonybutton"
-                sx={{ height: "120px", fontSize: "24px" }}
-                component="a"
-              >
+              <AnonyButton sx={{ height: "120px", fontSize: "24px" }}>
                 Reveal Confesser!
-              </Button>
+              </AnonyButton>
             </Link>
           </>
         )}

@@ -1,5 +1,4 @@
-import { Box, Button, Container, Grid, Typography, Paper } from "@mui/material";
-import styles from "../../styles/Profile.module.css";
+import { Container, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import Head from "next/head";
 import NoBg from "../../public/nobg.png";
@@ -14,6 +13,10 @@ import { GetProfileVariables, GetProfileResult } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
 import LinkTree from "../../Components/Profile/LinkTree";
+import { AnonyCover } from "../../Components/Style/Profile/AnonyCover";
+import { AnonyPFP } from "../../Components/Style/Profile/AnonyPFP";
+import { ProfileButton } from "../../Components/Style/Profile/ProfileButton";
+import { AnonyBio } from "../../Components/Style/Profile/AnonyBio";
 
 const Profile = ({ id }: { id: string }) => {
   const { data: session } = useSession();
@@ -33,16 +36,16 @@ const Profile = ({ id }: { id: string }) => {
         <meta name="description" content="Face the Fear of Confession" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box className={styles.cover}>
+      <AnonyCover>
         <Image
           src={getProfile?.cover ?? NoBg}
           alt="No Background Image"
           objectFit="cover"
           layout="fill"
         />
-      </Box>
+      </AnonyCover>
 
-      <Grid container className={styles.main}>
+      <Grid container sx={{ display: "flex" }}>
         <Grid item xs={6} sx={{ position: "relative", bottom: "80px" }}>
           <Container
             sx={{
@@ -51,15 +54,15 @@ const Profile = ({ id }: { id: string }) => {
               alignItems: "center",
             }}
           >
-            <Box className={styles.pfp}>
+            <AnonyPFP>
               <Image
                 src={getProfile?.image ?? anonyUser}
                 alt="PFP"
                 width={160}
                 height={160}
-                className={styles.avatar}
+                className="avatar"
               />
-            </Box>
+            </AnonyPFP>
 
             <Typography
               align="center"
@@ -91,14 +94,9 @@ const Profile = ({ id }: { id: string }) => {
               </Typography>
             </Information>
             <Link href="/profile/edit" passHref>
-              <Button
-                component="a"
-                variant="outlined"
-                className={styles.reqButton}
-                fullWidth
-              >
-                Edit Profile
-              </Button>
+                <ProfileButton variant="outlined" fullWidth>
+                  Edit Profile
+                </ProfileButton>
             </Link>
           </Grid>
           <Grid item xs={12} sm={6} md={12} lg={6}>
@@ -108,17 +106,7 @@ const Profile = ({ id }: { id: string }) => {
             >
               &ldquo;
             </Typography>
-            <Paper
-              className={styles.bio}
-              sx={{
-                color: "#f6f7f8",
-                wordBreak: "break-word",
-                overflowWrap: "break-word",
-              }}
-              elevation={6}
-            >
-              {getProfile?.bio ?? ""}
-            </Paper>
+            <AnonyBio elevation={6}>{getProfile?.bio ?? ""}</AnonyBio>
           </Grid>
         </Grid>
       </Container>

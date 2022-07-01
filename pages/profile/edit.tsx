@@ -1,17 +1,13 @@
 import Head from "next/head";
-import styles from "../../styles/Profile.module.css";
 import Image from "next/image";
 import NoBg from "../../public/nobg.png";
 import anonyUser from "../../public/anonyUser.png";
 import {
-  Box,
   Container,
   IconButton,
   TextField,
   Grid,
   Typography,
-  Paper,
-  Button,
   Select,
   MenuItem,
   SelectChangeEvent,
@@ -32,6 +28,10 @@ import { EDIT_USER_PROFILE } from "../../apollo/mutation/userMutation";
 import { useRouter } from "next/router";
 import { uploadImage } from "../../utils/Media/uploadMedia";
 import LinkTree from "../../Components/Profile/LinkTree";
+import { AnonyCover } from "../../Components/Style/Profile/AnonyCover";
+import { AnonyPFP } from "../../Components/Style/Profile/AnonyPFP";
+import { ProfileButton } from "../../Components/Style/Profile/ProfileButton";
+import { AnonyBio } from "../../Components/Style/Profile/AnonyBio";
 
 const EditProfile = () => {
   const router = useRouter();
@@ -133,7 +133,7 @@ const EditProfile = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box className={styles.cover}>
+      <AnonyCover>
         <Image
           src={profile.cover ?? NoBg}
           alt="No Background Image"
@@ -153,9 +153,9 @@ const EditProfile = () => {
           ref={cover}
           onChange={handleChangeCover}
         />
-      </Box>
+      </AnonyCover>
 
-      <Grid container className={styles.main}>
+      <Grid container sx={{ display: "flex" }}>
         <Grid item xs={6} sx={{ position: "relative", bottom: "80px" }}>
           <Container
             sx={{
@@ -164,13 +164,13 @@ const EditProfile = () => {
               alignItems: "center",
             }}
           >
-            <Box className={styles.pfp}>
+            <AnonyPFP>
               <Image
                 src={profile.image ?? anonyUser}
                 alt="PFP"
                 layout="fill"
                 objectFit="cover"
-                className={styles.avatar}
+                className="avatar"
               />
               <IconButton
                 sx={{ position: "absolute", color: "#f6f7f8" }}
@@ -185,7 +185,7 @@ const EditProfile = () => {
                 ref={pfp}
                 onChange={handleChangePFP}
               />
-            </Box>
+            </AnonyPFP>
 
             <TextField
               id="name"
@@ -241,24 +241,18 @@ const EditProfile = () => {
             </Information>
 
             <Link href={`/profile/${session?.user?.name}`} passHref>
-              <Button
-                component="a"
-                variant="outlined"
-                className={styles.reqButton}
-                fullWidth
-              >
-                Cancel
-              </Button>
+                <ProfileButton variant="outlined" fullWidth>
+                  Cancel
+                </ProfileButton>
             </Link>
 
-            <Button
-              variant="outlined"
-              className={styles.reqButton}
-              fullWidth
-              onClick={handleSubmit}
-            >
-              Save
-            </Button>
+              <ProfileButton
+                variant="outlined"
+                fullWidth
+                onClick={handleSubmit}
+              >
+                Save
+              </ProfileButton>
           </Grid>
 
           <Grid item xs={12} sm={6} md={12} lg={6}>
@@ -268,7 +262,7 @@ const EditProfile = () => {
             >
               &ldquo;
             </Typography>
-            <Paper className={styles.bio} elevation={6}>
+            <AnonyBio elevation={6}>
               <TextField
                 id="bio"
                 name="bio"
@@ -284,7 +278,7 @@ const EditProfile = () => {
                   },
                 }}
               />
-            </Paper>
+            </AnonyBio>
           </Grid>
         </Grid>
       </Container>

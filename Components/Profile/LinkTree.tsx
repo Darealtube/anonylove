@@ -1,7 +1,6 @@
 import {
   Container,
   Box,
-  Button,
   useMediaQuery,
   useTheme,
   IconButton,
@@ -10,6 +9,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import { AnonyButton } from "../Style/Global/AnonyButton";
 
 const LinkTree = () => {
   const theme = useTheme();
@@ -28,20 +28,18 @@ const LinkTree = () => {
           </>
         ) : (
           <>
-            <Button
+            <AnonyButton
               sx={{ mt: 2, width: "40%" }}
-              className="fbbutton"
               startIcon={<FacebookIcon />}
             >
               Facebook
-            </Button>
-            <Button
+            </AnonyButton>
+            <AnonyButton
               sx={{ mt: 2, width: "40%" }}
-              className="twtbutton"
               startIcon={<TwitterIcon />}
             >
               Twitter
-            </Button>
+            </AnonyButton>
           </>
         )}
       </Box>
@@ -57,20 +55,18 @@ const LinkTree = () => {
           </>
         ) : (
           <>
-            <Button
+            <AnonyButton
               sx={{ mt: 2, width: "40%" }}
-              className="instabutton"
               startIcon={<InstagramIcon />}
             >
               Instagram
-            </Button>
-            <Button
+            </AnonyButton>
+            <AnonyButton
               sx={{ mt: 2, width: "40%" }}
-              className="snapbutton"
               startIcon={<ChatBubbleIcon />}
             >
               Snapshot
-            </Button>
+            </AnonyButton>
           </>
         )}
       </Box>

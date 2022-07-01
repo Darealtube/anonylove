@@ -2,17 +2,16 @@ import {
   Box,
   CircularProgress,
   Container,
-  Paper,
   Tooltip,
   Typography,
 } from "@mui/material";
 import Image from "next/image";
 import Anonymous from "../../public/anonyUser.png";
 import { useSession } from "next-auth/react";
-import styles from "../../styles/Chat.module.css";
 import { DateTime } from "luxon";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Message, QueryConnection } from "../../types/models";
+import { AnonyChatBox } from "../Style/Chat/AnonyChatBox";
 
 const MessageList = ({
   messages,
@@ -74,7 +73,7 @@ const MessageList = ({
                   alt="PFP"
                   width={40}
                   height={40}
-                  className={styles.avatar}
+                  className="avatar"
                 />
               </Box>
               <Tooltip
@@ -85,7 +84,7 @@ const MessageList = ({
                   node.sender.name === session?.user?.name ? "left" : "right"
                 }
               >
-                <Paper className={styles.messagebox} elevation={6}>
+                <AnonyChatBox elevation={6}>
                   <Container sx={{ mt: 2, mb: 2 }}>
                     <Typography
                       paragraph
@@ -99,7 +98,7 @@ const MessageList = ({
                       {node.message}
                     </Typography>
                   </Container>
-                </Paper>
+                </AnonyChatBox>
               </Tooltip>
             </Box>
           ))}

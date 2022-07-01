@@ -1,9 +1,7 @@
-import styles from "../styles/Home.module.css";
 import {
   Box,
   TextField,
   Typography,
-  Container,
   useMediaQuery,
   useTheme,
   styled,
@@ -24,6 +22,7 @@ import BrandLogo from "../public/brandlogo.png";
 import { User } from "../types/models";
 import NoUserImg from "../public/anonyUser.png";
 import Link from "next/link";
+import { AnonyHome } from "../Components/Style/Home/AnonyHome";
 
 const StyledAutoComplete = styled(Autocomplete)({
   [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
@@ -77,7 +76,7 @@ const Home = () => {
         <meta name="description" content="Face the Fear of Confession" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Container className={styles.homeContainer}>
+      <AnonyHome>
         <Box mt={4}>
           <Image src={BrandLogo} alt="LOGO" width={304} height={192} />
         </Box>
@@ -110,7 +109,7 @@ const Home = () => {
                       alt="PFP"
                       width={40}
                       height={40}
-                      className={styles.avatar}
+                      className="avatar"
                     />
                   </ListItemAvatar>
                   <ListItemText
@@ -157,7 +156,7 @@ const Home = () => {
             eventually cause the right ideas to show up in your head.&quot;
           </Typography>
         </Box>
-      </Container>
+      </AnonyHome>
     </>
   );
 };

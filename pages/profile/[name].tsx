@@ -1,5 +1,4 @@
-import { Box, Button, Container, Grid, Typography, Paper } from "@mui/material";
-import styles from "../../styles/Profile.module.css";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import Head from "next/head";
 import NoBg from "../../public/nobg.png";
@@ -16,6 +15,10 @@ import Link from "next/link";
 import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
 import { useState } from "react";
 import LinkTree from "../../Components/Profile/LinkTree";
+import { AnonyPFP } from "../../Components/Style/Profile/AnonyPFP";
+import { AnonyCover } from "../../Components/Style/Profile/AnonyCover";
+import { ProfileButton } from "../../Components/Style/Profile/ProfileButton";
+import { AnonyBio } from "../../Components/Style/Profile/AnonyBio";
 
 const User = ({
   name,
@@ -54,16 +57,16 @@ const User = ({
         <meta name="description" content="Face the Fear of Confession" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box className={styles.cover}>
+      <AnonyCover>
         <Image
           src={getUser?.cover ?? NoBg}
           alt="No Background Image"
           objectFit="cover"
           layout="fill"
         />
-      </Box>
+      </AnonyCover>
 
-      <Grid container className={styles.main}>
+      <Grid container sx={{ display: "flex" }}>
         <Grid item xs={6} sx={{ position: "relative", bottom: "80px" }}>
           <Container
             sx={{
@@ -72,15 +75,15 @@ const User = ({
               alignItems: "center",
             }}
           >
-            <Box className={styles.pfp}>
+            <AnonyPFP>
               <Image
                 src={getUser?.image ?? anonyUser}
                 alt="PFP"
                 width={160}
                 height={160}
-                className={styles.avatar}
+                className="avatar"
               />
-            </Box>
+            </AnonyPFP>
 
             <Typography
               align="center"
@@ -113,34 +116,23 @@ const User = ({
             </Information>
             {ownProfile ? (
               <Link href="/profile/edit" passHref>
-                <Button
-                  component="a"
-                  variant="outlined"
-                  className={styles.reqButton}
-                  fullWidth
-                >
+                <ProfileButton variant="outlined" fullWidth>
                   Edit Profile
-                </Button>
+                </ProfileButton>
               </Link>
             ) : (
               <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Button
-                  component="a"
-                  variant="outlined"
-                  className={styles.reqButton}
-                  fullWidth
-                >
+                <ProfileButton variant="outlined" fullWidth>
                   Report User
-                </Button>
-                <Button
+                </ProfileButton>
+                <ProfileButton
                   variant="outlined"
-                  className={styles.reqButton}
                   onClick={handleRequest}
                   fullWidth
                   disabled={disableRequest || youSentRequest}
                 >
                   Send Request
-                </Button>
+                </ProfileButton>
               </Box>
             )}
           </Grid>
@@ -151,17 +143,7 @@ const User = ({
             >
               &ldquo;
             </Typography>
-            <Paper
-              className={styles.bio}
-              sx={{
-                color: "#f6f7f8",
-                wordBreak: "break-word",
-                overflowWrap: "break-word",
-              }}
-              elevation={6}
-            >
-              {getUser?.bio ?? ""}
-            </Paper>
+            <AnonyBio elevation={6}>{getUser?.bio ?? ""}</AnonyBio>
           </Grid>
         </Grid>
       </Container>

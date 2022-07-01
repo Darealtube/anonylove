@@ -1,7 +1,7 @@
 import { TabContext, TabList } from "@mui/lab";
-import { Box, Tab } from "@mui/material";
+import { Tab } from "@mui/material";
 import { useState, SyntheticEvent, ReactNode } from "react";
-import styles from "../../styles/AppWrap.module.css";
+import { AnonyTabs } from "../Style/AppWrap/AnonyTabs";
 
 const Tabs = ({ children }: { children: ReactNode }) => {
   const [tab, setTab] = useState("request");
@@ -15,7 +15,7 @@ const Tabs = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <TabContext value={tab}>
-        <Box sx={{ borderColor: "divider" }} className={styles.tabs}>
+        <AnonyTabs>
           <TabList onChange={handleTabChange} centered>
             <Tab label="Requests" value="request" sx={{ color: "#f6f7f8" }} />
             <Tab
@@ -24,7 +24,7 @@ const Tabs = ({ children }: { children: ReactNode }) => {
               sx={{ color: "#f6f7f8" }}
             />
           </TabList>
-        </Box>
+        </AnonyTabs>
         {children}
       </TabContext>
     </>

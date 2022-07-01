@@ -16,7 +16,6 @@ import { DateTime } from "luxon";
 import { GetUserResult } from "../../../types/Queries";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Anonymous from "../../../public/anonyUser.png";
-import styles from "../../../styles/List.module.css";
 import { QueryConnection, Request } from "../../../types/models";
 
 //  Set parameter "requests" as optional for now
@@ -69,7 +68,7 @@ const YourRequestList = ({
                         alt="Confesser PFP"
                         width={40}
                         height={40}
-                        className={styles.avatar}
+                        className="avatar"
                       />
                     </ListItemAvatar>
                     <ListItemText

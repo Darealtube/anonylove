@@ -7,7 +7,6 @@ import {
 import Image from "next/image";
 import Anonymous from "../../../public/anonyUser.png";
 import { useSession } from "next-auth/react";
-import styles from "../../../styles/List.module.css";
 import Link from "next/link";
 import { Chat } from "../../../types/models";
 
@@ -31,7 +30,7 @@ const ChatInfo = ({ chat }: { chat: Chat }) => {
               alt="PFP"
               width={40}
               height={40}
-              className={styles.avatar}
+              className="avatar"
             />
           </ListItemAvatar>
           <ListItemText

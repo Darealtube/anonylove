@@ -16,7 +16,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import { DateTime } from "luxon";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Anonymous from "../../../public/anonyUser.png";
-import styles from "../../../styles/List.module.css";
 import { GetUserResult } from "../../../types/Queries";
 import { QueryConnection, Request } from "../../../types/models";
 
@@ -75,7 +74,7 @@ const RequestList = ({
                         alt="Confesser PFP"
                         width={40}
                         height={40}
-                        className={styles.avatar}
+                        className="avatar"
                       />
                     </ListItemAvatar>
                     <ListItemText

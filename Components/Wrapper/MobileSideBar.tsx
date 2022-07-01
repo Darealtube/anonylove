@@ -1,6 +1,5 @@
 import {
   SwipeableDrawer,
-  AppBar,
   Box,
   List,
   ListItem,
@@ -10,12 +9,13 @@ import {
   Button,
 } from "@mui/material";
 import BrandLogo from "../../public/brandlogoblack.png";
-import styles from "../../styles/AppWrap.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import React, { ReactNode } from "react";
 import { signOut, useSession } from "next-auth/react";
 import Notifications from "./Notifications";
+import { AnonyAppBar } from "../Style/AppWrap/AnonyAppBar";
+import { AnonyButton } from "../Style/Global/AnonyButton";
 
 type MobileDrawerProps = {
   children: ReactNode;
@@ -40,7 +40,7 @@ const MobileSideBar = ({
       onOpen={handleChatList}
       PaperProps={{ style: { maxWidth: "90%" } }}
     >
-      <AppBar className={styles.appbar} elevation={0}>
+      <AnonyAppBar elevation={0}>
         <Link href="/home" passHref>
           <a>
             <Image src={BrandLogo} alt="LOGO" />
@@ -58,13 +58,13 @@ const MobileSideBar = ({
                   alt="PFP"
                   width={40}
                   height={40}
-                  className={styles.pfp}
+                  className="avatar"
                 />
               )}
             </Box>
           </a>
         </Link>
-      </AppBar>
+      </AnonyAppBar>
       <List sx={{ flexGrow: 1 }}>
         <ListItem sx={{ pl: 4 }}>
           <Typography>Active Chat</Typography>
@@ -101,14 +101,9 @@ const MobileSideBar = ({
           Conditions
         </Button>
       </Box>
-      <Button
-        fullWidth
-        sx={{ color: "#FFC2C2" }}
-        className="anonybutton"
-        onClick={handleSignOut}
-      >
+      <AnonyButton fullWidth sx={{ color: "#FFC2C2" }} onClick={handleSignOut}>
         <strong>Log Out</strong>
-      </Button>
+      </AnonyButton>
     </SwipeableDrawer>
   );
 };

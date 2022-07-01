@@ -1,7 +1,7 @@
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { BuiltInProviderType } from "next-auth/providers";
 import { LiteralUnion, ClientSafeProvider, signIn } from "next-auth/react";
-import styles from "../styles/Login.module.css";
+import { AnonyButton } from "./Style/Global/AnonyButton";
 
 type Providers = Record<
   LiteralUnion<BuiltInProviderType, string>,
@@ -12,15 +12,14 @@ const SignInOptions = ({ providers }: { providers: Providers }) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       {Object.values(providers).map((provider) => (
-        <Button
+        <AnonyButton
           key={provider.name}
           onClick={() => signIn(provider.id, { callbackUrl: "/home" })}
           variant="text"
           fullWidth
-          className={styles.loginbutton}
         >
           Sign in with {provider.name}
-        </Button>
+        </AnonyButton>
       ))}
     </Box>
   );

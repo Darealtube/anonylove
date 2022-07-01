@@ -1,7 +1,5 @@
 import {
-  AppBar,
   Box,
-  Grid,
   List,
   ListItem,
   Typography,
@@ -10,12 +8,14 @@ import {
   Divider,
 } from "@mui/material";
 import BrandLogo from "../../public/brandlogoblack.png";
-import styles from "../../styles/AppWrap.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import React, { ReactNode } from "react";
 import { signOut, useSession } from "next-auth/react";
 import Notifications from "./Notifications";
+import { AnonyAppBar } from "../Style/AppWrap/AnonyAppBar";
+import { AnonySideBar } from "../Style/AppWrap/AnonySideBar";
+import { AnonyButton } from "../Style/Global/AnonyButton";
 
 type SideBarProps = {
   children: ReactNode;
@@ -27,8 +27,8 @@ const SideBar = ({ children, notifSeen }: SideBarProps) => {
   const handleSignOut = () => signOut({ callbackUrl: "/" });
   return (
     <>
-      <Grid item md={4} className={styles.drawer} id="chatDrawer">
-        <AppBar className={styles.appbar} elevation={0}>
+      <AnonySideBar item md={4} id="chatDrawer">
+        <AnonyAppBar elevation={0}>
           <Link href="/home" passHref>
             <a>
               <Image src={BrandLogo} alt="LOGO" />
@@ -47,13 +47,13 @@ const SideBar = ({ children, notifSeen }: SideBarProps) => {
                     alt="PFP"
                     width={40}
                     height={40}
-                    className={styles.pfp}
+                    className="avatar"
                   />
                 )}
               </Box>
             </a>
           </Link>
-        </AppBar>
+        </AnonyAppBar>
 
         <List sx={{ flexGrow: 1 }}>
           <ListItem sx={{ pl: 4 }}>
@@ -89,15 +89,14 @@ const SideBar = ({ children, notifSeen }: SideBarProps) => {
             Conditions
           </Button>
         </Box>
-        <Button
+        <AnonyButton
           fullWidth
           sx={{ color: "#FFC2C2" }}
-          className="anonybutton"
           onClick={handleSignOut}
         >
           <strong>Log Out</strong>
-        </Button>
-      </Grid>
+        </AnonyButton>
+      </AnonySideBar>
     </>
   );
 };

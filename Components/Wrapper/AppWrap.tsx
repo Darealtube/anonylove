@@ -45,7 +45,7 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
 
   const chatExpired =
     getProfile?.activeChat &&
-    (getProfile?.activeChat?.expiresAt as number) < DateTime.local().toMillis();
+    (getProfile?.activeChat?.expiresAt as number) < DateTime.utc().toMillis();
 
   return (
     <>

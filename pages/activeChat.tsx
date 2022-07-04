@@ -49,7 +49,7 @@ const ActiveChat = ({ id }: { id: string }) => {
     }
   );
   const expiredChat =
-    DateTime.local().toMillis() > (getProfileActiveChat?.expiresAt as number);
+    DateTime.utc().toMillis() > (getProfileActiveChat?.expiresAt as number);
 
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const [seeChat] = useMutation(SEEN_CHAT, {
@@ -189,6 +189,7 @@ const ActiveChat = ({ id }: { id: string }) => {
 
             <CountdownTimer
               endsIn={getProfileActiveChat?.expiresAt as number}
+              startedAt={getProfileActiveChat?.startedAt as number}
             />
 
             <IconButton>

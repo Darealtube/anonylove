@@ -42,6 +42,7 @@ export interface Chat {
   messages: QueryConnection<Message>;
   latestMessage: Message;
   expiresAt: number;
+  startedAt: number;
 }
 
 export interface NotificationModel {

@@ -62,6 +62,7 @@ export const GET_PROFILE_CHAT = gql`
             name
           }
         }
+        startedAt
         expiresAt
         anonSeen
         confesseeSeen

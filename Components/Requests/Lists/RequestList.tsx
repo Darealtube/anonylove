@@ -31,7 +31,7 @@ const RequestList = ({
   handleOpenDialog: (e: React.MouseEvent<HTMLButtonElement>) => void;
   hasActiveChat: boolean;
 }) => {
-  const dateNow = DateTime.local();
+  const dateNow = DateTime.utc();
   const [hasMore, setHasMore] = useState(requests?.pageInfo.hasNextPage);
 
   const loadMoreRequests = () => {

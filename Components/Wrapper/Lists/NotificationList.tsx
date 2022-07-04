@@ -28,7 +28,7 @@ const NotificationList = ({
   moreNotifications: any;
   hasMore: boolean;
 }) => {
-  const dateNow = DateTime.local();
+  const dateNow = DateTime.utc();
   const [deleteNotif] = useMutation(DELETE_NOTIFICATION);
   const loadMoreNotifs = () => {
     moreNotifications({

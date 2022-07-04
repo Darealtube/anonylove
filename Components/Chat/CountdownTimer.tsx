@@ -3,10 +3,19 @@ import { DateTime } from "luxon";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const CountdownTimer = ({ endsIn }: { endsIn: number }) => {
+const CountdownTimer = ({
+  endsIn,
+  startedAt,
+}: {
+  endsIn: number;
+  startedAt: number;
+}) => {
   const router = useRouter();
+  const timePassed = DateTime.fromMillis(startedAt).diff(DateTime.utc());
   const [time, setTime] = useState(
-    DateTime.fromMillis(endsIn).diff(DateTime.local())
+    DateTime.fromMillis(endsIn)
+      .diff(DateTime.fromMillis(startedAt))
+      .plus(timePassed)
   );
 
   useEffect(() => {
@@ -34,10 +43,10 @@ const CountdownTimer = ({ endsIn }: { endsIn: number }) => {
           color: Math.floor(time.as("minutes")) === 0 ? "red" : "inherit",
         }}
       >
-        {DateTime.local().toMillis() < endsIn ? (
-          time.toFormat("mm:ss")
-        ) : (
+        {DateTime.utc().toMillis() > endsIn ? (
           <Typography>Expired!</Typography>
+        ) : (
+          time.toFormat("mm:ss")
         )}
       </Typography>
     </>

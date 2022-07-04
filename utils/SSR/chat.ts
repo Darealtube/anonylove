@@ -26,7 +26,7 @@ export const revealChatInfo = async (id: string) => {
   });
 
   const expired =
-    DateTime.local().toMillis() > (getProfileActiveChat?.expiresAt as number);
+    DateTime.utc().toMillis() > (getProfileActiveChat?.expiresAt as number);
 
   return {
     data: apolloClient,

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Box, Container, Typography } from "@mui/material";
 import { GetServerSideProps } from "next";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { addApolloState } from "../apollo/apolloClient";
@@ -9,19 +9,15 @@ import { REVEAL_USER_CHAT } from "../apollo/query/chatQuery";
 import {
   getProfileChatResult,
   getProfileChatVariables,
-  GetProfileResult,
-  GetProfileVariables,
 } from "../types/Queries";
 import { revealChatInfo } from "../utils/SSR/chat";
 import NoPicture from "../public/anonyUser.png";
 import { END_CHAT } from "../apollo/mutation/chatMutation";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { GET_PROFILE_CHAT } from "../apollo/query/userQuery";
 import { AnonyButton } from "../Components/Style/Global/AnonyButton";
 
 const RevealConfession = ({ id }: { id: string }) => {
-  const { data: session } = useSession();
   const router = useRouter();
   const { data: { getProfileActiveChat } = {} } = useQuery<
     getProfileChatResult,
@@ -30,30 +26,6 @@ const RevealConfession = ({ id }: { id: string }) => {
 
   const [endChat] = useMutation(END_CHAT, {
     variables: { chat: getProfileActiveChat?._id },
-    update: (cache) => {
-      // We can't use cache evict() because the query data disappears when changing tabs.
-      const user = cache.readQuery<GetProfileResult, GetProfileVariables>({
-        query: GET_PROFILE_CHAT,
-        variables: {
-          limit: 10,
-          id: session?.user?.id as string,
-        },
-      });
-
-      cache.writeQuery({
-        query: GET_PROFILE_CHAT,
-        variables: {
-          limit: 10,
-          id: session?.user?.id,
-        },
-        data: {
-          getProfile: {
-            ...user?.getProfile,
-            activeChat: null,
-          },
-        },
-      });
-    },
   });
 
   const handleEndChat = () => {

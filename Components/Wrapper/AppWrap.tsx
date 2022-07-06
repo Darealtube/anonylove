@@ -12,12 +12,12 @@ import { createContext, ReactNode, useState } from "react";
 import ChatInfo from "./Lists/ChatInfo";
 import { useSubscription, useQuery } from "@apollo/client";
 import { GET_PROFILE_CHAT } from "../../apollo/query/userQuery";
-import { SEEN_CHAT_SUBSCRIPTION } from "../../apollo/subscription/messageSub";
 import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
 import { Chat } from "../../types/models";
 import { DateTime } from "luxon";
 import SideBar from "./SideBar";
 import { AnonyMenu } from "../Style/AppWrap/AnonyMenu";
+import { PROFILE_CHAT_SUBSCRIPTION } from "../../apollo/subscription/chatSub";
 
 export const NotificationContext = createContext<{ notifSeen?: boolean }>({
   notifSeen: undefined,
@@ -29,7 +29,9 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const sm = useMediaQuery(theme.breakpoints.down("md"));
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
-  const { data } = useSubscription(SEEN_CHAT_SUBSCRIPTION);
+  const { data } = useSubscription(PROFILE_CHAT_SUBSCRIPTION, {
+    variables: { user: session?.user?.id },
+  });
   const { data: { getProfile } = {}, loading } = useQuery<
     GetProfileResult,
     GetProfileVariables

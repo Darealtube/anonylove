@@ -8,11 +8,8 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ACCEPT_CONFESSION_REQUEST } from "../../../apollo/mutation/requestMutation";
-import { GET_PROFILE_CHAT } from "../../../apollo/query/userQuery";
-import { GetProfileResult, GetProfileVariables } from "../../../types/Queries";
 
 type AcceptRequestDialog = {
   open: boolean;
@@ -28,41 +25,12 @@ const AcceptRequestDialog = ({
   requestID,
 }: AcceptRequestDialog) => {
   const router = useRouter();
-  const { data: session } = useSession();
-  const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST, {
-    update: (cache, result) => {
-      const newChat = result?.data?.acceptConfessionRequest;
-      const user = cache.readQuery<GetProfileResult, GetProfileVariables>({
-        query: GET_PROFILE_CHAT,
-        variables: {
-          limit: 10,
-          id: session?.user?.id as string,
-        },
-      });
-
-      cache.writeQuery({
-        query: GET_PROFILE_CHAT,
-        variables: {
-          limit: 10,
-          name: session?.user?.name,
-        },
-        data: {
-          getProfile: {
-            ...user?.getProfile,
-            activeChat: newChat,
-          },
-        },
-      });
-
-      cache.evict({ id: `Request:${requestID}` });
-      cache.gc();
-      router.replace("/activeChat");
-    },
-  });
+  const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST);
 
   const handleAcceptRequest = (e: React.MouseEvent<HTMLButtonElement>) => {
     acceptRequest({ variables: { requestID } });
     handleClose(e);
+    router.replace("/activeChat");
   };
 
   return (

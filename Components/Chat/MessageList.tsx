@@ -35,7 +35,6 @@ const MessageList = ({
       }
       inverse={true}
       style={{
-        textAlign: "center",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column-reverse",

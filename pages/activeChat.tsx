@@ -94,6 +94,7 @@ const ActiveChat = ({ id }: { id: string }) => {
     }
     subscribeToMore({
       document: NEW_MSG_SUBSCRIPTION,
+      variables: { chat: getProfileActiveChat?._id },
       updateQuery: (
         prev,
         { subscriptionData }: { subscriptionData: SubscriptionData<NewMessage> }
@@ -123,7 +124,7 @@ const ActiveChat = ({ id }: { id: string }) => {
         }
       },
     });
-  }, [subscribeToMore]);
+  }, [subscribeToMore, getProfileActiveChat?._id]);
 
   // Handle Page Visibility Changes
   useEffect(() => {

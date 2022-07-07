@@ -53,6 +53,17 @@ const Textbar = ({
     setMessage("");
   };
 
+  const handleMessageKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (
+      (e.key === "Enter" || e.code === "NumpadEnter") &&
+      !e.shiftKey &&
+      !(message.trim().length === 0)
+    ) {
+      e.preventDefault();
+      handleMessage();
+    }
+  };
+
   return (
     <>
       <AnonyTextBar elevation={6}>
@@ -71,6 +82,7 @@ const Textbar = ({
             maxRows={4}
             onChange={handleMessageChange}
             value={message}
+            onKeyPress={handleMessageKey}
           />
           <IconButton sx={{ ml: 2, color: "white" }} onClick={handleOpenEmoji}>
             <EmojiEmotionsIcon />

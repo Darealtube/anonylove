@@ -57,16 +57,11 @@ export const GET_PROFILE_CHAT = gql`
         latestMessage {
           _id
           message
-          sender {
-            _id
-            name
-          }
+          anonymous
         }
-        startedAt
         expiresAt
         anonSeen
         confesseeSeen
-        updatedAt
       }
       notifSeen
     }
@@ -136,6 +131,23 @@ export const GET_PROFILE_NOTIFICATIONS = gql`
           hasNextPage
         }
       }
+    }
+  }
+`;
+
+export const GET_PROFILE_STATUS = gql`
+  query ProfileStatus($id: ID!) {
+    getProfile(id: $id) {
+      _id
+      activeChat {
+        _id
+        confessee {
+          _id
+        }
+        anonSeen
+        confesseeSeen
+      }
+      notifSeen
     }
   }
 `;

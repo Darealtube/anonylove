@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { Box, Container, Typography } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import Head from "next/head";
 import Image from "next/image";
 import { addApolloState } from "../apollo/apolloClient";
 import { REVEAL_USER_CHAT } from "../apollo/query/chatQuery";
@@ -35,12 +34,6 @@ const RevealConfession = ({ id }: { id: string }) => {
 
   return (
     <>
-      <Head>
-        <title>AnonyLove | Confession</title>
-        <meta name="description" content="Face the fear of confession." />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <Container
         sx={{
           diplay: "flex",

@@ -7,16 +7,20 @@ export const PROFILE_CHAT_SUBSCRIPTION = gql`
       latestMessage {
         _id
         message
-        sender {
-          _id
-          name
-        }
       }
-      startedAt
       expiresAt
       anonSeen
       confesseeSeen
-      updatedAt
+    }
+  }
+`;
+
+export const CHAT_SEEN_SUBSCRIPTION = gql`
+  subscription ProfileChat($user: ID!) {
+    profileChat(user: $user) {
+      _id
+      anonSeen
+      confesseeSeen
     }
   }
 `;

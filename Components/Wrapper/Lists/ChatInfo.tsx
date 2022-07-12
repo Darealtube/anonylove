@@ -15,7 +15,11 @@ const ChatInfo = ({ chat }: { chat: Chat }) => {
   const { data: session } = useSession();
   const confessedTo = session?.user?.id === chat?.confessee._id;
   const chatSeen = confessedTo ? chat?.confesseeSeen : chat?.anonSeen;
-  const sentByYou = chat?.latestMessage?.sender._id === session?.user?.id;
+  const sentByYou =
+    chat?.latestMessage &&
+    ((confessedTo && !chat?.latestMessage?.anonymous) ||
+      (!confessedTo && chat?.latestMessage?.anonymous));
+
   return (
     <>
       <Link href="/activeChat" passHref>
@@ -47,12 +51,12 @@ const ChatInfo = ({ chat }: { chat: Chat }) => {
                 {!chat?.latestMessage && <strong>Send a Message!</strong>}
                 {!chatSeen ? (
                   <strong>
-                    {sentByYou && "You:"}
+                    {sentByYou && "You: "}
                     {chat?.latestMessage?.message}
                   </strong>
                 ) : (
                   <>
-                    {sentByYou && "You:"}
+                    {sentByYou && "You: "}
                     {chat?.latestMessage?.message}
                   </>
                 )}

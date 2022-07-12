@@ -34,7 +34,6 @@ export interface Message {
 
 export interface Chat {
   _id: string;
-  updatedAt: number;
   anonSeen: boolean;
   confesseeSeen: boolean;
   anonymous: User;
@@ -42,7 +41,6 @@ export interface Chat {
   messages: QueryConnection<Message>;
   latestMessage: Message;
   expiresAt: number;
-  startedAt: number;
 }
 
 export interface NotificationModel {

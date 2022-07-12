@@ -1,6 +1,5 @@
 import { TabPanel } from "@mui/lab";
 import { Container } from "@mui/material";
-import Head from "next/head";
 import Tabs from "../../Components/Requests/Tabs";
 import dynamic from "next/dynamic";
 
@@ -14,12 +13,6 @@ const YourRequestTab = dynamic(
 const Requests = () => {
   return (
     <>
-      <Head>
-        <title>AnonyLove | Home</title>
-        <meta name="description" content="Face the Fear of Confession" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <Container sx={{ height: "100%", pt: 4, pb: 4 }}>
         <Tabs>
           <TabPanel value="request">

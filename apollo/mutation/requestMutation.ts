@@ -48,7 +48,6 @@ export const ACCEPT_CONFESSION_REQUEST = gql`
       expiresAt
       anonSeen
       confesseeSeen
-      updatedAt
     }
   }
 `;

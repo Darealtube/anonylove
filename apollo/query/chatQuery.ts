@@ -9,10 +9,8 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
         name
         image
       }
-      updatedAt
       anonSeen
       confesseeSeen
-      startedAt
       expiresAt
       messages(after: $after, limit: $limit) {
         totalCount
@@ -47,7 +45,6 @@ export const REVEAL_USER_CHAT = gql`
         name
         image
       }
-      startedAt
       expiresAt
     }
   }

@@ -14,7 +14,6 @@ import {
   ListItemAvatar,
   ListItemText,
 } from "@mui/material";
-import Head from "next/head";
 import Image from "next/image";
 import { SyntheticEvent, useState } from "react";
 import useSearch from "../utils/Hooks/useSearch";
@@ -71,11 +70,6 @@ const Home = () => {
 
   return (
     <>
-      <Head>
-        <title>AnonyLove | Home</title>
-        <meta name="description" content="Face the Fear of Confession" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <AnonyHome>
         <Box mt={4}>
           <Image src={BrandLogo} alt="LOGO" width={304} height={192} />

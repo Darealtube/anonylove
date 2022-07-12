@@ -6,6 +6,7 @@ import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../apollo/apolloClient";
 import { useRouter } from "next/router";
 import AppWrap from "../Components/Wrapper/AppWrap";
+import TitleWrap from "../Components/TitleWrap";
 
 const theme = createTheme({
   typography: {
@@ -24,9 +25,11 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             {router.route === "/" ? (
               <Component {...pageProps} />
             ) : (
-              <AppWrap>
-                <Component {...pageProps} />
-              </AppWrap>
+              <TitleWrap>
+                <AppWrap>
+                  <Component {...pageProps} />
+                </AppWrap>
+              </TitleWrap>
             )}
           </SessionProvider>
         </ThemeProvider>

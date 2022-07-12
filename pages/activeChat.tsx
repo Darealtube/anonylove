@@ -9,7 +9,6 @@ import {
 import SettingsIcon from "@mui/icons-material/Settings";
 import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
-import Head from "next/head";
 import Image from "next/image";
 import { addApolloState } from "../apollo/apolloClient";
 import { GET_PROFILE_ACTIVE_CHAT } from "../apollo/query/chatQuery";
@@ -158,11 +157,6 @@ const ActiveChat = ({ id }: { id: string }) => {
 
   return (
     <>
-      <Head>
-        <title>AnonyLove | Confession</title>
-        <meta name="description" content="Face the fear of confession." />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Box display="flex" flexDirection="column" height="100%">
         <AnonyChatHead>
           <Container
@@ -190,7 +184,6 @@ const ActiveChat = ({ id }: { id: string }) => {
 
             <CountdownTimer
               endsIn={getProfileActiveChat?.expiresAt as number}
-              startedAt={getProfileActiveChat?.startedAt as number}
             />
 
             <IconButton>

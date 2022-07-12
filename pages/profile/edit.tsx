@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Image from "next/image";
 import NoBg from "../../public/nobg.png";
 import anonyUser from "../../public/anonyUser.png";
@@ -127,12 +126,6 @@ const EditProfile = () => {
 
   return (
     <>
-      <Head>
-        <title>AnonyLove | Profile</title>
-        <meta name="description" content="Face the Fear of Confession" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <AnonyCover>
         <Image
           src={profile.cover ?? NoBg}

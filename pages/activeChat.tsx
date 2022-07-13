@@ -180,6 +180,8 @@ const ActiveChat = ({ id }: { id: string }) => {
                   ? "Anonymous"
                   : getProfileActiveChat?.confessee.name}
               </Typography>
+
+              <Typography>{DateTime.utc().offset}</Typography>
             </Box>
 
             <CountdownTimer

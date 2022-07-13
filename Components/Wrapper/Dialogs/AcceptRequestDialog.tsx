@@ -25,12 +25,13 @@ const AcceptRequestDialog = ({
   requestID,
 }: AcceptRequestDialog) => {
   const router = useRouter();
-  const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST);
+  const [acceptRequest] = useMutation(ACCEPT_CONFESSION_REQUEST, {
+    onCompleted: () => router.replace("/activeChat"),
+  });
 
   const handleAcceptRequest = (e: React.MouseEvent<HTMLButtonElement>) => {
     acceptRequest({ variables: { requestID } });
     handleClose(e);
-    router.replace("/activeChat");
   };
 
   return (

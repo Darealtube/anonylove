@@ -7,6 +7,7 @@ import { useApollo } from "../apollo/apolloClient";
 import { useRouter } from "next/router";
 import AppWrap from "../Components/Wrapper/AppWrap";
 import TitleWrap from "../Components/TitleWrap";
+import ErrorProvider from "../Components/ErrorProvider";
 
 const theme = createTheme({
   typography: {
@@ -27,7 +28,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             ) : (
               <TitleWrap>
                 <AppWrap>
-                  <Component {...pageProps} />
+                  <ErrorProvider>
+                    <Component {...pageProps} />
+                  </ErrorProvider>
                 </AppWrap>
               </TitleWrap>
             )}

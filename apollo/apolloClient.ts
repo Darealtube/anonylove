@@ -23,6 +23,11 @@ const authLink = setContext(async (_, req) => {
   };
 });
 
+// http://localhost:3000/graphql for test servers
+// https://anony-api-3.herokuapp.com/graphql for production
+// ws://localhost:3000/graphql for test websocket
+// wss://anony-api-3.herokuapp.com/graphql
+
 const httpLink = new HttpLink({
   uri: "https://anony-api-3.herokuapp.com/graphql",
   credentials: "include",

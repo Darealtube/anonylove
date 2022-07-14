@@ -14,7 +14,7 @@ import { addApolloState } from "../apollo/apolloClient";
 import { GET_PROFILE_ACTIVE_CHAT } from "../apollo/query/chatQuery";
 import { getUserActiveChat } from "../utils/SSR/chat";
 import Anonymous from "../public/anonyUser.png";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { SEEN_CHAT } from "../apollo/mutation/chatMutation";
 import {
   getProfileChatResult,
@@ -29,9 +29,14 @@ import Link from "next/link";
 import { NewMessage, SubscriptionData } from "../types/Subscriptions";
 import { AnonyChatHead } from "../Components/Style/Chat/AnonyChatHead";
 import { AnonyButton } from "../Components/Style/Global/AnonyButton";
+import { ErrorContext } from "../Components/ErrorProvider";
+import Error from "next/error";
+import { useRouter } from "next/router";
 
 const ActiveChat = ({ id }: { id: string }) => {
+  const router = useRouter();
   const chatMain = useRef<HTMLElement>();
+  const errorHandler = useContext(ErrorContext);
   const { data: session } = useSession();
   const [pageVisible, setPageVisible] = useState(false);
   const {
@@ -86,14 +91,19 @@ const ActiveChat = ({ id }: { id: string }) => {
   // Put the scrollbar at the end on page mount
   // Setup chat subscription on mount
   useEffect(() => {
-    if (chatMain) {
+    if (chatMain && getProfileActiveChat) {
       (chatMain as React.MutableRefObject<HTMLElement>).current.scrollTop =
-        (chatMain as React.MutableRefObject<HTMLElement>).current.scrollHeight -
-        (chatMain as React.MutableRefObject<HTMLElement>).current.clientHeight;
+        (chatMain as React.MutableRefObject<HTMLElement>)?.current
+          .scrollHeight -
+        (chatMain as React.MutableRefObject<HTMLElement>)?.current.clientHeight;
     }
     subscribeToMore({
       document: NEW_MSG_SUBSCRIPTION,
       variables: { chat: getProfileActiveChat?._id },
+      onError: (error) => {
+        errorHandler("Invalid Input: Chat does not exist.");
+        router.replace("/");
+      },
       updateQuery: (
         prev,
         { subscriptionData }: { subscriptionData: SubscriptionData<NewMessage> }
@@ -150,10 +160,18 @@ const ActiveChat = ({ id }: { id: string }) => {
 
   // If the page is visible and the chat hasn't been seen yet, seen the chat.
   useEffect(() => {
-    if (pageVisible && !chatSeen) {
+    if (pageVisible && !chatSeen && getProfileActiveChat) {
       seeChat();
     }
-  }, [pageVisible, seeChat, chatSeen]);
+  }, [pageVisible, seeChat, chatSeen, getProfileActiveChat]);
+
+  if (!getProfileActiveChat) {
+    return (
+      <>
+        <Error statusCode={404} />
+      </>
+    );
+  }
 
   return (
     <>
@@ -180,8 +198,6 @@ const ActiveChat = ({ id }: { id: string }) => {
                   ? "Anonymous"
                   : getProfileActiveChat?.confessee.name}
               </Typography>
-
-              <Typography>{DateTime.utc().offset}</Typography>
             </Box>
 
             <CountdownTimer

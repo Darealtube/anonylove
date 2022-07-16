@@ -23,10 +23,7 @@ const Profile = ({ id }: { id: string }) => {
   const { data: { getProfile } = {} } = useQuery<
     GetProfileResult,
     GetProfileVariables
-  >(GET_PROFILE_QUERY, {
-    variables: { id },
-    skip: !session,
-  });
+  >(GET_PROFILE_QUERY, { variables: { id }, skip: !session });
 
   return (
     <>
@@ -88,9 +85,9 @@ const Profile = ({ id }: { id: string }) => {
               </Typography>
             </Information>
             <Link href="/profile/edit" passHref>
-                <ProfileButton variant="outlined" fullWidth>
-                  Edit Profile
-                </ProfileButton>
+              <ProfileButton variant="outlined" fullWidth>
+                Edit Profile
+              </ProfileButton>
             </Link>
           </Grid>
           <Grid item xs={12} sm={6} md={12} lg={6}>

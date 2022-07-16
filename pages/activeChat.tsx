@@ -22,7 +22,6 @@ import {
 } from "../types/Queries";
 import MessageList from "../Components/Chat/MessageList";
 import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
-import Textbar from "../Components/Chat/Textbar";
 import CountdownTimer from "../Components/Chat/CountdownTimer";
 import { DateTime } from "luxon";
 import Link from "next/link";
@@ -32,6 +31,9 @@ import { AnonyButton } from "../Components/Style/Global/AnonyButton";
 import { ErrorContext } from "../Components/ErrorProvider";
 import Error from "next/error";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+
+const Textbar = dynamic(() => import("../Components/Chat/Textbar"));
 
 const ActiveChat = ({ id }: { id: string }) => {
   const router = useRouter();
@@ -100,7 +102,7 @@ const ActiveChat = ({ id }: { id: string }) => {
     subscribeToMore({
       document: NEW_MSG_SUBSCRIPTION,
       variables: { chat: getProfileActiveChat?._id },
-      onError: (error) => {
+      onError: () => {
         errorHandler("Invalid Input: Chat does not exist.");
         router.replace("/");
       },

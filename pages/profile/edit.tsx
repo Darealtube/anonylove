@@ -15,7 +15,7 @@ import { getSession, useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@apollo/client";
 import { EDIT_PROFILE_QUERY } from "../../apollo/query/userQuery";
 import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
-import { MutableRefObject, useRef, useState } from "react";
+import { MutableRefObject, useContext, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { addApolloState } from "../../apollo/apolloClient";
 import { editProfileInfo } from "../../utils/SSR/profile";
@@ -31,13 +31,19 @@ import { AnonyCover } from "../../Components/Style/Profile/AnonyCover";
 import { AnonyPFP } from "../../Components/Style/Profile/AnonyPFP";
 import { ProfileButton } from "../../Components/Style/Profile/ProfileButton";
 import { AnonyBio } from "../../Components/Style/Profile/AnonyBio";
+import { ErrorContext } from "../../Components/ErrorProvider";
 
 const EditProfile = () => {
   const router = useRouter();
+  const errorHandler = useContext(ErrorContext);
   const pfp = useRef<HTMLInputElement | null>(null);
   const cover = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
-  const [editProfile] = useMutation(EDIT_USER_PROFILE);
+  const [editProfile] = useMutation(EDIT_USER_PROFILE, {
+    onError: () => {
+      errorHandler("You can only edit 3 times per hour.");
+    },
+  });
   const { data: { getProfile } = {} } = useQuery<
     GetProfileResult,
     GetProfileVariables
@@ -234,18 +240,14 @@ const EditProfile = () => {
             </Information>
 
             <Link href={`/profile/${session?.user?.name}`} passHref>
-                <ProfileButton variant="outlined" fullWidth>
-                  Cancel
-                </ProfileButton>
+              <ProfileButton variant="outlined" fullWidth>
+                Cancel
+              </ProfileButton>
             </Link>
 
-              <ProfileButton
-                variant="outlined"
-                fullWidth
-                onClick={handleSubmit}
-              >
-                Save
-              </ProfileButton>
+            <ProfileButton variant="outlined" fullWidth onClick={handleSubmit}>
+              Save
+            </ProfileButton>
           </Grid>
 
           <Grid item xs={12} sm={6} md={12} lg={6}>

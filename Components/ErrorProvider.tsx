@@ -10,23 +10,14 @@ export const ErrorContext = React.createContext<ErrorHandler>((message) =>
 );
 
 const ErrorProvider = ({ children }: { children: ReactNode }) => {
-  const [error, setError] = useState({
-    hasError: false,
-    errMessage: "",
-  });
+  const [error, setError] = useState({ hasError: false, errMessage: "" });
 
   const handleError = (message: string) => {
-    setError({
-      hasError: true,
-      errMessage: message,
-    });
+    setError({ hasError: true, errMessage: message });
   };
 
   const handleErrorClose = () => {
-    setError({
-      hasError: false,
-      errMessage: "",
-    });
+    setError({ hasError: false, errMessage: "" });
   };
 
   useEffect(() => {

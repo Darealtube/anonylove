@@ -11,10 +11,7 @@ export const getUserInfo = async (name: string, sessionId: string) => {
     data: { getUser },
   } = await apolloClient.query({
     query: GET_USER_QUERY,
-    variables: {
-      name,
-      from: sessionId,
-    },
+    variables: { name, from: sessionId },
   });
   const youSentRequest = getUser?.userSentRequest;
   return { data: apolloClient, exists: getUser, youSentRequest };

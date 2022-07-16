@@ -12,10 +12,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { ReactNode } from "react";
 import { signOut, useSession } from "next-auth/react";
-import Notifications from "./Notifications";
 import { AnonyAppBar } from "../Style/AppWrap/AnonyAppBar";
 import { AnonySideBar } from "../Style/AppWrap/AnonySideBar";
 import { AnonyButton } from "../Style/Global/AnonyButton";
+import dynamic from "next/dynamic";
+
+const Notifications = dynamic(() => import("./Notifications"));
 
 type SideBarProps = {
   children: ReactNode;

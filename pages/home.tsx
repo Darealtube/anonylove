@@ -4,12 +4,8 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  styled,
-  inputLabelClasses,
   CircularProgress,
-  Autocomplete,
   AutocompleteInputChangeReason,
-  outlinedInputClasses,
   ListItem,
   ListItemAvatar,
   ListItemText,
@@ -22,32 +18,7 @@ import { User } from "../types/models";
 import NoUserImg from "../public/anonyUser.png";
 import Link from "next/link";
 import { AnonyHome } from "../Components/Style/Home/AnonyHome";
-
-const StyledAutoComplete = styled(Autocomplete)({
-  [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
-    borderColor: "#F6F7F8",
-  },
-  [`&:hover .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]:
-    {
-      borderColor: "#70161E",
-    },
-  [`& .${outlinedInputClasses.root}.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]:
-    {
-      borderColor: "#F6F7F8",
-    },
-  [`& .${outlinedInputClasses.input}`]: {
-    color: "#F6F7F8",
-  },
-  [`& .${inputLabelClasses.outlined}`]: {
-    color: "#F6F7F8",
-  },
-  [`&:hover .${inputLabelClasses.outlined}`]: {
-    color: "#70161E",
-  },
-  [`& .${inputLabelClasses.outlined}.${inputLabelClasses.focused}`]: {
-    color: "#F6F7F8",
-  },
-});
+import AnonySearchBar from "../Components/Style/Home/AnonySearchBar";
 
 const Home = () => {
   const theme = useTheme();
@@ -74,7 +45,7 @@ const Home = () => {
         <Box mt={4}>
           <Image src={BrandLogo} alt="LOGO" width={304} height={192} />
         </Box>
-        <StyledAutoComplete
+        <AnonySearchBar
           id="anonylove-searchbar"
           sx={{ width: "80%", color: "white", mt: 4, mb: 4 }}
           open={searchOpen}

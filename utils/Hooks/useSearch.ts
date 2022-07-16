@@ -26,9 +26,7 @@ const useSearch = (key: string, searchOpen: boolean) => {
 
   useEffect(() => {
     if (!typing && searchOpen) {
-      searchUser({
-        variables: { key },
-      });
+      searchUser({ variables: { key } });
     }
   }, [key, searchUser, typing, searchOpen]);
 

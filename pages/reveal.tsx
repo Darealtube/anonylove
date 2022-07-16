@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import Image from "next/image";
@@ -15,6 +15,7 @@ import { END_CHAT } from "../apollo/mutation/chatMutation";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { AnonyButton } from "../Components/Style/Global/AnonyButton";
+import { RevealContainer } from "../Components/Style/Chat/RevealContainer";
 
 const RevealConfession = ({ id }: { id: string }) => {
   const router = useRouter();
@@ -34,17 +35,7 @@ const RevealConfession = ({ id }: { id: string }) => {
 
   return (
     <>
-      <Container
-        sx={{
-          diplay: "flex",
-          alignItems: "center",
-          textAlign: "center",
-          flexDirection: "column",
-          height: "100%",
-          pt: 3,
-          pb: 3,
-        }}
-      >
+      <RevealContainer>
         <Typography variant="h4" align="center" mb={12}>
           The confesser is...
         </Typography>
@@ -74,7 +65,7 @@ const RevealConfession = ({ id }: { id: string }) => {
             End Chat
           </AnonyButton>
         </Box>
-      </Container>
+      </RevealContainer>
     </>
   );
 };

@@ -9,7 +9,6 @@ import {
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { createContext, ReactNode, useState } from "react";
-import ChatInfo from "./Lists/ChatInfo";
 import { useSubscription, useQuery } from "@apollo/client";
 import { GET_PROFILE_CHAT } from "../../apollo/query/userQuery";
 import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
@@ -22,6 +21,8 @@ import { PROFILE_CHAT_SUBSCRIPTION } from "../../apollo/subscription/chatSub";
 export const NotificationContext = createContext<{ notifSeen?: boolean }>({
   notifSeen: undefined,
 });
+
+const ChatInfo = dynamic(() => import("./Lists/ChatInfo"));
 const MobileSideBar = dynamic(() => import("./MobileSideBar"));
 
 const AppWrap = ({ children }: { children: ReactNode }) => {
@@ -38,7 +39,6 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   >(GET_PROFILE_CHAT, {
     variables: { id: session?.user?.id as string },
     skip: !session,
-    fetchPolicy: "network-only",
   });
 
   const handleChatOpen = () => {

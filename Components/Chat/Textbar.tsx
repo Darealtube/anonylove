@@ -1,5 +1,5 @@
 import { Container, IconButton } from "@mui/material";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useContext, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import { useMutation } from "@apollo/client";
@@ -9,8 +9,11 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import { AnonyTextField } from "../Style/Chat/AnonyTextField";
 import { AnonyTextBar } from "../Style/Chat/AnonyTextBar";
+import { ErrorContext } from "../ErrorProvider";
 
 const EmojiPicker = dynamic(() => import("../Chat/EmojiPopover"));
+
+const rateLimitedText = "You are messaging too much. Try again in 30 seconds";
 
 const Textbar = ({
   chatId,
@@ -19,8 +22,13 @@ const Textbar = ({
   chatId: string | undefined;
   confessedTo: boolean;
 }) => {
+  const errorHandler = useContext(ErrorContext);
   const { data: session } = useSession();
-  const [sendMessage] = useMutation(SEND_MESSAGE);
+  const [sendMessage] = useMutation(SEND_MESSAGE, {
+    onError: () => {
+      errorHandler(rateLimitedText);
+    },
+  });
   const [message, setMessage] = useState("");
   const [emojiAnchor, setEmojiAnchor] = useState<HTMLButtonElement | null>(
     null

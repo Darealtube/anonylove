@@ -31,13 +31,7 @@ const User = ({
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const { data: { getUser } = {} } = useQuery<GetUserResult, GetUserVariables>(
     GET_USER_QUERY,
-    {
-      variables: {
-        name,
-        from: session?.user?.id as string,
-      },
-      skip: !session,
-    }
+    { variables: { name, from: session?.user?.id as string }, skip: !session }
   );
   const ownProfile = session?.user?.name === getUser?.name;
   const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
@@ -153,9 +147,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   );
 
   if (!exists) {
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 
   return addApolloState(data, {

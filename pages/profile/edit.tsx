@@ -40,8 +40,8 @@ const EditProfile = () => {
   const cover = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
   const [editProfile] = useMutation(EDIT_USER_PROFILE, {
-    onError: () => {
-      errorHandler("You can only edit 3 times per hour.");
+    onError: (error) => {
+      errorHandler(error.message);
     },
   });
   const { data: { getProfile } = {} } = useQuery<

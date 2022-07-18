@@ -13,8 +13,9 @@ export const getUserInfo = async (name: string, sessionId: string) => {
     query: GET_USER_QUERY,
     variables: { name, from: sessionId },
   });
+  const ownProfile = sessionId === getUser?._id;
   const youSentRequest = getUser?.userSentRequest;
-  return { data: apolloClient, exists: getUser, youSentRequest };
+  return { data: apolloClient, exists: getUser, youSentRequest, ownProfile };
 };
 
 export const getProfileInfo = async (id: string) => {

@@ -69,13 +69,15 @@ const Home = () => {
               <a>
                 <ListItem {...props}>
                   <ListItemAvatar>
-                    <Image
-                      src={(option as User).image ?? NoUserImg}
-                      alt="PFP"
-                      width={40}
-                      height={40}
-                      className="avatar"
-                    />
+                    <Box sx={{ width: 40, height: 40, position: "relative" }}>
+                      <Image
+                        src={(option as User).image ?? NoUserImg}
+                        alt="PFP"
+                        layout="fill"
+                        objectFit="cover"
+                        className="avatar"
+                      />
+                    </Box>
                   </ListItemAvatar>
                   <ListItemText
                     primary={(option as User).name}

@@ -49,8 +49,8 @@ const Profile = ({ id }: { id: string }) => {
               <Image
                 src={getProfile?.image ?? anonyUser}
                 alt="PFP"
-                width={160}
-                height={160}
+                layout="fill"
+                objectFit="cover"
                 className="avatar"
               />
             </AnonyPFP>

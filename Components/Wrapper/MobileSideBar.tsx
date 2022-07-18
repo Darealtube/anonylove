@@ -51,13 +51,13 @@ const MobileSideBar = ({
 
         <Link href={`/profile/`} passHref>
           <a>
-            <Box ml={2}>
+            <Box ml={2} width={40} height={40}>
               {session?.user?.image && (
                 <Image
                   src={session.user.image}
                   alt="PFP"
-                  width={40}
-                  height={40}
+                  layout="fill"
+                  objectFit="cover"
                   className="avatar"
                 />
               )}

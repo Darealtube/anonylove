@@ -10,7 +10,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { getUserInfo } from "../../utils/SSR/profile";
 import { GetUserResult, GetUserVariables } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
-import Link from "next/link";
 import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
 import { useState } from "react";
 import LinkTree from "../../Components/Profile/LinkTree";
@@ -26,6 +25,7 @@ const User = ({
   name: string;
   youSentRequest: boolean;
 }) => {
+  const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
   const [disableRequest, setDisableRequest] = useState(false);
   const { data: session } = useSession();
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
@@ -33,8 +33,6 @@ const User = ({
     GET_USER_QUERY,
     { variables: { name, from: session?.user?.id as string }, skip: !session }
   );
-  const ownProfile = session?.user?.name === getUser?.name;
-  const [sendRequest] = useMutation(SEND_CONFESSION_REQUEST);
 
   const handleRequest = () => {
     setDisableRequest(true);
@@ -67,8 +65,8 @@ const User = ({
               <Image
                 src={getUser?.image ?? anonyUser}
                 alt="PFP"
-                width={160}
-                height={160}
+                layout="fill"
+                objectFit="cover"
                 className="avatar"
               />
             </AnonyPFP>
@@ -102,27 +100,19 @@ const User = ({
                 {getUser?.status ?? "Unknown"}
               </Typography>
             </Information>
-            {ownProfile ? (
-              <Link href="/profile/edit" passHref>
-                <ProfileButton variant="outlined" fullWidth>
-                  Edit Profile
-                </ProfileButton>
-              </Link>
-            ) : (
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <ProfileButton variant="outlined" fullWidth>
-                  Report User
-                </ProfileButton>
-                <ProfileButton
-                  variant="outlined"
-                  onClick={handleRequest}
-                  fullWidth
-                  disabled={disableRequest || youSentRequest}
-                >
-                  Send Request
-                </ProfileButton>
-              </Box>
-            )}
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <ProfileButton variant="outlined" fullWidth>
+                Report User
+              </ProfileButton>
+              <ProfileButton
+                variant="outlined"
+                onClick={handleRequest}
+                fullWidth
+                disabled={disableRequest || youSentRequest}
+              >
+                Send Request
+              </ProfileButton>
+            </Box>
           </Grid>
           <Grid item xs={12} sm={6} md={12} lg={6}>
             <Typography
@@ -141,10 +131,19 @@ const User = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data, exists, youSentRequest } = await getUserInfo(
+  const { data, exists, youSentRequest, ownProfile } = await getUserInfo(
     context.params?.name as string,
     session?.user?.id as string
   );
+
+  if (ownProfile) {
+    return {
+      redirect: {
+        destination: "/profile/",
+        permanent: true,
+      },
+    };
+  }
 
   if (!exists) {
     return { notFound: true };

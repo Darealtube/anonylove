@@ -42,13 +42,13 @@ const SideBar = ({ children, notifSeen }: SideBarProps) => {
 
           <Link href={`/profile/`} passHref>
             <a>
-              <Box ml={2}>
+              <Box ml={2} width={40} height={40} position="relative">
                 {session?.user?.image && (
                   <Image
                     src={session.user.image}
                     alt="PFP"
-                    width={40}
-                    height={40}
+                    layout="fill"
+                    objectFit="cover"
                     className="avatar"
                   />
                 )}

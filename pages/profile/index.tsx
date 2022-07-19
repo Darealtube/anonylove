@@ -23,7 +23,7 @@ const Profile = ({ id }: { id: string }) => {
   const { data: { getProfile } = {} } = useQuery<
     GetProfileResult,
     GetProfileVariables
-  >(GET_PROFILE_QUERY, { variables: { id }, skip: !session });
+  >(GET_PROFILE_QUERY, { variables: { profileId: id }, skip: !session });
 
   return (
     <>

@@ -31,13 +31,13 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
   const [chatOpen, setChatOpen] = useState(false);
   const { data } = useSubscription(PROFILE_CHAT_SUBSCRIPTION, {
-    variables: { user: session?.user?.id },
+    variables: { profileId: session?.user?.id },
   });
   const { data: { getProfile } = {}, loading } = useQuery<
     GetProfileResult,
     GetProfileVariables
   >(GET_PROFILE_CHAT, {
-    variables: { id: session?.user?.id as string },
+    variables: { profileId: session?.user?.id as string },
     skip: !session,
   });
 
@@ -48,6 +48,8 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const chatExpired =
     getProfile?.activeChat &&
     (getProfile?.activeChat?.expiresAt as number) < DateTime.utc().toMillis();
+
+    console.log(getProfile?.notifSeen)
 
   return (
     <>

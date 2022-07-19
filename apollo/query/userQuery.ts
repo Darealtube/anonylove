@@ -16,8 +16,8 @@ export const GET_USER_QUERY = gql`
 `;
 
 export const GET_PROFILE_QUERY = gql`
-  query GetProfile($id: ID!) {
-    getProfile(id: $id) {
+  query GetProfile($profileId: ID!) {
+    getProfile(profileId: $profileId) {
       _id
       name
       email
@@ -30,8 +30,8 @@ export const GET_PROFILE_QUERY = gql`
 `;
 
 export const EDIT_PROFILE_QUERY = gql`
-  query EditProfileInfo($id: ID!) {
-    getProfile(id: $id) {
+  query EditProfileInfo($profileId: ID!) {
+    getProfile(profileId: $profileId) {
       _id
       name
       email
@@ -44,8 +44,8 @@ export const EDIT_PROFILE_QUERY = gql`
 `;
 
 export const GET_PROFILE_CHAT = gql`
-  query ProfileChat($id: ID!) {
-    getProfile(id: $id) {
+  query ProfileChat($profileId: ID!) {
+    getProfile(profileId: $profileId) {
       _id
       activeChat {
         _id
@@ -69,8 +69,8 @@ export const GET_PROFILE_CHAT = gql`
 `;
 
 export const GET_PROFILE_RECEIVED_REQUESTS = gql`
-  query ProfileRequests($id: ID!, $after: String, $limit: Int) {
-    getProfile(id: $id) {
+  query ProfileRequests($profileId: ID!, $after: String, $limit: Int) {
+    getProfile(profileId: $profileId) {
       _id
       activeChat {
         _id
@@ -92,8 +92,8 @@ export const GET_PROFILE_RECEIVED_REQUESTS = gql`
 `;
 
 export const GET_PROFILE_SENT_REQUESTS = gql`
-  query ProfileSentRequests($id: ID!, $after: String, $limit: Int) {
-    getProfile(id: $id) {
+  query ProfileSentRequests($profileId: ID!, $after: String, $limit: Int) {
+    getProfile(profileId: $profileId) {
       _id
       sentConfessionRequests(limit: $limit, after: $after) {
         edges {
@@ -112,8 +112,8 @@ export const GET_PROFILE_SENT_REQUESTS = gql`
 `;
 
 export const GET_PROFILE_NOTIFICATIONS = gql`
-  query ProfileNotifications($id: ID!, $after: String, $limit: Int) {
-    getProfile(id: $id) {
+  query ProfileNotifications($profileId: ID!, $after: String, $limit: Int) {
+    getProfile(profileId: $profileId) {
       _id
       userNotifications(limit: $limit, after: $after) {
         edges {
@@ -136,8 +136,8 @@ export const GET_PROFILE_NOTIFICATIONS = gql`
 `;
 
 export const GET_PROFILE_STATUS = gql`
-  query ProfileStatus($id: ID!) {
-    getProfile(id: $id) {
+  query ProfileStatus($profileId: ID!) {
+    getProfile(profileId: $profileId) {
       _id
       activeChat {
         _id

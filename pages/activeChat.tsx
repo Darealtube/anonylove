@@ -49,7 +49,7 @@ const ActiveChat = ({ id }: { id: string }) => {
     GET_PROFILE_ACTIVE_CHAT,
     {
       variables: {
-        id: session?.user?.id as string,
+        profileId: session?.user?.id as string,
         limit: 10,
       },
     }

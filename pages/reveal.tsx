@@ -22,7 +22,7 @@ const RevealConfession = ({ id }: { id: string }) => {
   const { data: { getProfileActiveChat } = {} } = useQuery<
     getProfileChatResult,
     getProfileChatVariables
-  >(REVEAL_USER_CHAT, { variables: { id } });
+  >(REVEAL_USER_CHAT, { variables: { profileId: id } });
 
   const [endChat] = useMutation(END_CHAT, {
     variables: { chat: getProfileActiveChat?._id },

@@ -16,13 +16,13 @@ const Notifications = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [seenNotif, setSeenNotif] = useState(notifSeen);
   const { data } = useSubscription(NEW_NOTIF_SUBSCRIPTION, {
-    variables: { receiver: session?.user?.id },
+    variables: { profileId: session?.user?.id },
     onSubscriptionData: ({ subscriptionData }) => {
       setSeenNotif(subscriptionData?.data?.notifSeen);
     },
   });
   const [seeNotification] = useMutation(SEEN_NOTIFICATION, {
-    variables: { userId: session?.user?.id },
+    variables: { profileId: session?.user?.id },
   });
 
   const handleNotification = (e: React.MouseEvent<HTMLButtonElement>) => {

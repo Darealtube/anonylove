@@ -13,10 +13,10 @@ const TitleWrap = ({ children }: { children: ReactNode }) => {
   const [notifSeen, setNotifSeen] = useState<boolean | undefined>(true);
   const { data } = useQuery<GetProfileResult, GetProfileVariables>(
     GET_PROFILE_STATUS,
-    { variables: { id: session?.user?.id as string } }
+    { variables: { profileId: session?.user?.id as string } }
   );
   const { data: notifS } = useSubscription(NEW_NOTIF_SUBSCRIPTION, {
-    variables: { receiver: session?.user?.id },
+    variables: { profileId: session?.user?.id },
     onSubscriptionData: ({ subscriptionData }) => {
       setNotifSeen(subscriptionData?.data?.notifSeen);
     },

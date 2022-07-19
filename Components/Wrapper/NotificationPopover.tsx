@@ -30,7 +30,7 @@ const NotificationPopover = ({
       GET_PROFILE_NOTIFICATIONS,
       {
         variables: {
-          id: session?.user?.id as string,
+          profileId: session?.user?.id as string,
           limit: 10,
         },
       }

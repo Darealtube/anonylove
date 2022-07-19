@@ -24,7 +24,7 @@ export const getProfileInfo = async (id: string) => {
     data: { getProfile },
   } = await apolloClient.query({
     query: GET_PROFILE_QUERY,
-    variables: { id },
+    variables: { profileId: id },
   });
   return { data: apolloClient, exists: getProfile };
 };
@@ -35,7 +35,7 @@ export const editProfileInfo = async (id: string) => {
     data: { getProfile },
   } = await apolloClient.query({
     query: EDIT_PROFILE_QUERY,
-    variables: { id },
+    variables: { profileId: id },
   });
   return { data: apolloClient, exists: getProfile };
 };

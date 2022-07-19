@@ -11,7 +11,7 @@ export const getUserActiveChat = async (id: string) => {
     data: { getProfileActiveChat },
   } = await apolloClient.query({
     query: GET_PROFILE_ACTIVE_CHAT,
-    variables: { id, limit: 10 },
+    variables: { profileId: id, limit: 10 },
   });
   return { data: apolloClient, exists: getProfileActiveChat };
 };
@@ -22,7 +22,7 @@ export const revealChatInfo = async (id: string) => {
     data: { getProfileActiveChat },
   } = await apolloClient.query({
     query: REVEAL_USER_CHAT,
-    variables: { id },
+    variables: { profileId: id },
   });
 
   const expired =

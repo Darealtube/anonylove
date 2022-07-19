@@ -22,7 +22,7 @@ const YourRequestTab = () => {
     GET_PROFILE_SENT_REQUESTS,
     {
       variables: {
-        id: session?.user?.id as string,
+        profileId: session?.user?.id as string,
         limit: 10,
       },
     }

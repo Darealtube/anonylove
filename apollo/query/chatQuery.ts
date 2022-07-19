@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client/core";
 
 export const GET_PROFILE_ACTIVE_CHAT = gql`
-  query GetProfileActiveChat($id: ID!, $after: String, $limit: Int) {
-    getProfileActiveChat(id: $id) {
+  query GetProfileActiveChat($profileId: ID!, $after: String, $limit: Int) {
+    getProfileActiveChat(profileId: $profileId) {
       _id
       confessee {
         _id
@@ -37,8 +37,8 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
 `;
 
 export const REVEAL_USER_CHAT = gql`
-  query RevealUserChat($id: ID!) {
-    getProfileActiveChat(id: $id) {
+  query RevealUserChat($profileId: ID!) {
+    getProfileActiveChat(profileId: $profileId) {
       _id
       anonymous {
         _id

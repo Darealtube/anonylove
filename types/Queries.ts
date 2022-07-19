@@ -1,7 +1,7 @@
 import { Chat, User } from "./models";
 
 export interface GetProfileVariables {
-  id: string;
+  profileId: string;
   from?: string;
   limit?: number;
   after?: string;
@@ -35,7 +35,7 @@ export interface getProfileChatResult {
 }
 
 export interface getProfileChatVariables {
-  id: string;
+  profileId: string;
   after?: string;
   limit?: number;
 }

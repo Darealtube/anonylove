@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const PROFILE_CHAT_SUBSCRIPTION = gql`
-  subscription ProfileChat($user: ID!) {
-    profileChat(user: $user) {
+  subscription ProfileChat($profileId: ID!) {
+    profileChat(profileId: $profileId) {
       _id
       latestMessage {
         _id
@@ -16,8 +16,8 @@ export const PROFILE_CHAT_SUBSCRIPTION = gql`
 `;
 
 export const CHAT_SEEN_SUBSCRIPTION = gql`
-  subscription ProfileChat($user: ID!) {
-    profileChat(user: $user) {
+  subscription ProfileChat($profileId: ID!) {
+    profileChat(profileId: $profileId) {
       _id
       anonSeen
       confesseeSeen

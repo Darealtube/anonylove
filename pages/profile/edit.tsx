@@ -49,7 +49,7 @@ const EditProfile = () => {
     GetProfileVariables
   >(EDIT_PROFILE_QUERY, {
     variables: {
-      id: session?.user?.id as string,
+      profileId: session?.user?.id as string,
     },
   });
 

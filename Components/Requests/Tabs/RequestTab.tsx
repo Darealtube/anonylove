@@ -25,7 +25,7 @@ const RequestTab = () => {
     GET_PROFILE_RECEIVED_REQUESTS,
     {
       variables: {
-        id: session?.user?.id as string,
+        profileId: session?.user?.id as string,
         limit: 10,
       },
       skip: !session,

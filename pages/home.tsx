@@ -6,19 +6,17 @@ import {
   useTheme,
   CircularProgress,
   AutocompleteInputChangeReason,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
 } from "@mui/material";
 import Image from "next/image";
 import { SyntheticEvent, useState } from "react";
 import useSearch from "../utils/Hooks/useSearch";
 import BrandLogo from "../public/brandlogo.png";
 import { User } from "../types/models";
-import NoUserImg from "../public/anonyUser.png";
-import Link from "next/link";
 import { AnonyHome } from "../Components/Style/Home/AnonyHome";
 import AnonySearchBar from "../Components/Style/Home/AnonySearchBar";
+import dynamic from "next/dynamic";
+
+const SearchOptions = dynamic(() => import("../Components/Home/SearchOptions"));
 
 const Home = () => {
   const theme = useTheme();
@@ -65,27 +63,7 @@ const Home = () => {
             (option as User).name === (value as User).name
           }
           renderOption={(props, option) => (
-            <Link href={`/profile/${(option as User).name}`} passHref>
-              <a>
-                <ListItem {...props}>
-                  <ListItemAvatar>
-                    <Box sx={{ width: 40, height: 40, position: "relative" }}>
-                      <Image
-                        src={(option as User).image ?? NoUserImg}
-                        alt="PFP"
-                        layout="fill"
-                        objectFit="cover"
-                        className="avatar"
-                      />
-                    </Box>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={(option as User).name}
-                    secondary="Heya!"
-                  />
-                </ListItem>
-              </a>
-            </Link>
+            <SearchOptions props={props} option={option} />
           )}
           renderInput={(params) => (
             <TextField

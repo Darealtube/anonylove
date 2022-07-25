@@ -48,9 +48,6 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
   const chatExpired =
     getProfile?.activeChat &&
     (getProfile?.activeChat?.expiresAt as number) < DateTime.utc().toMillis();
-
-    console.log(getProfile?.notifSeen)
-
   return (
     <>
       <AnonyMenu container>

@@ -10,18 +10,6 @@ import { split } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
-import { setContext } from "@apollo/client/link/context";
-import { getSession } from "next-auth/react";
-
-const authLink = setContext(async (_, req) => {
-  const session = await getSession(req);
-  return {
-    headers: {
-      ...req.headers,
-      authorization: session?.user?.id,
-    },
-  };
-});
 
 // http://localhost:3000/graphql for test servers
 // https://anony-api-3.herokuapp.com/graphql for production
@@ -75,7 +63,7 @@ let apolloClient: null | ApolloClient<NormalizedCacheObject>;
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: authLink.concat(splitLink),
+    link: splitLink,
     cache: new InMemoryCache({
       typePolicies: {
         User: {

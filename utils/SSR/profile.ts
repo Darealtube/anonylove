@@ -12,6 +12,7 @@ export const getUserInfo = async (name: string, sessionId: string) => {
   } = await apolloClient.query({
     query: GET_USER_QUERY,
     variables: { name, from: sessionId },
+    context: { Authorization: sessionId },
   });
   const ownProfile = sessionId === getUser?._id;
   const youSentRequest = getUser?.userSentRequest;
@@ -25,6 +26,7 @@ export const getProfileInfo = async (id: string) => {
   } = await apolloClient.query({
     query: GET_PROFILE_QUERY,
     variables: { profileId: id },
+    context: { Authorization: id },
   });
   return { data: apolloClient, exists: getProfile };
 };
@@ -36,6 +38,7 @@ export const editProfileInfo = async (id: string) => {
   } = await apolloClient.query({
     query: EDIT_PROFILE_QUERY,
     variables: { profileId: id },
+    context: { Authorization: id },
   });
   return { data: apolloClient, exists: getProfile };
 };

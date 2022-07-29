@@ -52,8 +52,6 @@ const ActiveChat = ({ id }: { id: string }) => {
         profileId: session?.user?.id as string,
         limit: 10,
       },
-      fetchPolicy: "cache-and-network",
-      nextFetchPolicy: "cache-first",
     }
   );
   const expiredChat =

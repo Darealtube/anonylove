@@ -40,13 +40,19 @@ const RevealConfession = ({ id }: { id: string }) => {
           The confesser is...
         </Typography>
 
-        <Box mb={16}>
+        <Box
+          mb={16}
+          width={320}
+          height={320}
+          className="avatar"
+          position="relative"
+        >
           <Image
             src={getProfileActiveChat?.anonymous.image ?? NoPicture}
             alt="Confesser PFP"
+            layout="fill"
+            objectFit="cover"
             className="avatar"
-            width={320}
-            height={320}
           />
         </Box>
 
@@ -54,7 +60,12 @@ const RevealConfession = ({ id }: { id: string }) => {
           {getProfileActiveChat?.anonymous.name}
         </Typography>
 
-        <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          width="100%"
+        >
           <Link
             href={`/profile/${getProfileActiveChat?.anonymous.name}`}
             passHref

@@ -44,6 +44,10 @@ const wsLink =
     ? new GraphQLWsLink(
         createClient({
           url: "wss://anony-api-3.herokuapp.com/graphql",
+          connectionParams: async () => {
+            const session = await getSession();
+            return { Authorization: session?.user.id };
+          },
         })
       )
     : null;

@@ -117,7 +117,7 @@ const EditProfile = () => {
           getProfile?.cover === profile.cover
             ? profile.cover
             : await uploadImage(profile.cover as string),
-        userId: session?.user?.id,
+        profileId: session?.user?.id,
       },
     })
       .then((res) => {

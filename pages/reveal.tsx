@@ -83,7 +83,7 @@ const RevealConfession = ({ id }: { id: string }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data, exists, expired } = await revealChatInfo(
+  const { data, exists, ended } = await revealChatInfo(
     session?.user?.id as string
   );
 
@@ -93,7 +93,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  if (!expired) {
+  if (!ended) {
     return {
       redirect: {
         destination: "/activeChat",

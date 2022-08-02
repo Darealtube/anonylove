@@ -29,7 +29,7 @@ export interface Message {
   sender: User;
   message: string;
   anonymous: boolean;
-  expiresAt: number;
+  endRequestMsg: boolean;
 }
 
 export interface Chat {
@@ -40,7 +40,8 @@ export interface Chat {
   confessee: User;
   messages: QueryConnection<Message>;
   latestMessage: Message;
-  expiresAt: number;
+  endAttempts: number;
+  chatEnded: boolean;
 }
 
 export interface NotificationModel {

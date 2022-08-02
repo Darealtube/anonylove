@@ -59,7 +59,6 @@ export const GET_PROFILE_CHAT = gql`
           message
           anonymous
         }
-        expiresAt
         anonSeen
         confesseeSeen
       }

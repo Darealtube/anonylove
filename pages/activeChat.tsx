@@ -22,18 +22,17 @@ import {
 } from "../types/Queries";
 import MessageList from "../Components/Chat/MessageList";
 import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
-import CountdownTimer from "../Components/Chat/CountdownTimer";
-import { DateTime } from "luxon";
 import Link from "next/link";
 import { NewMessage, SubscriptionData } from "../types/Subscriptions";
 import { AnonyChatHead } from "../Components/Style/Chat/AnonyChatHead";
 import { AnonyButton } from "../Components/Style/Global/AnonyButton";
 import { ErrorContext } from "../Components/ErrorProvider";
-import Error from "next/error";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import Error from "next/error";
 
 const Textbar = dynamic(() => import("../Components/Chat/Textbar"));
+const EndButton = dynamic(() => import("../Components/Chat/EndButton"));
 
 const ActiveChat = ({ id }: { id: string }) => {
   const router = useRouter();
@@ -54,8 +53,9 @@ const ActiveChat = ({ id }: { id: string }) => {
       },
     }
   );
-  const expiredChat =
-    DateTime.utc().toMillis() > (getProfileActiveChat?.expiresAt as number);
+  const [requestLatest, setRequestLatest] = useState(
+    getProfileActiveChat?.messages.edges[0]?.node.endRequestMsg
+  );
 
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const [seeChat] = useMutation(SEEN_CHAT, {
@@ -116,6 +116,8 @@ const ActiveChat = ({ id }: { id: string }) => {
           prev.getProfileActiveChat.messages.edges.filter((item) => {
             return item.node._id === newMessage._id;
           }).length > 0;
+
+        setRequestLatest(newMessage?.endRequestMsg);
 
         if (!idAlreadyExists) {
           return Object.assign({}, prev, {
@@ -202,9 +204,14 @@ const ActiveChat = ({ id }: { id: string }) => {
               </Typography>
             </Box>
 
-            <CountdownTimer
-              endsIn={getProfileActiveChat?.expiresAt as number}
-            />
+            {!getProfileActiveChat?.chatEnded && (
+              <EndButton
+                chatId={getProfileActiveChat?._id}
+                confessedTo={confessedTo}
+                requestLatest={requestLatest}
+                attempts={getProfileActiveChat?.endAttempts}
+              />
+            )}
 
             <IconButton>
               <SettingsIcon />
@@ -229,16 +236,18 @@ const ActiveChat = ({ id }: { id: string }) => {
               messages={getProfileActiveChat?.messages}
               loadMoreMessages={loadMoreMessages}
               hasMore={hasMore}
+              chatEnded={getProfileActiveChat?.chatEnded}
             />
           ) : (
             <CircularProgress />
           )}
         </Box>
 
-        {!expiredChat ? (
+        {!getProfileActiveChat?.chatEnded ? (
           <Textbar
             chatId={getProfileActiveChat?._id}
             confessedTo={confessedTo}
+            requestLatest={requestLatest}
           />
         ) : (
           <>

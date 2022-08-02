@@ -12,15 +12,20 @@ import { DateTime } from "luxon";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Message, QueryConnection } from "../../types/models";
 import { AnonyChatBox } from "../Style/Chat/AnonyChatBox";
+import dynamic from "next/dynamic";
+
+const EndRequestMessage = dynamic(() => import("./EndRequestMessage"));
 
 const MessageList = ({
   messages,
   loadMoreMessages,
   hasMore,
+  chatEnded,
 }: {
   messages: QueryConnection<Message>;
   loadMoreMessages: () => void;
   hasMore: boolean | undefined;
+  chatEnded: boolean | undefined;
 }) => {
   const { data: session } = useSession();
   return (
@@ -85,17 +90,23 @@ const MessageList = ({
               >
                 <AnonyChatBox elevation={6}>
                   <Container sx={{ mt: 2, mb: 2 }}>
-                    <Typography
-                      paragraph
-                      variant="body1"
-                      whiteSpace="pre-wrap"
-                      sx={{
-                        wordBreak: "break-word",
-                        overflowWrap: "break-word",
-                      }}
-                    >
-                      {node.message}
-                    </Typography>
+                    {node.endRequestMsg &&
+                    node == messages.edges[0]?.node &&
+                    !chatEnded ? (
+                      <EndRequestMessage message={node} />
+                    ) : (
+                      <Typography
+                        paragraph
+                        variant="body1"
+                        whiteSpace="pre-wrap"
+                        sx={{
+                          wordBreak: "break-word",
+                          overflowWrap: "break-word",
+                        }}
+                      >
+                        {node.message}
+                      </Typography>
+                    )}
                   </Container>
                 </AnonyChatBox>
               </Tooltip>

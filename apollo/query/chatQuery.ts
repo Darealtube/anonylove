@@ -12,6 +12,7 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
       anonSeen
       confesseeSeen
       chatEnded
+      endAttempts
       messages(after: $after, limit: $limit) {
         totalCount
         edges {

@@ -15,7 +15,7 @@ import { GET_PROFILE_ACTIVE_CHAT } from "../apollo/query/chatQuery";
 import { getUserActiveChat } from "../utils/SSR/chat";
 import Anonymous from "../public/anonyUser.png";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { END_CHAT_REQUEST, SEEN_CHAT } from "../apollo/mutation/chatMutation";
+import { SEEN_CHAT } from "../apollo/mutation/chatMutation";
 import {
   getProfileChatResult,
   getProfileChatVariables,
@@ -27,17 +27,17 @@ import { NewMessage, SubscriptionData } from "../types/Subscriptions";
 import { AnonyChatHead } from "../Components/Style/Chat/AnonyChatHead";
 import { AnonyButton } from "../Components/Style/Global/AnonyButton";
 import { ErrorContext } from "../Components/ErrorProvider";
-import Error from "next/error";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import Error from "next/error";
 
 const Textbar = dynamic(() => import("../Components/Chat/Textbar"));
+const EndButton = dynamic(() => import("../Components/Chat/EndButton"));
 
 const ActiveChat = ({ id }: { id: string }) => {
   const router = useRouter();
   const chatMain = useRef<HTMLElement>();
   const errorHandler = useContext(ErrorContext);
-  const [requestEndChat] = useMutation(END_CHAT_REQUEST);
   const { data: session } = useSession();
   const [pageVisible, setPageVisible] = useState(false);
   const {
@@ -87,16 +87,6 @@ const ActiveChat = ({ id }: { id: string }) => {
       ) {
         setHasMore(false);
       }
-    });
-  };
-
-  const requestEnd = () => {
-    requestEndChat({
-      variables: {
-        chat: getProfileActiveChat?._id,
-        anonymous: confessedTo ? false : true,
-        sender: session?.user?.id,
-      },
     });
   };
 
@@ -215,13 +205,12 @@ const ActiveChat = ({ id }: { id: string }) => {
             </Box>
 
             {!getProfileActiveChat?.chatEnded && (
-              <AnonyButton
-                onClick={requestEnd}
-                disabled={requestLatest}
-                sx={{ color: "white" }}
-              >
-                End Chat
-              </AnonyButton>
+              <EndButton
+                chatId={getProfileActiveChat?._id}
+                confessedTo={confessedTo}
+                requestLatest={requestLatest}
+                attempts={getProfileActiveChat?.endAttempts}
+              />
             )}
 
             <IconButton>

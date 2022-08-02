@@ -18,9 +18,11 @@ const rateLimitedText = "You are messaging too much. Try again in 30 seconds";
 const Textbar = ({
   chatId,
   confessedTo,
+  requestLatest,
 }: {
   chatId: string | undefined;
   confessedTo: boolean;
+  requestLatest: boolean | undefined;
 }) => {
   const errorHandler = useContext(ErrorContext);
   const { data: session } = useSession();
@@ -65,7 +67,7 @@ const Textbar = ({
     if (
       (e.key === "Enter" || e.code === "NumpadEnter") &&
       !e.shiftKey &&
-      !(message.trim().length === 0)
+      !(message.trim().length == 0 || requestLatest)
     ) {
       e.preventDefault();
       handleMessage();
@@ -98,7 +100,7 @@ const Textbar = ({
           <IconButton
             sx={{ ml: 2, color: "white" }}
             onClick={handleMessage}
-            disabled={message.trim().length == 0}
+            disabled={message.trim().length == 0 || requestLatest}
           >
             <SendIcon />
           </IconButton>

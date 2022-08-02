@@ -45,7 +45,6 @@ export const ACCEPT_CONFESSION_REQUEST = gql`
           name
         }
       }
-      expiresAt
       anonSeen
       confesseeSeen
     }

@@ -11,12 +11,13 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
       }
       anonSeen
       confesseeSeen
-      expiresAt
+      chatEnded
       messages(after: $after, limit: $limit) {
         totalCount
         edges {
           node {
             _id
+            chat
             sender {
               _id
               name
@@ -25,6 +26,7 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
             anonymous
             message
             date
+            endRequestMsg
           }
         }
         pageInfo {
@@ -45,7 +47,7 @@ export const REVEAL_USER_CHAT = gql`
         name
         image
       }
-      expiresAt
+      chatEnded
     }
   }
 `;

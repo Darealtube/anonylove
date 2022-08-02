@@ -8,7 +8,6 @@ export const PROFILE_CHAT_SUBSCRIPTION = gql`
         _id
         message
       }
-      expiresAt
       anonSeen
       confesseeSeen
     }

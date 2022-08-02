@@ -15,15 +15,13 @@ import { GET_PROFILE_ACTIVE_CHAT } from "../apollo/query/chatQuery";
 import { getUserActiveChat } from "../utils/SSR/chat";
 import Anonymous from "../public/anonyUser.png";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { SEEN_CHAT } from "../apollo/mutation/chatMutation";
+import { END_CHAT_REQUEST, SEEN_CHAT } from "../apollo/mutation/chatMutation";
 import {
   getProfileChatResult,
   getProfileChatVariables,
 } from "../types/Queries";
 import MessageList from "../Components/Chat/MessageList";
 import { NEW_MSG_SUBSCRIPTION } from "../apollo/subscription/messageSub";
-import CountdownTimer from "../Components/Chat/CountdownTimer";
-import { DateTime } from "luxon";
 import Link from "next/link";
 import { NewMessage, SubscriptionData } from "../types/Subscriptions";
 import { AnonyChatHead } from "../Components/Style/Chat/AnonyChatHead";
@@ -39,6 +37,7 @@ const ActiveChat = ({ id }: { id: string }) => {
   const router = useRouter();
   const chatMain = useRef<HTMLElement>();
   const errorHandler = useContext(ErrorContext);
+  const [requestEndChat] = useMutation(END_CHAT_REQUEST);
   const { data: session } = useSession();
   const [pageVisible, setPageVisible] = useState(false);
   const {
@@ -54,8 +53,9 @@ const ActiveChat = ({ id }: { id: string }) => {
       },
     }
   );
-  const expiredChat =
-    DateTime.utc().toMillis() > (getProfileActiveChat?.expiresAt as number);
+  const [requestLatest, setRequestLatest] = useState(
+    getProfileActiveChat?.messages.edges[0]?.node.endRequestMsg
+  );
 
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const [seeChat] = useMutation(SEEN_CHAT, {
@@ -90,6 +90,16 @@ const ActiveChat = ({ id }: { id: string }) => {
     });
   };
 
+  const requestEnd = () => {
+    requestEndChat({
+      variables: {
+        chat: getProfileActiveChat?._id,
+        anonymous: confessedTo ? false : true,
+        sender: session?.user?.id,
+      },
+    });
+  };
+
   // Put the scrollbar at the end on page mount
   // Setup chat subscription on mount
   useEffect(() => {
@@ -116,6 +126,8 @@ const ActiveChat = ({ id }: { id: string }) => {
           prev.getProfileActiveChat.messages.edges.filter((item) => {
             return item.node._id === newMessage._id;
           }).length > 0;
+
+        setRequestLatest(newMessage?.endRequestMsg);
 
         if (!idAlreadyExists) {
           return Object.assign({}, prev, {
@@ -202,9 +214,15 @@ const ActiveChat = ({ id }: { id: string }) => {
               </Typography>
             </Box>
 
-            <CountdownTimer
-              endsIn={getProfileActiveChat?.expiresAt as number}
-            />
+            {!getProfileActiveChat?.chatEnded && (
+              <AnonyButton
+                onClick={requestEnd}
+                disabled={requestLatest}
+                sx={{ color: "white" }}
+              >
+                End Chat
+              </AnonyButton>
+            )}
 
             <IconButton>
               <SettingsIcon />
@@ -229,16 +247,18 @@ const ActiveChat = ({ id }: { id: string }) => {
               messages={getProfileActiveChat?.messages}
               loadMoreMessages={loadMoreMessages}
               hasMore={hasMore}
+              chatEnded={getProfileActiveChat?.chatEnded}
             />
           ) : (
             <CircularProgress />
           )}
         </Box>
 
-        {!expiredChat ? (
+        {!getProfileActiveChat?.chatEnded ? (
           <Textbar
             chatId={getProfileActiveChat?._id}
             confessedTo={confessedTo}
+            requestLatest={requestLatest}
           />
         ) : (
           <>

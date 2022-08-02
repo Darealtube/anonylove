@@ -13,7 +13,6 @@ import { useSubscription, useQuery } from "@apollo/client";
 import { GET_PROFILE_CHAT } from "../../apollo/query/userQuery";
 import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
 import { Chat } from "../../types/models";
-import { DateTime } from "luxon";
 import SideBar from "./SideBar";
 import { AnonyMenu } from "../Style/AppWrap/AnonyMenu";
 import { PROFILE_CHAT_SUBSCRIPTION } from "../../apollo/subscription/chatSub";
@@ -45,9 +44,6 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
     setChatOpen(!chatOpen);
   };
 
-  const chatExpired =
-    getProfile?.activeChat &&
-    (getProfile?.activeChat?.expiresAt as number) < DateTime.utc().toMillis();
   return (
     <>
       <AnonyMenu container>
@@ -63,12 +59,6 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
               ) : (
                 <Typography variant="h5">No Active Chats</Typography>
               )}
-
-              {chatExpired && (
-                <Typography sx={{ color: "red" }}>
-                  <strong>Chat has expired.</strong>
-                </Typography>
-              )}
             </SideBar>
           ) : (
             <MobileSideBar
@@ -83,12 +73,6 @@ const AppWrap = ({ children }: { children: ReactNode }) => {
                   <ChatInfo chat={getProfile?.activeChat as Chat} />
                 ) : (
                   <Typography variant="h5">No Active Chats</Typography>
-                )}
-
-                {chatExpired && (
-                  <Typography sx={{ color: "red" }}>
-                    <strong>Chat has expired.</strong>
-                  </Typography>
                 )}
               </ListItem>
             </MobileSideBar>

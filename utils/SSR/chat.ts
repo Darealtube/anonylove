@@ -1,4 +1,3 @@
-import { DateTime } from "luxon";
 import { initializeApollo } from "../../apollo/apolloClient";
 import {
   GET_PROFILE_ACTIVE_CHAT,
@@ -27,12 +26,9 @@ export const revealChatInfo = async (id: string) => {
     context: { Authorization: id },
   });
 
-  const expired =
-    DateTime.utc().toMillis() > (getProfileActiveChat?.expiresAt as number);
-
   return {
     data: apolloClient,
     exists: getProfileActiveChat,
-    expired,
+    ended: getProfileActiveChat.chatEnded,
   };
 };

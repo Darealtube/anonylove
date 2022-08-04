@@ -12,17 +12,7 @@ export const SEND_MESSAGE = gql`
       sender: $sender
       message: $message
       anonymous: $anonymous
-    ) {
-      _id
-      sender {
-        _id
-        name
-        image
-      }
-      message
-      date
-      anonymous
-    }
+    )
   }
 `;
 

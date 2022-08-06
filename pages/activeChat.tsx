@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import {
   Box,
   CircularProgress,
@@ -30,11 +30,20 @@ import { ErrorContext } from "../Components/ErrorProvider";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Error from "next/error";
+import { CHAT_ENDED_SUBSCRIPTION } from "../apollo/subscription/chatSub";
 
 const Textbar = dynamic(() => import("../Components/Chat/Textbar"));
 const EndButton = dynamic(() => import("../Components/Chat/EndButton"));
 
-const ActiveChat = ({ id }: { id: string }) => {
+const ActiveChat = ({
+  sessionId,
+  chatId,
+  ended,
+}: {
+  sessionId: string;
+  chatId: string;
+  ended: boolean;
+}) => {
   const router = useRouter();
   const chatMain = useRef<HTMLElement>();
   const errorHandler = useContext(ErrorContext);
@@ -48,11 +57,19 @@ const ActiveChat = ({ id }: { id: string }) => {
     GET_PROFILE_ACTIVE_CHAT,
     {
       variables: {
-        profileId: session?.user?.id as string,
+        profileId: sessionId,
         limit: 10,
       },
     }
   );
+  const { data } = useSubscription(CHAT_ENDED_SUBSCRIPTION, {
+    variables: { chatId },
+    onSubscriptionData: ({ subscriptionData }) => {
+      const ended = subscriptionData.data.activeChatEnded;
+      if (ended) router.replace("/reveal");
+      else return false;
+    },
+  });
   const [requestLatest, setRequestLatest] = useState(
     getProfileActiveChat?.messages.edges[0]?.node.endRequestMsg
   );
@@ -60,7 +77,10 @@ const ActiveChat = ({ id }: { id: string }) => {
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const [seeChat] = useMutation(SEEN_CHAT, {
     variables: {
-      person: id === getProfileActiveChat?.confessee._id ? id : "anonymous",
+      person:
+        sessionId === getProfileActiveChat?.confessee._id
+          ? sessionId
+          : "anonymous",
       chat: getProfileActiveChat?._id,
     },
   });
@@ -243,7 +263,7 @@ const ActiveChat = ({ id }: { id: string }) => {
           )}
         </Box>
 
-        {!getProfileActiveChat?.chatEnded ? (
+        {!(ended || getProfileActiveChat?.chatEnded) ? (
           <Textbar
             chatId={getProfileActiveChat?._id}
             confessedTo={confessedTo}
@@ -265,7 +285,9 @@ const ActiveChat = ({ id }: { id: string }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  const { data, exists } = await getUserActiveChat(session?.user?.id as string);
+  const { data, exists, ended, chatId } = await getUserActiveChat(
+    session?.user?.id as string
+  );
 
   if (!exists) {
     return {
@@ -276,7 +298,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return addApolloState(data, {
     props: {
       session,
-      id: session?.user?.id,
+      sessionId: session?.user?.id,
+      chatId,
+      ended,
     },
   });
 };

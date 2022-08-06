@@ -80,13 +80,15 @@ const NotificationList = ({
                     }
                   >
                     <ListItemAvatar>
-                      <Image
-                        src={Anonymous}
-                        alt="Confesser PFP"
-                        width={40}
-                        height={40}
-                        className="avatar"
-                      />
+                      <Box width={40} height={40} position="relative">
+                        <Image
+                          src={Anonymous}
+                          alt="Confesser PFP"
+                          layout="fill"
+                          objectFit="cover"
+                          className="avatar"
+                        />
+                      </Box>
                     </ListItemAvatar>
                     <ListItemText
                       primary={"New Request"}

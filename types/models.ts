@@ -42,6 +42,7 @@ export interface Chat {
   latestMessage: Message;
   endAttempts: number;
   chatEnded: boolean;
+  expireChatAt: number;
 }
 
 export interface NotificationModel {

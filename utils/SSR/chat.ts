@@ -1,4 +1,6 @@
+import { DateTime } from "luxon";
 import { initializeApollo } from "../../apollo/apolloClient";
+import { ACCEPT_END_CHAT_REQUEST as AUTO_END_CHAT } from "../../apollo/mutation/chatMutation";
 import {
   GET_PROFILE_ACTIVE_CHAT,
   REVEAL_USER_CHAT,
@@ -13,7 +15,29 @@ export const getUserActiveChat = async (id: string) => {
     variables: { profileId: id, limit: 10 },
     context: { Authorization: id },
   });
-  return { data: apolloClient, exists: getProfileActiveChat };
+
+  if (
+    DateTime.utc().toMillis() >= getProfileActiveChat.expireChatAt &&
+    !getProfileActiveChat.chatEnded
+  ) {
+    await apolloClient.mutate({
+      mutation: AUTO_END_CHAT,
+      variables: { chat: getProfileActiveChat._id },
+      context: { Authorization: id },
+    });
+    return {
+      data: apolloClient,
+      exists: getProfileActiveChat,
+      chatId: getProfileActiveChat._id,
+      ended: true,
+    };
+  }
+  return {
+    data: apolloClient,
+    exists: getProfileActiveChat,
+    chatId: getProfileActiveChat._id,
+    ended: false,
+  };
 };
 
 export const revealChatInfo = async (id: string) => {

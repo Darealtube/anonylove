@@ -12,6 +12,7 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
       anonSeen
       confesseeSeen
       chatEnded
+      expireChatAt
       endAttempts
       messages(after: $after, limit: $limit) {
         totalCount

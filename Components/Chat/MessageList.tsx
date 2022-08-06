@@ -69,14 +69,21 @@ const MessageList = ({
                 node.sender.name === session?.user?.name ? "end" : "start"
               }
             >
-              <Box display="flex" flexDirection="column" justifyContent="end">
+              <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="end"
+                position="relative"
+                width={40}
+                height={40}
+              >
                 <Image
                   src={
                     node.anonymous ? Anonymous : (node.sender.image as string)
                   }
                   alt="PFP"
-                  width={40}
-                  height={40}
+                  layout="fill"
+                  objectFit="cover"
                   className="avatar"
                 />
               </Box>

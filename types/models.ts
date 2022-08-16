@@ -8,6 +8,7 @@ export interface User {
   status?: string;
   activeChat?: Chat;
   notifSeen?: boolean;
+  requestsDisabled: boolean;
   sentConfessionRequests: QueryConnection<Request>;
   receivedConfessionRequests: QueryConnection<Request>;
   sentUserRequest: Boolean;

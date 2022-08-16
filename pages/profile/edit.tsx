@@ -10,6 +10,8 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  Switch,
+  Box,
 } from "@mui/material";
 import { getSession, useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@apollo/client";
@@ -26,7 +28,6 @@ import Link from "next/link";
 import { EDIT_USER_PROFILE } from "../../apollo/mutation/userMutation";
 import { useRouter } from "next/router";
 import { uploadImage } from "../../utils/Media/uploadMedia";
-import LinkTree from "../../Components/Profile/LinkTree";
 import { AnonyCover } from "../../Components/Style/Profile/AnonyCover";
 import { AnonyPFP } from "../../Components/Style/Profile/AnonyPFP";
 import { ProfileButton } from "../../Components/Style/Profile/ProfileButton";
@@ -59,12 +60,20 @@ const EditProfile = () => {
     cover: getProfile?.cover,
     bio: getProfile?.bio,
     status: getProfile?.status ?? "Single",
+    requestsDisabled: getProfile?.requestsDisabled ?? false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfile({
       ...profile,
       [e.currentTarget.name]: e.currentTarget.value,
+    });
+  };
+
+  const handleDisableRequests = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfile({
+      ...profile,
+      [e.currentTarget.name]: e.currentTarget.checked,
     });
   };
 
@@ -155,7 +164,14 @@ const EditProfile = () => {
       </AnonyCover>
 
       <Grid container sx={{ display: "flex" }}>
-        <Grid item xs={6} sx={{ position: "relative", bottom: "80px" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={12}
+          lg={6}
+          sx={{ position: "relative", bottom: "80px" }}
+        >
           <Container
             sx={{
               display: "flex",
@@ -185,27 +201,39 @@ const EditProfile = () => {
                 onChange={handleChangePFP}
               />
             </AnonyPFP>
-
-            <TextField
-              id="name"
-              name="name"
-              variant="standard"
-              sx={{ width: "80%" }}
-              value={profile.name}
-              onChange={handleChange}
-              inputProps={{
-                style: {
-                  color: "white",
-                  fontSize: "20px",
-                  textAlign: "center",
-                },
-              }}
-            />
           </Container>
         </Grid>
 
-        <Grid item xs={6}>
-          <LinkTree />
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={12}
+          lg={6}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            bottom: "40px",
+          }}
+        >
+          <TextField
+            id="name"
+            name="name"
+            variant="standard"
+            sx={{ width: "80%", mb: 2, mt: 2 }}
+            value={profile.name}
+            onChange={handleChange}
+            inputProps={{
+              style: {
+                color: "white",
+                fontSize: "42px",
+                fontWeight: "bolder",
+                textAlign: "center",
+              },
+            }}
+          />
         </Grid>
       </Grid>
 
@@ -274,6 +302,16 @@ const EditProfile = () => {
                 }}
               />
             </AnonyBio>
+
+            <Box display="flex" alignItems="center" mt={4}>
+              <Switch
+                checked={profile.requestsDisabled}
+                onChange={handleDisableRequests}
+                color="warning"
+                name="requestsDisabled"
+              />
+              <Typography>Disable Confession Requests</Typography>
+            </Box>
           </Grid>
         </Grid>
       </Container>

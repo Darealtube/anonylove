@@ -8,6 +8,7 @@ export const EDIT_USER_PROFILE = gql`
     $cover: String
     $bio: String
     $status: String
+    $requestsDisabled: Boolean
   ) {
     editUser(
       profileId: $profileId
@@ -16,6 +17,7 @@ export const EDIT_USER_PROFILE = gql`
       cover: $cover
       bio: $bio
       status: $status
+      requestsDisabled: $requestsDisabled
     )
   }
 `;

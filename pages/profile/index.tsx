@@ -11,7 +11,6 @@ import { getProfileInfo } from "../../utils/SSR/profile";
 import { GetProfileVariables, GetProfileResult } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
-import LinkTree from "../../Components/Profile/LinkTree";
 import { AnonyCover } from "../../Components/Style/Profile/AnonyCover";
 import { AnonyPFP } from "../../Components/Style/Profile/AnonyPFP";
 import { ProfileButton } from "../../Components/Style/Profile/ProfileButton";
@@ -67,7 +66,8 @@ const Profile = ({ id }: { id: string }) => {
         </Grid>
 
         <Grid item xs={6}>
-          <LinkTree />
+          {getProfile?.requestsDisabled &&
+            "This person's requests are disabled."}
         </Grid>
       </Grid>
 

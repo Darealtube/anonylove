@@ -6,9 +6,11 @@ import { GET_PROFILE_STATUS } from "../apollo/query/userQuery";
 import { NEW_NOTIF_SUBSCRIPTION } from "../apollo/subscription/notifSub";
 import { GetProfileResult, GetProfileVariables } from "../types/Queries";
 import useTitle from "../utils/Hooks/useTitle";
+import MessageRing from "../public/hey.mp3";
 
 const TitleWrap = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [chatSeen, setChatSeen] = useState<boolean | undefined>(true);
   const [notifSeen, setNotifSeen] = useState<boolean | undefined>(true);
   const { data } = useQuery<GetProfileResult, GetProfileVariables>(
@@ -39,6 +41,16 @@ const TitleWrap = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     setNotifSeen(data?.getProfile?.notifSeen);
   }, [data]);
+
+  useEffect(() => {
+    setAudio(new Audio(MessageRing));
+  }, []);
+
+  useEffect(() => {
+    if (!chatSeen) {
+      audio?.play();
+    }
+  }, [chatSeen, audio, data?.getProfile?.activeChat?.latestMessage]);
 
   const { title } = useTitle({ notifSeen, chatSeen });
   return (

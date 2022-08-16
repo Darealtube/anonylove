@@ -12,7 +12,6 @@ import { GetUserResult, GetUserVariables } from "../../types/Queries";
 import Information from "../../Components/Profile/Information";
 import { SEND_CONFESSION_REQUEST } from "../../apollo/mutation/requestMutation";
 import { useState } from "react";
-import LinkTree from "../../Components/Profile/LinkTree";
 import { AnonyPFP } from "../../Components/Style/Profile/AnonyPFP";
 import { AnonyCover } from "../../Components/Style/Profile/AnonyCover";
 import { ProfileButton } from "../../Components/Style/Profile/ProfileButton";
@@ -83,7 +82,7 @@ const User = ({
         </Grid>
 
         <Grid item xs={6}>
-          <LinkTree />
+          {getUser?.requestsDisabled && "This person's requests are disabled."}
         </Grid>
       </Grid>
 
@@ -108,7 +107,9 @@ const User = ({
                 variant="outlined"
                 onClick={handleRequest}
                 fullWidth
-                disabled={disableRequest || youSentRequest}
+                disabled={
+                  disableRequest || youSentRequest || getUser?.requestsDisabled
+                }
               >
                 Send Request
               </ProfileButton>

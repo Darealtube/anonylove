@@ -11,6 +11,7 @@ export const GET_USER_QUERY = gql`
       bio
       status
       userSentRequest(from: $from)
+      requestsDisabled
     }
   }
 `;
@@ -25,6 +26,7 @@ export const GET_PROFILE_QUERY = gql`
       cover
       bio
       status
+      requestsDisabled
     }
   }
 `;
@@ -39,6 +41,7 @@ export const EDIT_PROFILE_QUERY = gql`
       cover
       bio
       status
+      requestsDisabled
     }
   }
 `;
@@ -145,6 +148,9 @@ export const GET_PROFILE_STATUS = gql`
         }
         anonSeen
         confesseeSeen
+        latestMessage {
+          _id
+        }
       }
       notifSeen
     }

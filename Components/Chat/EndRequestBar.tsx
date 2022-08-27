@@ -11,15 +11,18 @@ import {
 const EndRequestBar = ({
   requester,
   chatId,
+  confessedTo,
 }: {
   requester: string;
   chatId: string;
+  confessedTo: boolean;
 }) => {
   const router = useRouter();
+  const canAccept =
+    (confessedTo && requester === "Anonymous") ||
+    (!confessedTo && requester !== "Anonymous");
   const [rejectEndRequest] = useMutation(REJECT_END_CHAT_REQUEST, {
-    variables: {
-      chat: chatId,
-    },
+    variables: { chat: chatId },
   });
   const [acceptEndRequest] = useMutation(ACCEPT_END_CHAT_REQUEST, {
     variables: { chat: chatId },
@@ -51,11 +54,11 @@ const EndRequestBar = ({
             {requester} wants to end the confession. Accept?
           </Typography>
 
-          <IconButton onClick={acceptEnd}>
+          <IconButton onClick={acceptEnd} disabled={!canAccept}>
             <CheckIcon />
           </IconButton>
 
-          <IconButton onClick={rejectEnd}>
+          <IconButton onClick={rejectEnd} disabled={!canAccept}>
             <ClearIcon />
           </IconButton>
         </Container>

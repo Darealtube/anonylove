@@ -258,6 +258,7 @@ const ActiveChat = ({
         {getProfileActiveChat.status.endRequesting && (
           <EndRequestBar
             requester={getProfileActiveChat.status.endRequester}
+            confessedTo={confessedTo}
             chatId={chatId}
           />
         )}

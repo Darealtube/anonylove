@@ -6,9 +6,11 @@ import { GET_PROFILE_STATUS } from "../apollo/query/userQuery";
 import { GetProfileResult, GetProfileVariables } from "../types/Queries";
 import useTitle from "../utils/Hooks/useTitle";
 import MessageRing from "../public/hey.mp3";
+import { useRouter } from "next/router";
 
 const TitleWrap = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [chatSeen, setChatSeen] = useState<boolean | undefined>(true);
   const [notifSeen, setNotifSeen] = useState<boolean | undefined>(true);
@@ -30,7 +32,7 @@ const TitleWrap = ({ children }: { children: ReactNode }) => {
           : data?.getProfile?.activeChat?.anonSeen
       );
     }
-    
+
     setNotifSeen(data?.getProfile?.notifSeen);
   }, [data, session]);
 
@@ -39,10 +41,10 @@ const TitleWrap = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (!chatSeen) {
+    if (router.route !== "/activeChat" && !chatSeen) {
       audio?.play();
     }
-  }, [chatSeen, audio, data?.getProfile?.activeChat?.latestMessage]);
+  }, [router, chatSeen, audio, data?.getProfile?.activeChat?.latestMessage]);
 
   return (
     <>

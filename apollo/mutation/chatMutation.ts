@@ -23,36 +23,14 @@ export const SEEN_CHAT = gql`
 `;
 
 export const END_CHAT_REQUEST = gql`
-  mutation SendEndReq($chat: ID!, $sender: ID!, $anonymous: Boolean!) {
-    endChatRequest(chat: $chat, sender: $sender, anonymous: $anonymous) {
-      _id
-      sender {
-        _id
-        name
-        image
-      }
-      message
-      date
-      anonymous
-      endRequestMsg
-    }
+  mutation SendEndReq($chat: ID!, $requester: ID!) {
+    endChatRequest(chat: $chat, requester: $requester)
   }
 `;
 
 export const REJECT_END_CHAT_REQUEST = gql`
-  mutation RejectEnd($chat: ID!, $sender: ID!, $anonymous: Boolean!) {
-    rejectEndChat(chat: $chat, sender: $sender, anonymous: $anonymous) {
-      _id
-      sender {
-        _id
-        name
-        image
-      }
-      message
-      date
-      anonymous
-      endRequestMsg
-    }
+  mutation RejectEnd($chat: ID!) {
+    rejectEndChat(chat: $chat)
   }
 `;
 

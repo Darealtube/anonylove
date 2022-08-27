@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { initializeApollo } from "../../apollo/apolloClient";
-import { ACCEPT_END_CHAT_REQUEST as AUTO_END_CHAT } from "../../apollo/mutation/chatMutation";
+import { ACCEPT_END_CHAT_REQUEST as EXPIRE_CHAT } from "../../apollo/mutation/chatMutation";
 import {
   GET_PROFILE_ACTIVE_CHAT,
   REVEAL_USER_CHAT,
@@ -21,7 +21,7 @@ export const getUserActiveChat = async (id: string) => {
     !getProfileActiveChat.chatEnded
   ) {
     await apolloClient.mutate({
-      mutation: AUTO_END_CHAT,
+      mutation: EXPIRE_CHAT,
       variables: { chat: getProfileActiveChat._id },
       context: { Authorization: id },
     });
@@ -53,6 +53,6 @@ export const revealChatInfo = async (id: string) => {
   return {
     data: apolloClient,
     exists: getProfileActiveChat,
-    ended: getProfileActiveChat.chatEnded,
+    ended: getProfileActiveChat.status.chatEnded,
   };
 };

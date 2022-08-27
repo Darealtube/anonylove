@@ -9,9 +9,10 @@ const useTitle = ({
 }) => {
   const defaultTitle = `${notifSeen ? "" : "(!)"} Anonylove`;
   const newMsgTitle = `${notifSeen ? "" : "(!)"} New Message!`;
-  const [title, setTitle] = useState(defaultTitle);
   const notifTitle = chatSeen ? defaultTitle : newMsgTitle;
+  const [title, setTitle] = useState(defaultTitle);
 
+  // Change the Head Title when there is a New Message 
   useEffect(() => {
     let headTimer: NodeJS.Timer;
     headTimer = setInterval(() => {
@@ -27,7 +28,7 @@ const useTitle = ({
       setTitle(defaultTitle);
     }
     return () => clearInterval(headTimer);
-  }, [chatSeen, notifSeen, defaultTitle, notifTitle, title]);
+  }, [chatSeen, notifSeen, defaultTitle, notifTitle, title, newMsgTitle]);
 
   return { title };
 };

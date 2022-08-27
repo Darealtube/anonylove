@@ -12,17 +12,16 @@ import { AnonyTextBar } from "../Style/Chat/AnonyTextBar";
 import { ErrorContext } from "../ErrorProvider";
 
 const EmojiPicker = dynamic(() => import("../Chat/EmojiPopover"));
-
 const rateLimitedText = "You are messaging too much. Try again in 30 seconds";
 
 const Textbar = ({
   chatId,
   confessedTo,
-  requestLatest,
+  endRequesting,
 }: {
-  chatId: string | undefined;
+  chatId?: string;
   confessedTo: boolean;
-  requestLatest: boolean | undefined;
+  endRequesting?: boolean;
 }) => {
   const errorHandler = useContext(ErrorContext);
   const { data: session } = useSession();
@@ -67,7 +66,7 @@ const Textbar = ({
     if (
       (e.key === "Enter" || e.code === "NumpadEnter") &&
       !e.shiftKey &&
-      !(message.trim().length == 0 || requestLatest)
+      !(message.trim().length == 0 || endRequesting)
     ) {
       e.preventDefault();
       handleMessage();
@@ -100,7 +99,7 @@ const Textbar = ({
           <IconButton
             sx={{ ml: 2, color: "white" }}
             onClick={handleMessage}
-            disabled={message.trim().length == 0 || requestLatest}
+            disabled={message.trim().length == 0 || endRequesting}
           >
             <SendIcon />
           </IconButton>

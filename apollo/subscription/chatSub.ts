@@ -24,8 +24,16 @@ export const CHAT_SEEN_SUBSCRIPTION = gql`
   }
 `;
 
-export const CHAT_ENDED_SUBSCRIPTION = gql`
-  subscription ChatEnded($chatId: ID!) {
-    activeChatEnded(chatId: $chatId)
+export const CHAT_STATUS_SUBSCRIPTION = gql`
+  subscription ChatStatus($chatId: ID!) {
+    activeChatStatus(chatId: $chatId) {
+      _id
+      status {
+        chatEnded
+        endAttempts
+        endRequester
+        endRequesting
+      }
+    }
   }
 `;

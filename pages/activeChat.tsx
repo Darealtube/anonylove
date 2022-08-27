@@ -30,10 +30,11 @@ import { ErrorContext } from "../Components/ErrorProvider";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Error from "next/error";
-import { CHAT_ENDED_SUBSCRIPTION } from "../apollo/subscription/chatSub";
+import { CHAT_STATUS_SUBSCRIPTION } from "../apollo/subscription/chatSub";
 
 const Textbar = dynamic(() => import("../Components/Chat/Textbar"));
 const EndButton = dynamic(() => import("../Components/Chat/EndButton"));
+const EndRequestBar = dynamic(() => import("../Components/Chat/EndRequestBar"));
 
 const ActiveChat = ({
   sessionId,
@@ -62,17 +63,9 @@ const ActiveChat = ({
       },
     }
   );
-  const { data } = useSubscription(CHAT_ENDED_SUBSCRIPTION, {
+  const { data } = useSubscription(CHAT_STATUS_SUBSCRIPTION, {
     variables: { chatId },
-    onSubscriptionData: ({ subscriptionData }) => {
-      const ended = subscriptionData.data.activeChatEnded;
-      if (ended) router.replace("/reveal");
-      else return false;
-    },
   });
-  const [requestLatest, setRequestLatest] = useState(
-    getProfileActiveChat?.messages.edges[0]?.node.endRequestMsg
-  );
 
   // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const [seeChat] = useMutation(SEEN_CHAT, {
@@ -137,8 +130,6 @@ const ActiveChat = ({
             return item.node._id === newMessage._id;
           }).length > 0;
 
-        setRequestLatest(newMessage?.endRequestMsg);
-
         if (!idAlreadyExists) {
           return Object.assign({}, prev, {
             getProfileActiveChat: {
@@ -189,6 +180,10 @@ const ActiveChat = ({
     }
   }, [pageVisible, seeChat, chatSeen, getProfileActiveChat]);
 
+  useEffect(() => {
+    console.log(getProfileActiveChat);
+  }, [getProfileActiveChat]);
+
   if (!getProfileActiveChat) {
     return (
       <>
@@ -224,12 +219,10 @@ const ActiveChat = ({
               </Typography>
             </Box>
 
-            {!getProfileActiveChat?.chatEnded && (
+            {!getProfileActiveChat?.status.chatEnded && (
               <EndButton
                 chatId={getProfileActiveChat?._id}
-                confessedTo={confessedTo}
-                requestLatest={requestLatest}
-                attempts={getProfileActiveChat?.endAttempts}
+                chatStatus={getProfileActiveChat?.status}
               />
             )}
 
@@ -256,23 +249,31 @@ const ActiveChat = ({
               messages={getProfileActiveChat?.messages}
               loadMoreMessages={loadMoreMessages}
               hasMore={hasMore}
-              chatEnded={getProfileActiveChat?.chatEnded}
             />
           ) : (
             <CircularProgress />
           )}
         </Box>
 
-        {!(ended || getProfileActiveChat?.chatEnded) ? (
+        {getProfileActiveChat.status.endRequesting && (
+          <EndRequestBar
+            requester={getProfileActiveChat.status.endRequester}
+            chatId={chatId}
+          />
+        )}
+
+        {!(ended || getProfileActiveChat?.status.chatEnded) ? (
           <Textbar
             chatId={getProfileActiveChat?._id}
             confessedTo={confessedTo}
-            requestLatest={requestLatest}
+            endRequesting={getProfileActiveChat?.status.endRequesting}
           />
         ) : (
           <>
             <Link href="/reveal" passHref>
-              <AnonyButton sx={{ height: "120px", fontSize: "24px" }}>
+              <AnonyButton
+                sx={{ height: "120px", fontSize: "24px", color: "white" }}
+              >
                 Reveal Confesser!
               </AnonyButton>
             </Link>

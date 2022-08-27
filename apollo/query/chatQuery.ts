@@ -11,9 +11,13 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
       }
       anonSeen
       confesseeSeen
-      chatEnded
       expireChatAt
-      endAttempts
+      status {
+        chatEnded
+        endAttempts
+        endRequester
+        endRequesting
+      }
       messages(after: $after, limit: $limit) {
         totalCount
         edges {
@@ -49,7 +53,9 @@ export const REVEAL_USER_CHAT = gql`
         name
         image
       }
-      chatEnded
+      status {
+        chatEnded
+      }
     }
   }
 `;

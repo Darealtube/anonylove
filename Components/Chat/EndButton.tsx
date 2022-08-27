@@ -3,22 +3,19 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import {
-  ACCEPT_END_CHAT_REQUEST,
+  ACCEPT_END_CHAT_REQUEST as FORCE_END_CHAT,
   END_CHAT_REQUEST,
 } from "../../apollo/mutation/chatMutation";
+import { ChatStatus } from "../../types/models";
 import { ErrorContext } from "../ErrorProvider";
 import { AnonyButton } from "../Style/Global/AnonyButton";
 
 const EndButton = ({
-  requestLatest,
+  chatStatus,
   chatId,
-  confessedTo,
-  attempts,
 }: {
-  requestLatest: boolean | undefined;
+  chatStatus: ChatStatus;
   chatId: string | undefined;
-  confessedTo: boolean;
-  attempts: number | undefined;
 }) => {
   const router = useRouter();
   const { data: session } = useSession();
@@ -26,7 +23,7 @@ const EndButton = ({
   const [requestEndChat] = useMutation(END_CHAT_REQUEST, {
     onError: (err) => errorHandler(err.message),
   });
-  const [autoAcceptEndChat] = useMutation(ACCEPT_END_CHAT_REQUEST, {
+  const [forceEndChat] = useMutation(FORCE_END_CHAT, {
     variables: { chat: chatId },
     onError: (err) => errorHandler(err.message),
     onCompleted: () => {
@@ -38,23 +35,22 @@ const EndButton = ({
     requestEndChat({
       variables: {
         chat: chatId,
-        anonymous: confessedTo ? false : true,
-        sender: session?.user?.id,
+        requester: session?.user?.id,
       },
     });
   };
 
   const autoAcceptEnd = () => {
-    autoAcceptEndChat();
+    forceEndChat();
   };
 
-  const buttonOp = attempts === 3 ? autoAcceptEnd : requestEnd;
+  const buttonOp = chatStatus.endAttempts === 3 ? autoAcceptEnd : requestEnd;
 
   return (
     <>
       <AnonyButton
         onClick={buttonOp}
-        disabled={requestLatest}
+        disabled={chatStatus.endRequesting || chatStatus.chatEnded}
         sx={{ color: "white" }}
       >
         End Chat

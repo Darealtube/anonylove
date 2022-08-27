@@ -12,7 +12,7 @@ const useSearch = (key: string, searchOpen: boolean) => {
 
   // If the search bar is active, detect if the user is still typing in the search bar based on input change (key).
   useEffect(() => {
-    let typeTimer: NodeJS.Timeout; // TypeTimer is obviously a timeout function
+    let typeTimer: NodeJS.Timeout;
     if (searchOpen) {
       setTyping(true);
       typeTimer = setTimeout(() => {
@@ -24,6 +24,7 @@ const useSearch = (key: string, searchOpen: boolean) => {
     };
   }, [searchOpen, key]);
 
+  // If the user is finished typing
   useEffect(() => {
     if (!typing && searchOpen) {
       searchUser({ variables: { key } });

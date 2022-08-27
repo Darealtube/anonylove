@@ -40,10 +40,16 @@ export interface Chat {
   anonymous: User;
   confessee: User;
   messages: QueryConnection<Message>;
+  status: ChatStatus;
   latestMessage: Message;
-  endAttempts: number;
-  chatEnded: boolean;
   expireChatAt: number;
+}
+
+export interface ChatStatus {
+  endRequesting: boolean;
+  endRequester: string;
+  chatEnded: boolean;
+  endAttempts: number;
 }
 
 export interface NotificationModel {

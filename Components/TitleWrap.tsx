@@ -41,7 +41,10 @@ const TitleWrap = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (router.route !== "/activeChat" && !chatSeen) {
+    if (
+      (router.route !== "/activeChat" && !chatSeen) ||
+      (document.hidden && !chatSeen)
+    ) {
       audio?.play();
     }
   }, [router, chatSeen, audio, data?.getProfile?.activeChat?.latestMessage]);

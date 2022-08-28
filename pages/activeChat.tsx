@@ -31,6 +31,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Error from "next/error";
 import { CHAT_STATUS_SUBSCRIPTION } from "../apollo/subscription/chatSub";
+import useVisibility from "../utils/Hooks/useVisibility";
 
 const Textbar = dynamic(() => import("../Components/Chat/Textbar"));
 const EndButton = dynamic(() => import("../Components/Chat/EndButton"));
@@ -49,25 +50,20 @@ const ActiveChat = ({
   const chatMain = useRef<HTMLElement>();
   const errorHandler = useContext(ErrorContext);
   const { data: session } = useSession();
-  const [pageVisible, setPageVisible] = useState(false);
+  const { pageVisible } = useVisibility();
+
   const {
     data: { getProfileActiveChat } = {},
     subscribeToMore,
     fetchMore: moreMessages,
   } = useQuery<getProfileChatResult, getProfileChatVariables>(
     GET_PROFILE_ACTIVE_CHAT,
-    {
-      variables: {
-        profileId: sessionId,
-        limit: 10,
-      },
-    }
+    { variables: { profileId: sessionId, limit: 10 } }
   );
   const { data } = useSubscription(CHAT_STATUS_SUBSCRIPTION, {
     variables: { chatId },
   });
 
-  // GIVE A BLANK OBJECT TO DESTRUCTURE IT FROM. THIS AVOIDS THE 'UNDEFINED' DESTRUCTURE PROBLEM
   const [seeChat] = useMutation(SEEN_CHAT, {
     variables: {
       person:
@@ -148,29 +144,6 @@ const ActiveChat = ({
         }
       },
     });
-  }, [subscribeToMore, getProfileActiveChat?._id]);
-
-  // Handle Page Visibility Changes
-  useEffect(() => {
-    function handleVisibilityChange() {
-      if (document.hidden) {
-        setPageVisible(false);
-      } else {
-        setPageVisible(true);
-      }
-    }
-    document.addEventListener(
-      "visibilitychange",
-      handleVisibilityChange,
-      false
-    );
-    window.addEventListener("focus", () => setPageVisible(true), false);
-    window.addEventListener("blur", () => setPageVisible(false), false);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("focus", () => setPageVisible(true));
-      window.removeEventListener("blur", () => setPageVisible(false));
-    };
   }, []);
 
   // If the page is visible and the chat hasn't been seen yet, seen the chat.
@@ -179,10 +152,6 @@ const ActiveChat = ({
       seeChat();
     }
   }, [pageVisible, seeChat, chatSeen, getProfileActiveChat]);
-
-  useEffect(() => {
-    console.log(getProfileActiveChat);
-  }, [getProfileActiveChat]);
 
   if (!getProfileActiveChat) {
     return (

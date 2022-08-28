@@ -30,7 +30,6 @@ export interface Message {
   sender: User;
   message: string;
   anonymous: boolean;
-  endRequestMsg: boolean;
 }
 
 export interface Chat {

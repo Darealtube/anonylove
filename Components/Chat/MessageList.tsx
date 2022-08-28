@@ -12,7 +12,6 @@ import { DateTime } from "luxon";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Message, QueryConnection } from "../../types/models";
 import { AnonyChatBox } from "../Style/Chat/AnonyChatBox";
-import dynamic from "next/dynamic";
 
 const MessageList = ({
   messages,

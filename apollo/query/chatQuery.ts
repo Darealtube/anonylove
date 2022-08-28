@@ -32,7 +32,6 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
             anonymous
             message
             date
-            endRequestMsg
           }
         }
         pageInfo {

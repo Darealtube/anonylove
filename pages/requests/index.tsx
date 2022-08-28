@@ -1,7 +1,8 @@
-import { TabPanel } from "@mui/lab";
-import { Container } from "@mui/material";
-import Tabs from "../../Components/Requests/Tabs";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Container, Tab } from "@mui/material";
 import dynamic from "next/dynamic";
+import { useState, SyntheticEvent } from "react";
+import { AnonyTabs } from "../../Components/Style/AppWrap/AnonyTabs";
 
 const RequestTab = dynamic(
   () => import("../../Components/Requests/Tabs/RequestTab")
@@ -11,10 +12,27 @@ const YourRequestTab = dynamic(
 );
 
 const Requests = () => {
+  const [tab, setTab] = useState("request");
+  const handleTabChange = (
+    _event: SyntheticEvent<Element, Event>,
+    tab: string
+  ) => {
+    setTab(tab);
+  };
   return (
     <>
       <Container sx={{ height: "100%", pt: 4, pb: 4 }}>
-        <Tabs>
+        <TabContext value={tab}>
+          <AnonyTabs>
+            <TabList onChange={handleTabChange} centered>
+              <Tab label="Requests" value="request" sx={{ color: "#f6f7f8" }} />
+              <Tab
+                label="Your Requests"
+                value="yourRequest"
+                sx={{ color: "#f6f7f8" }}
+              />
+            </TabList>
+          </AnonyTabs>
           <TabPanel value="request">
             <Container sx={{ zIndex: 1 }}>
               <RequestTab />
@@ -26,7 +44,7 @@ const Requests = () => {
               <YourRequestTab />
             </Container>
           </TabPanel>
-        </Tabs>
+        </TabContext>
       </Container>
     </>
   );

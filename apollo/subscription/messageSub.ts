@@ -13,7 +13,6 @@ export const NEW_MSG_SUBSCRIPTION = gql`
       anonymous
       message
       date
-      endRequestMsg
     }
   }
 `;

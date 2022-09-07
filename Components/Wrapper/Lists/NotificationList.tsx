@@ -18,6 +18,7 @@ import { useMutation } from "@apollo/client";
 import { DELETE_NOTIFICATION } from "../../../apollo/mutation/notifMutation";
 import React from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { AnonyAvatar } from "../../Style/Global/AnonyAvatar";
 
 const NotificationList = ({
   notifications,
@@ -80,7 +81,7 @@ const NotificationList = ({
                     }
                   >
                     <ListItemAvatar>
-                      <Box width={40} height={40} position="relative">
+                      <AnonyAvatar>
                         <Image
                           src={Anonymous}
                           alt="Confesser PFP"
@@ -88,7 +89,7 @@ const NotificationList = ({
                           objectFit="cover"
                           className="avatar"
                         />
-                      </Box>
+                      </AnonyAvatar>
                     </ListItemAvatar>
                     <ListItemText
                       primary={"New Request"}

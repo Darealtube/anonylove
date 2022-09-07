@@ -1,9 +1,10 @@
-import { ListItem, ListItemAvatar, Box, ListItemText } from "@mui/material";
+import { ListItem, ListItemAvatar, ListItemText } from "@mui/material";
 import Link from "next/link";
 import { HTMLAttributes } from "react";
 import { User } from "../../types/models";
 import Image from "next/image";
 import NoUserImg from "../../public/anonyUser.png";
+import { AnonyAvatar } from "../Style/Global/AnonyAvatar";
 
 const SearchOptions = ({
   props,
@@ -17,7 +18,7 @@ const SearchOptions = ({
       <a>
         <ListItem {...props}>
           <ListItemAvatar>
-            <Box sx={{ width: 40, height: 40, position: "relative" }}>
+            <AnonyAvatar>
               <Image
                 src={(option as User).image ?? NoUserImg}
                 alt="PFP"
@@ -25,7 +26,7 @@ const SearchOptions = ({
                 objectFit="cover"
                 className="avatar"
               />
-            </Box>
+            </AnonyAvatar>
           </ListItemAvatar>
           <ListItemText primary={(option as User).name} secondary="Heya!" />
         </ListItem>

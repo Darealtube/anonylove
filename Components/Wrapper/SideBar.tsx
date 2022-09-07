@@ -16,6 +16,7 @@ import { AnonyAppBar } from "../Style/AppWrap/AnonyAppBar";
 import { AnonySideBar } from "../Style/AppWrap/AnonySideBar";
 import { AnonyButton } from "../Style/Global/AnonyButton";
 import dynamic from "next/dynamic";
+import { AnonyAvatar } from "../Style/Global/AnonyAvatar";
 
 const Notifications = dynamic(() => import("./Notifications"));
 
@@ -42,7 +43,7 @@ const SideBar = ({ children, notifSeen }: SideBarProps) => {
 
           <Link href={`/profile/`} passHref>
             <a>
-              <Box ml={2} width={40} height={40} position="relative">
+              <AnonyAvatar ml={2}>
                 {session?.user?.image && (
                   <Image
                     src={session.user.image}
@@ -52,7 +53,7 @@ const SideBar = ({ children, notifSeen }: SideBarProps) => {
                     className="avatar"
                   />
                 )}
-              </Box>
+              </AnonyAvatar>
             </a>
           </Link>
         </AnonyAppBar>

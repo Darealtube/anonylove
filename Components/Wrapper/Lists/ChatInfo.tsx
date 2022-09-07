@@ -9,6 +9,7 @@ import Anonymous from "../../../public/anonyUser.png";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Chat } from "../../../types/models";
+import { AnonyAvatar } from "../../Style/Global/AnonyAvatar";
 
 //  Set parameter "chats" as optional for now
 const ChatInfo = ({ chat }: { chat: Chat }) => {
@@ -29,13 +30,17 @@ const ChatInfo = ({ chat }: { chat: Chat }) => {
           sx={{ width: "100%" }}
         >
           <ListItemAvatar>
-            <Image
-              src={confessedTo ? Anonymous : (chat?.confessee.image as string)}
-              alt="PFP"
-              width={40}
-              height={40}
-              className="avatar"
-            />
+            <AnonyAvatar>
+              <Image
+                src={
+                  confessedTo ? Anonymous : (chat?.confessee.image as string)
+                }
+                alt="PFP"
+                layout="fill"
+                objectFit="cover"
+                className="avatar"
+              />
+            </AnonyAvatar>
           </ListItemAvatar>
           <ListItemText
             primary={confessedTo ? "Anonymous" : chat?.confessee.name}

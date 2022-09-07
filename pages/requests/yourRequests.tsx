@@ -5,21 +5,18 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState, SyntheticEvent } from "react";
-import { GET_PROFILE_RECEIVED_REQUESTS } from "../../apollo/query/userQuery";
+import { GET_PROFILE_SENT_REQUESTS } from "../../apollo/query/userQuery";
 import { AnonyTabs } from "../../Components/Style/AppWrap/AnonyTabs";
 import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
 
-const RequestList = dynamic(
-  () => import("../../Components/Requests/Lists/RequestList")
+const YourRequestList = dynamic(
+  () => import("../../Components/Requests/Lists/YourRequestList")
 );
 const DeleteDialog = dynamic(
   () => import("../../Components/Requests/Dialogs/DeleteRequestDialog")
 );
-const AcceptDialog = dynamic(
-  () => import("../../Components/Requests/Dialogs/AcceptRequestDialog")
-);
 
-const Requests = () => {
+const YourRequests = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const {
@@ -27,37 +24,25 @@ const Requests = () => {
     fetchMore: moreRequests,
     loading,
   } = useQuery<GetProfileResult, GetProfileVariables>(
-    GET_PROFILE_RECEIVED_REQUESTS,
+    GET_PROFILE_SENT_REQUESTS,
     {
       variables: {
         profileId: session?.user?.id as string,
         limit: 10,
       },
-      skip: !session,
     }
   );
   const [openDelete, setOpenDelete] = useState(false);
-  const [openAccept, setOpenAccept] = useState(false);
   const [targetId, setTargetId] = useState("");
 
-  const handleCloseDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (e.currentTarget.value === "accept") {
-      setTargetId("");
-      setOpenAccept(false);
-    } else {
-      setTargetId("");
-      setOpenDelete(false);
-    }
+  const handleCloseDialog = () => {
+    setTargetId("");
+    setOpenDelete(false);
   };
 
   const handleOpenDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (e.currentTarget.value === "accept") {
-      setTargetId(e.currentTarget.id);
-      setOpenAccept(true);
-    } else {
-      setTargetId(e.currentTarget.id);
-      setOpenDelete(true);
-    }
+    setTargetId(e.currentTarget.id);
+    setOpenDelete(true);
   };
 
   const handleTabChange = (
@@ -88,15 +73,14 @@ const Requests = () => {
         </TabContext>
 
         {loading ? (
-          <Box display="flex" justifyContent="center">
+          <Box display="flex" justifyContent="center" alignItems="center">
             <CircularProgress />
           </Box>
         ) : (
-          <RequestList
-            requests={getProfile?.receivedConfessionRequests}
+          <YourRequestList
+            requests={getProfile?.sentConfessionRequests}
             moreRequests={moreRequests}
             handleOpenDialog={handleOpenDialog}
-            hasActiveChat={Boolean(getProfile?.activeChat)}
           />
         )}
 
@@ -105,14 +89,9 @@ const Requests = () => {
           handleClose={handleCloseDialog}
           requestID={targetId}
         />
-        <AcceptDialog
-          open={openAccept}
-          handleClose={handleCloseDialog}
-          requestID={targetId}
-        />
       </Container>
     </>
   );
 };
 
-export default Requests;
+export default YourRequests;

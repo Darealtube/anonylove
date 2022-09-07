@@ -17,6 +17,7 @@ import { GetUserResult } from "../../../types/Queries";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Anonymous from "../../../public/anonyUser.png";
 import { QueryConnection, Request } from "../../../types/models";
+import { AnonyAvatar } from "../../Style/Global/AnonyAvatar";
 
 //  Set parameter "requests" as optional for now
 const YourRequestList = ({
@@ -63,13 +64,15 @@ const YourRequestList = ({
                 <Box display="flex">
                   <ListItem alignItems="flex-start">
                     <ListItemAvatar>
-                      <Image
-                        src={Anonymous}
-                        alt="Confesser PFP"
-                        width={40}
-                        height={40}
-                        className="avatar"
-                      />
+                      <AnonyAvatar>
+                        <Image
+                          src={Anonymous}
+                          alt="Confesser PFP"
+                          layout="fill"
+                          objectFit="cover"
+                          className="avatar"
+                        />
+                      </AnonyAvatar>
                     </ListItemAvatar>
                     <ListItemText
                       primary={"Anonymous"}

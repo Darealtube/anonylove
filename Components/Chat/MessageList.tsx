@@ -11,7 +11,8 @@ import { useSession } from "next-auth/react";
 import { DateTime } from "luxon";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Message, QueryConnection } from "../../types/models";
-import { AnonyChatBox } from "../Style/Chat/AnonyChatBox";
+import { AnonyMessage } from "../Style/Chat/AnonyMessage";
+import { AnonyAvatar } from "../Style/Global/AnonyAvatar";
 
 const MessageList = ({
   messages,
@@ -58,19 +59,16 @@ const MessageList = ({
               mt={2}
               mb={2}
               flexDirection={
-                node.sender.name === session?.user?.name ? "row-reverse" : "row"
+                node.sender._id === session?.user?.id ? "row-reverse" : "row"
               }
               justifyContent={
-                node.sender.name === session?.user?.name ? "end" : "start"
+                node.sender._id === session?.user?.id ? "end" : "start"
               }
             >
-              <Box
+              <AnonyAvatar
                 display="flex"
                 flexDirection="column"
                 justifyContent="end"
-                position="relative"
-                width={40}
-                height={40}
               >
                 <Image
                   src={
@@ -81,19 +79,16 @@ const MessageList = ({
                   objectFit="cover"
                   className="avatar"
                 />
-              </Box>
+              </AnonyAvatar>
               <Tooltip
                 title={`${DateTime.fromMillis(+node.date).toLocaleString(
                   DateTime.DATETIME_MED
                 )}`}
-                placement={
-                  node.sender.name === session?.user?.name ? "left" : "right"
-                }
+                placement="left"
               >
-                <AnonyChatBox elevation={6}>
+                <AnonyMessage>
                   <Container sx={{ mt: 2, mb: 2 }}>
                     <Typography
-                      paragraph
                       variant="body1"
                       whiteSpace="pre-wrap"
                       sx={{
@@ -104,7 +99,7 @@ const MessageList = ({
                       {node.message}
                     </Typography>
                   </Container>
-                </AnonyChatBox>
+                </AnonyMessage>
               </Tooltip>
             </Box>
           ))}

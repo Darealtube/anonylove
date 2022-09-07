@@ -16,6 +16,7 @@ import { signOut, useSession } from "next-auth/react";
 import Notifications from "./Notifications";
 import { AnonyAppBar } from "../Style/AppWrap/AnonyAppBar";
 import { AnonyButton } from "../Style/Global/AnonyButton";
+import { AnonyAvatar } from "../Style/Global/AnonyAvatar";
 
 type MobileDrawerProps = {
   children: ReactNode;
@@ -51,7 +52,7 @@ const MobileSideBar = ({
 
         <Link href={`/profile/`} passHref>
           <a>
-            <Box ml={2} width={40} height={40}>
+            <AnonyAvatar ml={2}>
               {session?.user?.image && (
                 <Image
                   src={session.user.image}
@@ -61,7 +62,7 @@ const MobileSideBar = ({
                   className="avatar"
                 />
               )}
-            </Box>
+            </AnonyAvatar>
           </a>
         </Link>
       </AnonyAppBar>

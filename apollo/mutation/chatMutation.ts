@@ -6,12 +6,14 @@ export const SEND_MESSAGE = gql`
     $sender: ID!
     $message: String!
     $anonymous: Boolean!
+    $repliesTo: ID
   ) {
     sendMessage(
       chat: $chat
       sender: $sender
       message: $message
       anonymous: $anonymous
+      repliesTo: $repliesTo
     )
   }
 `;

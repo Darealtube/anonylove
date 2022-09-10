@@ -32,7 +32,7 @@ const authLink = setContext(async (_, previousContext) => {
 });
 
 const httpLink = new HttpLink({
-  uri: "https://anony-api-3.herokuapp.com/graphql",
+  uri: "http://localhost:3000/graphql",
   credentials: "include",
   fetchOptions: {
     mode: "cors", // This should always be CORS as our API server is on another domain.
@@ -43,7 +43,7 @@ const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: "wss://anony-api-3.herokuapp.com/graphql",
+          url: "ws://localhost:3000/graphql",
           connectionParams: async () => {
             const session = await getSession();
             return { Authorization: session?.user.id };

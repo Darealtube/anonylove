@@ -11,6 +11,7 @@ import { AnonyTextField } from "../Style/Chat/AnonyTextField";
 import { AnonyTextBar } from "../Style/Chat/AnonyTextBar";
 import { ErrorContext } from "../ErrorProvider";
 
+const ReplyBar = dynamic(() => import("./ReplyBar"));
 const EmojiPicker = dynamic(() => import("../Chat/EmojiPopover"));
 const rateLimitedText = "You are messaging too much. Try again in 30 seconds";
 
@@ -18,10 +19,14 @@ const Textbar = ({
   chatId,
   confessedTo,
   endRequesting,
+  handleReply,
+  replyingTo,
 }: {
   chatId?: string;
   confessedTo: boolean;
   endRequesting?: boolean;
+  handleReply: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
+  replyingTo: HTMLButtonElement | null;
 }) => {
   const errorHandler = useContext(ErrorContext);
   const { data: session } = useSession();
@@ -57,9 +62,11 @@ const Textbar = ({
         message,
         anonymous: confessedTo ? false : true,
         sender: session?.user?.id,
+        repliesTo: replyingTo?.id,
       },
     });
     setMessage("");
+    handleReply(null);
   };
 
   const handleMessageKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -73,8 +80,16 @@ const Textbar = ({
     }
   };
 
+  // Closes ReplyBar and sets Reply Message to null
+  const handleCloseReply = () => {
+    handleReply(null);
+  };
+
   return (
     <>
+      {replyingTo && (
+        <ReplyBar text={replyingTo.innerText} handleClose={handleCloseReply} />
+      )}
       <AnonyTextBar elevation={6}>
         <Container
           sx={{

@@ -51,6 +51,8 @@ const ActiveChat = ({
   const errorHandler = useContext(ErrorContext);
   const { data: session } = useSession();
   const { pageVisible } = useVisibility();
+  // Replying to a message state
+  const [replyTo, setReplyTo] = useState<HTMLButtonElement | null>(null);
 
   const {
     data: { getProfileActiveChat } = {},
@@ -218,6 +220,7 @@ const ActiveChat = ({
               messages={getProfileActiveChat?.messages}
               loadMoreMessages={loadMoreMessages}
               hasMore={hasMore}
+              handleReply={setReplyTo}
             />
           ) : (
             <CircularProgress />
@@ -237,6 +240,8 @@ const ActiveChat = ({
             chatId={getProfileActiveChat?._id}
             confessedTo={confessedTo}
             endRequesting={getProfileActiveChat?.status.endRequesting}
+            handleReply={setReplyTo}
+            replyingTo={replyTo}
           />
         ) : (
           <>

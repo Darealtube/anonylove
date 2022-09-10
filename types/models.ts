@@ -30,6 +30,7 @@ export interface Message {
   sender: User;
   message: string;
   anonymous: boolean;
+  repliesTo: Message;
 }
 
 export interface Chat {

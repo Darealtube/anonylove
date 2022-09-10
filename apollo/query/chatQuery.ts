@@ -32,6 +32,10 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
             anonymous
             message
             date
+            repliesTo {
+              _id
+              message
+            }
           }
         }
         pageInfo {

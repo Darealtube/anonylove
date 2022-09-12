@@ -1,5 +1,5 @@
 import { Container, IconButton } from "@mui/material";
-import { SyntheticEvent, useContext, useState } from "react";
+import { SyntheticEvent, useContext, useEffect, useRef, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import { useMutation } from "@apollo/client";
@@ -28,6 +28,7 @@ const Textbar = ({
   handleReply: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
   replyingTo: HTMLButtonElement | null;
 }) => {
+  const TextBarRef = useRef<HTMLInputElement | null>(null);
   const errorHandler = useContext(ErrorContext);
   const { data: session } = useSession();
   const [sendMessage] = useMutation(SEND_MESSAGE, {
@@ -85,6 +86,11 @@ const Textbar = ({
     handleReply(null);
   };
 
+  useEffect(() => {
+    if (replyingTo) {
+      TextBarRef.current?.focus();
+    }
+  }, [replyingTo]);
   return (
     <>
       {replyingTo && (
@@ -101,6 +107,7 @@ const Textbar = ({
           }}
         >
           <AnonyTextField
+            inputRef={TextBarRef}
             sx={{ flexGrow: 1, height: "100%" }}
             multiline
             maxRows={4}

@@ -17,6 +17,7 @@ const SignInOptions = ({ providers }: { providers: Providers }) => {
           onClick={() => signIn(provider.id, { callbackUrl: "/home" })}
           variant="text"
           fullWidth
+          sx={{ color: "white" }}
         >
           Sign in with {provider.name}
         </AnonyButton>

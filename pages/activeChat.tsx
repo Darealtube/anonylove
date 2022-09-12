@@ -123,10 +123,20 @@ const ActiveChat = ({
       ) => {
         if (!subscriptionData.data) return prev;
         const newMessage = subscriptionData.data.newMessage;
+        const yourMessage = newMessage.sender._id === sessionId;
         const idAlreadyExists =
           prev.getProfileActiveChat.messages.edges.filter((item) => {
             return item.node._id === newMessage._id;
           }).length > 0;
+
+        // Automatically scrolls down when sent message or replied to a message
+        if (yourMessage) {
+          (chatMain as React.MutableRefObject<HTMLElement>).current.scrollTop =
+            (chatMain as React.MutableRefObject<HTMLElement>)?.current
+              .scrollHeight -
+            (chatMain as React.MutableRefObject<HTMLElement>)?.current
+              .clientHeight;
+        }
 
         if (!idAlreadyExists) {
           return Object.assign({}, prev, {

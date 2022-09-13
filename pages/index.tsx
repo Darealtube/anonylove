@@ -55,7 +55,11 @@ const SignIn = ({ providers }: { providers: Providers }) => {
             <Box className={styles.appbar}>
               <Image src={BrandLogo} alt={"Brand Logo"} />
               {!sm && <Box sx={{ flexGrow: 1 }} />}
-              {!sm && <SignInOptions providers={providers} />}
+              {!sm && (
+                <Box width="40%">
+                  <SignInOptions providers={providers} />
+                </Box>
+              )}
             </Box>
           </AppBar>
 
@@ -93,15 +97,8 @@ const SignIn = ({ providers }: { providers: Providers }) => {
             </Paper>
 
             {sm && (
-              <Box
-                mt={16}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <SignInOptions providers={providers} />
+              <Box width="100%" mt={8}>
+                <SignInOptions providers={providers} />{" "}
               </Box>
             )}
           </Box>

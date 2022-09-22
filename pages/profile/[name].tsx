@@ -46,8 +46,8 @@ const User = ({
         <Image
           src={getUser?.cover ?? NoBg}
           alt="No Background Image"
-          objectFit="cover"
-          layout="fill"
+          width={1280}
+          height={304}
         />
       </AnonyCover>
 

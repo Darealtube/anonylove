@@ -30,8 +30,8 @@ const Profile = ({ id }: { id: string }) => {
         <Image
           src={getProfile?.cover ?? NoBg}
           alt="No Background Image"
-          objectFit="cover"
-          layout="fill"
+          width={1280}
+          height={304}
         />
       </AnonyCover>
 

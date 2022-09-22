@@ -17,12 +17,11 @@ import { getSession, useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@apollo/client";
 import { EDIT_PROFILE_QUERY } from "../../apollo/query/userQuery";
 import { GetProfileResult, GetProfileVariables } from "../../types/Queries";
-import { MutableRefObject, useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { GetServerSideProps } from "next";
 import { addApolloState } from "../../apollo/apolloClient";
 import { editProfileInfo } from "../../utils/SSR/profile";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
-import { getImages } from "../../utils/Media/getImage";
 import Information from "../../Components/Profile/Information";
 import Link from "next/link";
 import { EDIT_USER_PROFILE } from "../../apollo/mutation/userMutation";
@@ -33,13 +32,25 @@ import { AnonyPFP } from "../../Components/Style/Profile/AnonyPFP";
 import { ProfileButton } from "../../Components/Style/Profile/ProfileButton";
 import { AnonyBio } from "../../Components/Style/Profile/AnonyBio";
 import { ErrorContext } from "../../Components/ErrorProvider";
+import dynamic from "next/dynamic";
+
+type CropperType = {
+  open: boolean;
+  handler: (image: string) => void;
+  type: "cover" | "pfp";
+};
+
+const ImageCropper = dynamic(() => import("../../Components/ImageCropper"));
 
 const EditProfile = () => {
   const router = useRouter();
   const errorHandler = useContext(ErrorContext);
-  const pfp = useRef<HTMLInputElement | null>(null);
-  const cover = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
+  const [cropper, setCropper] = useState<CropperType>({
+    open: false,
+    handler: (image: string) => {},
+    type: "pfp",
+  });
   const [editProfile] = useMutation(EDIT_USER_PROFILE, {
     onError: (error) => {
       errorHandler(error.message);
@@ -84,34 +95,30 @@ const EditProfile = () => {
     });
   };
 
-  const handleChangeCoverClick = () => {
-    (cover as MutableRefObject<HTMLInputElement>).current.click();
+  const handleChangeCover = (image: string) => {
+    setProfile({
+      ...profile,
+      cover: image,
+    });
   };
 
-  const handleChangePFPClick = () => {
-    (pfp as MutableRefObject<HTMLInputElement>).current.click();
+  const handleChangePFP = (image: string) => {
+    setProfile({
+      ...profile,
+      image,
+    });
   };
 
-  const handleChangeCover = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if ((e.currentTarget.files as FileList)?.length != 0) {
-      getImages((e.currentTarget.files as FileList)[0], (result) => {
-        setProfile({
-          ...profile,
-          cover: result,
-        });
-      });
-    }
+  const handleCropPFP = () => {
+    setCropper({ ...cropper, open: true, handler: handleChangePFP });
   };
 
-  const handleChangePFP = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if ((e.currentTarget.files as FileList)?.length != 0) {
-      getImages((e.currentTarget.files as FileList)[0], (result) => {
-        setProfile({
-          ...profile,
-          image: result,
-        });
-      });
-    }
+  const handleCropCover = () => {
+    setCropper({ open: true, handler: handleChangeCover, type: "cover" });
+  };
+
+  const handleCloseCropper = () => {
+    setCropper({ open: false, handler: (image: string) => {}, type: "pfp" });
   };
 
   const handleSubmit = async () => {
@@ -145,22 +152,15 @@ const EditProfile = () => {
         <Image
           src={profile.cover ?? NoBg}
           alt="No Background Image"
-          objectFit="cover"
-          layout="fill"
+          width={1280}
+          height={304}
         />
         <IconButton
           sx={{ position: "absolute", color: "#f6f7f8" }}
-          onClick={handleChangeCoverClick}
+          onClick={handleCropCover}
         >
           <CameraAltIcon />
         </IconButton>
-        <input
-          type="file"
-          hidden={true}
-          accept="image/*"
-          ref={cover}
-          onChange={handleChangeCover}
-        />
       </AnonyCover>
 
       <Grid container sx={{ display: "flex" }}>
@@ -184,22 +184,15 @@ const EditProfile = () => {
                 src={profile.image ?? anonyUser}
                 alt="PFP"
                 layout="fill"
-                objectFit="cover"
+                objectFit="contain"
                 className="avatar"
               />
               <IconButton
                 sx={{ position: "absolute", color: "#f6f7f8" }}
-                onClick={handleChangePFPClick}
+                onClick={handleCropPFP}
               >
                 <CameraAltIcon />
               </IconButton>
-              <input
-                type="file"
-                hidden={true}
-                accept="image/*"
-                ref={pfp}
-                onChange={handleChangePFP}
-              />
             </AnonyPFP>
           </Container>
         </Grid>
@@ -315,6 +308,7 @@ const EditProfile = () => {
           </Grid>
         </Grid>
       </Container>
+      <ImageCropper cropper={cropper} handleClose={handleCloseCropper} />
     </>
   );
 };

@@ -16,7 +16,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import { DateTime } from "luxon";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Anonymous from "../../../public/anonyUser.png";
-import { GetUserResult } from "../../../types/Queries";
+import { GetProfileResult } from "../../../types/Queries";
 import { QueryConnection, Request } from "../../../types/models";
 import { AnonyAvatar } from "../../Style/Global/AnonyAvatar";
 
@@ -41,10 +41,10 @@ const RequestList = ({
         after: requests?.pageInfo.endCursor,
         limit: 10,
       },
-    }).then((fetchMoreResult: { data: GetUserResult }) => {
-      if (fetchMoreResult.data.getUser) {
+    }).then((fetchMoreResult: { data: GetProfileResult }) => {
+      if (fetchMoreResult.data.getProfile) {
         if (
-          !fetchMoreResult.data.getUser.receivedConfessionRequests.pageInfo
+          !fetchMoreResult.data.getProfile.receivedConfessionRequests.pageInfo
             .hasNextPage
         ) {
           setHasMore(false);

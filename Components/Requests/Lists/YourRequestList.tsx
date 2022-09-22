@@ -13,7 +13,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DateTime } from "luxon";
-import { GetUserResult } from "../../../types/Queries";
+import { GetProfileResult } from "../../../types/Queries";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Anonymous from "../../../public/anonyUser.png";
 import { QueryConnection, Request } from "../../../types/models";
@@ -35,10 +35,10 @@ const YourRequestList = ({
   const loadMoreRequests = () => {
     moreRequests({
       variables: { after: requests?.pageInfo.endCursor, limit: 10 },
-    }).then((fetchMoreResult: { data: GetUserResult }) => {
-      if (fetchMoreResult.data.getUser) {
+    }).then((fetchMoreResult: { data: GetProfileResult }) => {
+      if (fetchMoreResult.data.getProfile) {
         if (
-          !fetchMoreResult.data.getUser.sentConfessionRequests.pageInfo
+          !fetchMoreResult.data.getProfile.sentConfessionRequests.pageInfo
             .hasNextPage
         ) {
           setHasMore(false);

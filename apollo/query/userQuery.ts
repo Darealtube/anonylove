@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 
+// GETS THE PROFILE INFO OF OTHER USERS
 export const GET_USER_QUERY = gql`
   query GetUser($name: String!, $from: ID!) {
     getUser(name: $name) {
@@ -16,6 +17,7 @@ export const GET_USER_QUERY = gql`
   }
 `;
 
+// GETS YOUR PROFILE INFO
 export const GET_PROFILE_QUERY = gql`
   query GetProfile($profileId: ID!) {
     getProfile(profileId: $profileId) {
@@ -46,6 +48,7 @@ export const EDIT_PROFILE_QUERY = gql`
   }
 `;
 
+// GETS CHAT INFO THAT'S DISPLAYED IN THE SIDEBAR
 export const GET_PROFILE_CHAT = gql`
   query ProfileChat($profileId: ID!) {
     getProfile(profileId: $profileId) {
@@ -137,6 +140,7 @@ export const GET_PROFILE_NOTIFICATIONS = gql`
   }
 `;
 
+// GETS PROFILE STATUS IN ORDER TO MAKE THE TAB NOTIFICATION FUNCTION WORK
 export const GET_PROFILE_STATUS = gql`
   query ProfileStatus($profileId: ID!) {
     getProfile(profileId: $profileId) {

@@ -19,6 +19,7 @@ import { encrypt } from "../utils/encrypt";
 // ws://localhost:3000/graphql for test websocket
 // wss://anony-api-3.herokuapp.com/graphql
 
+// ADDS AUTHENTICATION TO REQUESTS AND IS HANDLED IN THE API FOR RATE LIMITING AND AUTHORIZATION
 const authLink = setContext(async (_, previousContext) => {
   const session = await getSession();
   return {
@@ -31,6 +32,7 @@ const authLink = setContext(async (_, previousContext) => {
   };
 });
 
+// THE LINK TO THE APOLLO GRAPHQL API
 const httpLink = new HttpLink({
   uri: "https://anony-api-3.herokuapp.com/graphql",
   credentials: "include",
@@ -39,6 +41,7 @@ const httpLink = new HttpLink({
   },
 });
 
+// CREATES A WEBSOCKET LINK FOR THE CHATS
 const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
@@ -51,11 +54,10 @@ const wsLink =
         })
       )
     : null;
-// The split function takes three parameters:
-//
-// * A function that's called for each operation to execute
-// * The Link to use for an operation if the function returns a "truthy" value
-// * The Link to use for an operation if the function returns a "falsy" value
+
+// THIS LINK TAKES IN CONSIDERATION OF THE SERVER SIDE RENDERING FUNCTIONALITY OF NEXTJS
+// IF IT'S SSRing, KNOW IF THE REQUEST IS A QUERY OR A SUBSCRIPTION
+// IF NOT, DEFAULT TO HTTP REQUESTS
 const splitLink =
   typeof window !== "undefined"
     ? split(
@@ -75,10 +77,7 @@ export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
 let apolloClient: null | ApolloClient<NormalizedCacheObject>;
 
-// Creates an HttpLink towards the website's api on https://anonylove.vercel.app/api/graphql.
-// In order to work in dev environment, set the uri to http://localhost:4000/api/graphql.
-// Before pushing to main, make sure to set it back to https://anonylove.vercel.app/api/graphql.
-
+// CREATES APOLLO CLIENT FOR THE HOOKS TO FUNCTION
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",

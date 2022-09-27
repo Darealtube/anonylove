@@ -1,3 +1,4 @@
+// UPLOADS IMAGES ALONGSIDE WITH THE SIGNATURE TO THE MEDIA CDN (CLOUDINARY)
 export const uploadImage = async (image: File | string) => {
   let url: string = "";
   const data = new FormData();

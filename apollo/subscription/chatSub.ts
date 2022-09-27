@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 
+// CHAT INFO SUBSCRIPTION FOR THE SIDEBAR
 export const PROFILE_CHAT_SUBSCRIPTION = gql`
   subscription ProfileChat($profileId: ID!) {
     profileChat(profileId: $profileId) {
@@ -14,6 +15,7 @@ export const PROFILE_CHAT_SUBSCRIPTION = gql`
   }
 `;
 
+// LISTENS IF ANONYMOUS OR CONFESSER HAVE SEEN THE CHAT
 export const CHAT_SEEN_SUBSCRIPTION = gql`
   subscription ProfileChat($profileId: ID!) {
     profileChat(profileId: $profileId) {
@@ -24,6 +26,7 @@ export const CHAT_SEEN_SUBSCRIPTION = gql`
   }
 `;
 
+// LISTENS IF CHAT IS ENDED OR END REQUESTING
 export const CHAT_STATUS_SUBSCRIPTION = gql`
   subscription ChatStatus($chatId: ID!) {
     activeChatStatus(chatId: $chatId) {

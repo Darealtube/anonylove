@@ -1,3 +1,4 @@
+// RENDERS THE IMAGE INPUT FROM FILE INPUT TYPES
 export const getImages = (file: File, fn: (result: string) => void) => {
   var reader = new FileReader();
   reader.onload = function (e) {

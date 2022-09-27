@@ -33,6 +33,7 @@ const SignIn = ({ providers }: { providers: Providers }) => {
   const sm = useMediaQuery(theme.breakpoints.down("md"));
   const [quote, setQuote] = useState("");
 
+  // RANDOMIZES THE QUOTE EVERYTIME THIS PAGE IS VISITED.
   useEffect(() => {
     setQuote(quoteRandomizer(anonyQuotes));
   }, []);

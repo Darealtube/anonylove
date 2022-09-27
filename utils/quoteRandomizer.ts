@@ -12,6 +12,8 @@ export const anonyQuotes = [
     veggies, that is, accepting the bland and mundane truths of life.`,
 ];
 
+// REALLY SIMPLE ALGORITHM FOR PICKING A NUMBER THAT'S LESS THAN THE ARRAY LENGTH
+// AND GETS THE VALUE OF THE ARRAY INDEX OF THAT NUMBER
 const quoteRandomizer = (quotes: string[]) => {
   const quoteIndex = Math.floor(Math.random() * quotes.length);
   return quotes[quoteIndex];

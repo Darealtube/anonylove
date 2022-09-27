@@ -14,6 +14,7 @@ import { AnonyAvatar } from "../../Style/Global/AnonyAvatar";
 //  Set parameter "chats" as optional for now
 const ChatInfo = ({ chat }: { chat: Chat }) => {
   const { data: session } = useSession();
+  // THESE THREE ARE CRUCIAL TO DETERMINE WHO IS CONFESSING
   const confessedTo = session?.user?.id === chat?.confessee._id;
   const chatSeen = confessedTo ? chat?.confesseeSeen : chat?.anonSeen;
   const sentByYou =

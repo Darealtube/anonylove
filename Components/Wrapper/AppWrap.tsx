@@ -17,6 +17,7 @@ import SideBar from "./SideBar";
 import { AnonyMenu } from "../Style/AppWrap/AnonyMenu";
 import { PROFILE_CHAT_SUBSCRIPTION } from "../../apollo/subscription/chatSub";
 
+// PASSES DOWN notifSeen DATA TO SIDEBAR IN ORDER TO AVOID PROP DRILLING
 export const NotificationContext = createContext<{ notifSeen?: boolean }>({
   notifSeen: undefined,
 });

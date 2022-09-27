@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
 
+// THIS GETS THE USER'S ACTIVE CHAT SHOWN IN THE MAIN /activeChat PAGE
 export const GET_PROFILE_ACTIVE_CHAT = gql`
   query GetProfileActiveChat($profileId: ID!, $after: String, $limit: Int) {
     getProfileActiveChat(profileId: $profileId) {
@@ -47,6 +48,7 @@ export const GET_PROFILE_ACTIVE_CHAT = gql`
   }
 `;
 
+// REVEALS USER WHEN END REQUEST IS ACCEPTED
 export const REVEAL_USER_CHAT = gql`
   query RevealUserChat($profileId: ID!) {
     getProfileActiveChat(profileId: $profileId) {

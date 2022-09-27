@@ -20,6 +20,8 @@ const TitleWrap = ({ children }: { children: ReactNode }) => {
     { variables: { profileId: session?.user?.id as string } }
   );
 
+  // THIS IS THE CODE RESPONSIBLE FOR THE TAB STATUS WHEN USER HAS SEEN THE CHAT OR NOT
+  // THIS IS ALSO THE CODE RESPONSIBLE FOR NOTIFICATIONS READING OR "SEEING"
   useEffect(() => {
     if (!data?.getProfile?.activeChat) {
       setChatSeen(true);
@@ -36,10 +38,12 @@ const TitleWrap = ({ children }: { children: ReactNode }) => {
     setNotifSeen(data?.getProfile?.notifSeen);
   }, [data, session]);
 
+  // SETS AUDIO ELEMENT ON RENDER
   useEffect(() => {
     setAudio(new Audio(MessageRing));
   }, []);
 
+  // PLAYS AUDIO WHENEVER THERE IS A NEW MESSAGE IN THE CHAT AND THE USER IS AWAY FROM THE CHAT
   useEffect(() => {
     if (
       (router.route !== "/activeChat" && !chatSeen) ||

@@ -121,6 +121,7 @@ const EditProfile = () => {
     setCropper({ open: false, handler: (image: string) => {}, type: "pfp" });
   };
 
+  // WILL ONLY UPLOAD IMAGE TO CLOUDINARY IF IT'S NOT THE SAME IMAGE AS BEFORE
   const handleSubmit = async () => {
     editProfile({
       variables: {

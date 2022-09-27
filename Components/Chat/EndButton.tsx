@@ -23,6 +23,8 @@ const EndButton = ({
   const [requestEndChat] = useMutation(END_CHAT_REQUEST, {
     onError: (err) => errorHandler(err.message),
   });
+  // IF THE OTHER PERSON HAS REJECTED THE REQUEST A THIRD TIME, THE NEXT REQUEST IS FORCEDLY ACCEPTED
+  // THIS IS IN ORDER TO HANDLE THE EVENTS OF HARASSMENT BETWEEN PEOPLE
   const [forceEndChat] = useMutation(FORCE_END_CHAT, {
     variables: { chat: chatId },
     onError: (err) => errorHandler(err.message),

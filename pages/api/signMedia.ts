@@ -2,6 +2,7 @@ import cloudinary from "cloudinary";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
+// SENDS A SIGNATURE VALUE ALONGSIDE A REQUEST TO STORE AN IMAGE IN THE CDN (CLOUDINARY)
 const cloudinaryHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   // Must be UNIX format
   const timestamp = Math.round(new Date().getTime() / 1000);

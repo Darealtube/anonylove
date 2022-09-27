@@ -36,12 +36,15 @@ const NotificationPopover = ({
       }
     );
 
+  // IF THE USER OPENS THE NOTIFICATION LIST AND HE HASN'T SEEN IT YET,
+  // FETCH NEW DATA FROM THE SERVER
   useEffect(() => {
     if (Boolean(anchor) === true && seenNotif === false) {
       refetch();
     }
   }, [anchor, refetch, getNotifs, seenNotif]);
 
+  // GET NOTIFICATIONS WHEN THE LIST IS OPEN
   useEffect(() => {
     if (Boolean(anchor) === true) {
       getNotifs();

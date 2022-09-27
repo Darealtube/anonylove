@@ -20,6 +20,8 @@ const ErrorProvider = ({ children }: { children: ReactNode }) => {
     setError({ hasError: false, errMessage: "" });
   };
 
+  // IF THE USER HAS GONE OFFLINE OR ONLINE, NOTIFY THE USER THROUGH SNACKBAR
+  // THIS SIMILAR TO THE SNACKBAR YOU GET IN MESSENGER OR FACEBOOK
   useEffect(() => {
     window.addEventListener("offline", () => {
       handleError("You are offline.");

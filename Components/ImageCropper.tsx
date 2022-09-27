@@ -71,7 +71,7 @@ const ImageCropper = ({
             toggleDragModeOnDblclick={false}
             background={false}
             responsive={true}
-            checkOrientation={false} // https://github.com/fengyuanchen/cropperjs/issues/671
+            checkOrientation={false}
             onInitialized={(instance) => {
               setCropperElement(instance);
             }}

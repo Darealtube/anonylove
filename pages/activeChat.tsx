@@ -165,6 +165,7 @@ const ActiveChat = ({
     }
   }, [pageVisible, seeChat, chatSeen, getProfileActiveChat]);
 
+  // If there is no chat, throw 404.
   if (!getProfileActiveChat) {
     return (
       <>
